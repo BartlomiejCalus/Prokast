@@ -26,3 +26,5 @@ Projekt jest podzielony na trzy główne podprojekty:
 
 - **Testy**:
   - [Bartłomiej Całus](https://github.com/BartlomiejCalus)
+ 
+  - asdasdiughioafsd
