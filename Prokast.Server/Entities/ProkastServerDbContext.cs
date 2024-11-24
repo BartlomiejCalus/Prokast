@@ -10,6 +10,8 @@ namespace Prokast.Server.Entities
         public DbSet<AccountLogIn> AccountLogIn { get; set; }
         public DbSet<Client> Clients { get; set; }
         public DbSet<CustomParams> CustomParams { get; set; }
+        public DbSet<DictionaryParams> DictionaryParams { get; set; }
+        public DbSet<Regions> Regions { get; set; }
  
     }
 }

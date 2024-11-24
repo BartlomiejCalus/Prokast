@@ -1,0 +1,32 @@
+name: Deploy to Production
+
+on:
+    workflow_dispatch:
+        inputs:
+          project:
+            description: 'Which project to deploy'
+            required: true
+            type: choice
+            options:
+              - Server
+              - Klient
+              - Magazyn
+              - All   
+
+jobs:
+
+    build-and-deploy-klient:
+        name: "Deploy - Marketplace"
+        if: ${{ inputs.project == 'Klient' || inputs.project == 'All' }}
+        runs-on: "ubuntu-latest"
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Deploy to Azure Static Web App
+              uses: Azure/static-web-apps-deploy@v1
+              with:
+                app_location: '/'
+                azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_KLIENT_TOKEN }}
+                action: "upload"
+        

@@ -30,6 +30,7 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddScoped<ILogInService, LogInService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IParamsService, ParamsService>();
+builder.Services.AddScoped<IDictionaryService, DictionaryService>();
 
 var app = builder.Build();
 
@@ -38,6 +39,11 @@ if (app.Environment.IsDevelopment())
 {
 
 }
+
+
+
+
+
 
 app.UseSwagger();
 app.UseSwaggerUI();

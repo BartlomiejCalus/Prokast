@@ -29,5 +29,6 @@ namespace Prokast.Server.Entities
         public string City { get; set; }
         [Required]
         public string Country { get; set; }
+        public DateTime? Subscription { get; set; }
     }
 }

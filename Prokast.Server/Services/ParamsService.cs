@@ -79,7 +79,7 @@ namespace Prokast.Server.Services
         #region GetParamsByName
         public Response GetParamsByName(int clientID, string name) 
         {
-            var param = _dbContext.CustomParams.Where(x => x.ClientID == clientID && x.Name == name).ToList();
+            var param = _dbContext.CustomParams.Where(x => x.ClientID == clientID && x.Name.Contains(name)).ToList();
 
             
             var response = new Response() { ID = random.Next(1, 100000), ClientID = clientID, Model = param };
