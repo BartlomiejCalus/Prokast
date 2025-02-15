@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="main.css">
 	<link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
-    <title>Strona Główna</title>
+    <title>Stwórz konto pracownika</title>
+    <script src="pracownicy.js" defer></script>
 </head>
 <body>
     <nav> 
@@ -39,5 +40,17 @@
             </li>
         </ul>
     </nav>
+    
+    <h2>Stwórz konto pracownika</h2>
+    <form id="accountForm">
+        <label>Nazwa użytkownika: <input type="text" name="firstName" required></label><br>
+        <label>Hasło: <input type="text" name="lastName" required></label><br>
+        <label>Email: <input type="email" name="email" required></label><br>
+        <label>ID magazynu: <input type="number" name="warehouseID" required></label><br>
+        <label>Rola: <input type="number" name="role" required></label><br>
+        <button type="submit">Stwórz konto</button>
+    </form>
+    <h3>Dane pracownika:</h3>
+    <pre id="response"></pre>
 </body>
 </html>
