@@ -11,6 +11,7 @@ using System.Security.Cryptography;
 using System.Linq;
 using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Services.Interfaces;
+using Prokast.Server.Models.ClientModels;
 
 namespace Prokast.Server.Services
 {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Prokast.Server.Entities;
 using Prokast.Server.Models;
+using Prokast.Server.Models.PhotoModels;
 
 namespace Prokast.Server.Services.Interfaces
 {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Prokast.Server.Models;
+using Prokast.Server.Models.StoredProductModels;
 
 namespace Prokast.Server.Services.Interfaces
 {

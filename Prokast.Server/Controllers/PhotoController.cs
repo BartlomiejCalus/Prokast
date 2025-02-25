@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Prokast.Server.Entities;
 using Prokast.Server.Models;
+using Prokast.Server.Models.PhotoModels;
 using Prokast.Server.Models.ResponseModels;
+using Prokast.Server.Models.ResponseModels.PhotoResponseModels;
 using Prokast.Server.Services.Interfaces;
 
 namespace Prokast.Server.Controllers

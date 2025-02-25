@@ -3,6 +3,8 @@ using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models;
 using Prokast.Server.Services;
 using Prokast.Server.Services.Interfaces;
+using Prokast.Server.Models.StoredProductModels;
+using Prokast.Server.Models.ResponseModels.StoredProductResponseModels;
 
 
 namespace Prokast.Server.Controllers

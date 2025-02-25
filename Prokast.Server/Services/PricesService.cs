@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Azure;
 using Prokast.Server.Entities;
-using Prokast.Server.Models;
+using Prokast.Server.Models.PriceModels;
+using Prokast.Server.Models.PriceModels.PriceListModels;
+using Prokast.Server.Models.PricesModels;
 using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Services.Interfaces;
 using System.Web.Http;

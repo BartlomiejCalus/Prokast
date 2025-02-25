@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Prokast.Server.Models;
+using Prokast.Server.Models.ProductModels;
 using Prokast.Server.Models.ResponseModels;
 
 namespace Prokast.Server.Services.Interfaces

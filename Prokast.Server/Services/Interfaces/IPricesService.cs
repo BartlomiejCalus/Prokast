@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Prokast.Server.Entities;
 using Prokast.Server.Models;
+using Prokast.Server.Models.PriceModels;
+using Prokast.Server.Models.PriceModels.PriceListModels;
+using Prokast.Server.Models.PricesModels;
 
 namespace Prokast.Server.Services.Interfaces
 {

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Prokast.Server.Entities;
 using Prokast.Server.Models;
+using Prokast.Server.Models.PhotoModels;
 using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Services.Interfaces;
 
