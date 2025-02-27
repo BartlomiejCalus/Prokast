@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Prokast.Server.Entities;
 using Prokast.Server.Models;
 using Prokast.Server.Models.ResponseModels;
+using Prokast.Server.Models.ResponseModels.CustomParamsResponseModels;
 using Prokast.Server.Services.Interfaces;
 
 

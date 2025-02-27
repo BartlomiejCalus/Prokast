@@ -5,6 +5,8 @@ using Prokast.Server.Models.PriceModels;
 using Prokast.Server.Models.PriceModels.PriceListModels;
 using Prokast.Server.Models.PricesModels;
 using Prokast.Server.Models.ResponseModels;
+using Prokast.Server.Models.ResponseModels.PriceResponseModels;
+using Prokast.Server.Models.ResponseModels.PriceResponseModels.PriceListResponseModels;
 using Prokast.Server.Services.Interfaces;
 using System.Web.Http;
 using Response = Prokast.Server.Models.Response;

@@ -20,6 +20,8 @@ namespace Prokast.Server.Entities
         public DbSet<Photo> Photos { get; set; }
         public DbSet<Warehouse> Warehouses { get; set; }
         public DbSet<StoredProduct> StoredProducts { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<Customer> Customers { get; set; }
  
     }
 }
