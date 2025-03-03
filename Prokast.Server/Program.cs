@@ -41,6 +41,7 @@ builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddScoped<IWarehouseService, WarehouseService>();
 builder.Services.AddScoped<IStoredProductService, StoredProductService>();
 builder.Services.AddScoped<IMailingService, MailingService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 var app = builder.Build();
