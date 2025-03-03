@@ -10,6 +10,7 @@ using System;
 using System.Security.Cryptography;
 using System.Linq;
 using Prokast.Server.Models.ResponseModels;
+using Prokast.Server.Models.ResponseModels.AdditionalNameResponseModels;
 using Prokast.Server.Services.Interfaces;
 namespace Prokast.Server.Services
 {
