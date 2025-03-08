@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json(); // Pobierz dane z ciała żądania
+    const body = await req.json();
     const { clientID, productName } = body;
 
     if (!clientID || !productName) {
