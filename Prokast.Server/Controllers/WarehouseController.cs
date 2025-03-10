@@ -4,10 +4,11 @@ using Prokast.Server.Models;
 using Prokast.Server.Services;
 using Prokast.Server.Services.Interfaces;
 using Prokast.Server.Models.ResponseModels.WarehouseResponseModels;
+using Prokast.Server.Models.WarehouseModels;
 
 namespace Prokast.Server.Controllers
 {
-    [Route("api/warehouses")]
+    [Route("Api/Warehouses")]
     public class WarehouseController: ControllerBase
     {
         private readonly IWarehouseService _warehouseService;
@@ -71,7 +72,7 @@ namespace Prokast.Server.Controllers
             }
         }
 
-        [HttpGet("name/{name}")]
+        [HttpGet("Mame/{name}")]
         [ProducesResponseType(typeof(WarehouseGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetWarehousesByName([FromQuery] int clientID, [FromRoute] string name)
@@ -88,7 +89,7 @@ namespace Prokast.Server.Controllers
             }
         }
 
-        [HttpGet("city/{city}")]
+        [HttpGet("City/{city}")]
         [ProducesResponseType(typeof(WarehouseGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetWarehousesByCity([FromQuery] int clientID, [FromRoute] string city)
@@ -105,7 +106,7 @@ namespace Prokast.Server.Controllers
             }
         }
 
-        [HttpGet("country/{country}")]
+        [HttpGet("Country/{country}")]
         [ProducesResponseType(typeof(WarehouseGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetWarehousesByCountry([FromQuery] int clientID, [FromRoute] string country)
@@ -113,6 +114,23 @@ namespace Prokast.Server.Controllers
             try
             {
                 var result = _warehouseService.GetWarehouseByCountry(clientID, country);
+                if (result is ErrorResponse) return BadRequest(result);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("Minimal")]
+        [ProducesResponseType(typeof(WarehouseGetMinimalResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public ActionResult<Response> GetWarehousesMinimalData([FromQuery] int clientID)
+        {
+            try
+            {
+                var result = _warehouseService.GetWarehousesMinimalData(clientID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }

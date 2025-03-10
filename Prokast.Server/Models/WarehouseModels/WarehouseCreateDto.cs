@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Prokast.Server.Models
+namespace Prokast.Server.Models.WarehouseModels
 {
     public class WarehouseCreateDto
     {

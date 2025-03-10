@@ -3,6 +3,7 @@ using Prokast.Server.Entities;
 using Prokast.Server.Models;
 using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models.ResponseModels.WarehouseResponseModels;
+using Prokast.Server.Models.WarehouseModels;
 using Prokast.Server.Services.Interfaces;
 using System.Web.Http;
 
@@ -108,6 +109,31 @@ namespace Prokast.Server.Services
             }
 
             var response = new WarehouseGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = warehouseList };
+            return response;
+        }
+
+        public Response GetWarehousesMinimalData(int clientID)
+        {
+            var warehouses = _dbContext.Warehouses.Where(x => x.ClientID == clientID).ToList();
+            if (warehouses.Count == 0)
+            {
+                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak magazynów!" };
+                return responseNull;
+            }
+
+            var warehousesList = new List<WarehouseGetMinimal>();
+
+            foreach(var warehouse in warehouses)
+            {
+                var warehouseToList = new WarehouseGetMinimal()
+                {
+                    ID = warehouse.ID,
+                    Name = warehouse.Name
+                };
+                warehousesList.Add(warehouseToList);
+            }
+
+            var response = new WarehouseGetMinimalResponse() { ID = random.Next(1,100000), ClientID = clientID, Model = warehousesList};
             return response;
         }
         #endregion
