@@ -74,7 +74,7 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("Title/{ID}")]
+        [HttpGet("Title/{Title}")]
         [ProducesResponseType(typeof(AdditionalNameGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetNamesByIDNames([FromRoute] int ID, [FromQuery] string Title, [FromQuery] int clientID) 
@@ -92,7 +92,7 @@ namespace Prokast.Server.Controllers
         }
         
 
-        [HttpGet("Region/{ID}")]
+        [HttpGet("Region/{Region}")]
         [ProducesResponseType(typeof(AdditionalNameGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetNamesByIDRegion([FromRoute] int ID, [FromQuery] int Region, [FromQuery] int clientID)

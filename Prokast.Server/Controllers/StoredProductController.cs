@@ -56,7 +56,7 @@ namespace Prokast.Server.Controllers
             }
         }
 
-        [HttpGet("{ID}")]
+        [HttpGet("storeProducts/{storeProductsID}")]
         [ProducesResponseType(typeof(StoredProductGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetStoredProductByID([FromQuery] int clientID, [FromQuery] int warehouseID,[FromRoute] int ID)

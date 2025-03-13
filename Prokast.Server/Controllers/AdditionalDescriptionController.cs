@@ -68,7 +68,7 @@ namespace Prokast.Server.Controllers
             }
         }
 
-        [HttpGet("Titles")]
+        [HttpGet("Titles/{Titles}")]
         [ProducesResponseType(typeof(AdditionalDescriptionGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetDescriptionsByNames([FromQuery] string Title, [FromQuery] int clientID)
@@ -85,7 +85,7 @@ namespace Prokast.Server.Controllers
             }
         }
 
-        [HttpGet("Region")]
+        [HttpGet("Region/{Region}")]
         [ProducesResponseType(typeof(AdditionalDescriptionGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetDescriptionByRegion([FromQuery] int region, [FromQuery] int clientID)

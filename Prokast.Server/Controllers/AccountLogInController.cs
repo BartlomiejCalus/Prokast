@@ -12,7 +12,7 @@ using Prokast.Server.Models.ResponseModels.AccountResponseModels;
 
 namespace Prokast.Server.Controllers
 {
-    [Route("api/login")]
+    [Route("api/account")]
     public class AccountController : ControllerBase
     {
         private readonly ILogInService _LogInService;
@@ -60,7 +60,7 @@ namespace Prokast.Server.Controllers
         }
         #endregion
 
-        [HttpPost("create")]
+        [HttpPost("{ID}")]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> CreateAccount([FromBody] AccountCreateDto accountCreate,[FromQuery] int clientID)
@@ -100,7 +100,7 @@ namespace Prokast.Server.Controllers
             }
         }
 
-        [HttpPut("Password")]
+        [HttpPut("Password/{Password}")]
         [ProducesResponseType(typeof(AccountEditPasswordResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> EditPassword([FromBody] AccountEditPasswordDto editPasswordDto, [FromQuery] int clientID)
