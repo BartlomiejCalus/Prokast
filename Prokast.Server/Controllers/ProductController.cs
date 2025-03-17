@@ -37,7 +37,7 @@ namespace Prokast.Server.Controllers
         }
         #endregion
 
-        [HttpPost("Get")]
+        [HttpPost("products/{productID}")]
         [ProducesResponseType(typeof(ProductsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetProducts([FromBody] ProductGetFilter filter, int clientID)

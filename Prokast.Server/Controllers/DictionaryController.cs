@@ -57,7 +57,7 @@ namespace Prokast.Server.Controllers
         #endregion
 
         #region getParamsByName
-        [HttpGet("DictionaryName/{name}")]
+        [HttpGet("DictionaryName/{DictionaryName}")]
         [ProducesResponseType(typeof(DictionaryGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetParamsByName( [FromRoute] string name)
@@ -77,7 +77,7 @@ namespace Prokast.Server.Controllers
         #endregion
 
         #region ReturningValuesByName
-        [HttpGet("Region/{region}")]
+        [HttpGet("Region/{Region}")]
         [ProducesResponseType(typeof(DictionaryGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetParamsByRegion ( [FromRoute] int region)
@@ -94,7 +94,7 @@ namespace Prokast.Server.Controllers
             }
         }
 
-        [HttpGet("Name/{name}")]
+        [HttpGet("Name/{Name}")]
         [ProducesResponseType(typeof(DictionaryGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetValuesByName ( [FromRoute] string name)

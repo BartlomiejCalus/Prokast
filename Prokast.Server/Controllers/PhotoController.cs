@@ -8,6 +8,7 @@ using Prokast.Server.Services.Interfaces;
 
 namespace Prokast.Server.Controllers
 {
+    [Route("api/photos")]
     public class PhotoController : ControllerBase
     {
         private readonly IPhotoService _photoService;

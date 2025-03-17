@@ -16,7 +16,7 @@ using Prokast.Server.Models.ResponseModels.PriceResponseModels.PriceListResponse
 
 namespace Prokast.Server.Controllers
 {
-    [Route("api/priceLists")]
+    [Route("api/priceList")]
     public class PricesController : ControllerBase
     {
         private readonly IPricesService _priceService;
@@ -41,7 +41,7 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPost("{priceListID}")]
+        [HttpPost("priceListID/{priceListID}")]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> CreatePrice([FromBody] PricesDto prices, [FromRoute] int priceListID, [FromQuery] int clientID)
@@ -73,7 +73,7 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("{name}")]
+        [HttpGet("name/{name}")]
         [ProducesResponseType(typeof(PriceListsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetPriceListsByName([FromQuery] int clientID, [FromRoute] string name)
@@ -89,7 +89,7 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("prices/{priceListID}")]
+        [HttpGet("priceListID/{priceListID}")]
         [ProducesResponseType(typeof(PriceListsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetAllPrices([FromQuery] int clientID, [FromRoute] int priceListID)
@@ -105,7 +105,7 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("prices/region/{priceListID}")]
+        [HttpGet("pricesRegion/{priceListID}")]
         [ProducesResponseType(typeof(PriceListsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetPricesByRegion ([FromQuery] int clientID, [FromRoute]int priceListID, [FromQuery]int regionID)
@@ -121,7 +121,7 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("prices/name/{priceListID}")]
+        [HttpGet("pricesName/{priceListID}")]
         [ProducesResponseType(typeof(PriceListsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetPricesByName([FromQuery] int clientID, [FromRoute] int priceListID, [FromQuery] string name)
@@ -179,7 +179,7 @@ namespace Prokast.Server.Controllers
         }
 
 
-        [HttpDelete("{priceListID}")]
+        [HttpDelete("priceListID/{priceListID}")]
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> DeletePriceList([FromQuery] int clientID, [FromRoute] int priceListID)

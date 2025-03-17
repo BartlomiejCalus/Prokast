@@ -58,7 +58,7 @@ namespace Prokast.Server.Controllers
             }
         }
 
-        [HttpGet("{orderID}")]
+        [HttpGet("orderID/{orderID}")]
         [ProducesResponseType(typeof(OrderGetOneResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetOrder([FromQuery] int clientID, [FromRoute] int orderID)
@@ -94,7 +94,7 @@ namespace Prokast.Server.Controllers
         #endregion
 
         #region Edit
-        [HttpPut("trackingID{orderID}")]
+        [HttpPut("orderIDTracking/{orderID}")]
         [ProducesResponseType(typeof(OrderEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> AddTrackingID([FromQuery] int clientID, [FromRoute] int orderID, [FromQuery] string trackingID)
@@ -118,7 +118,7 @@ namespace Prokast.Server.Controllers
         }
 
 
-        [HttpPut("{orderID}/status")]
+        [HttpPut("orderIDStatus/{orderID}")]
         [ProducesResponseType(typeof(OrderEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> ChangeOrderStatus([FromQuery] int clientID, [FromRoute] int orderID,[FromQuery] OrderStatus status)
@@ -141,7 +141,7 @@ namespace Prokast.Server.Controllers
             }
         }
 
-        [HttpPut("{orderID}/payment")]
+        [HttpPut("orderIDPayment/{orderID}")]
         [ProducesResponseType(typeof(OrderEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> ChangePaymentStatus([FromQuery] int clientID, [FromRoute] int orderID, [FromQuery] PaymentStatus paymentStatus)
@@ -164,7 +164,7 @@ namespace Prokast.Server.Controllers
             }
         }
 
-        [HttpPut("edit/order/{orderID}")]
+        [HttpPut("order/{orderID}")]
         [ProducesResponseType(typeof(OrderEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> EditOrder([FromQuery] int clientID, [FromRoute] int orderID, [FromBody] OrderEditDto orderEditDto)
@@ -187,7 +187,7 @@ namespace Prokast.Server.Controllers
             }
         }
 
-        [HttpPut("edit/customer/{customerID}")]
+        [HttpPut("customer/{customerID}")]
         [ProducesResponseType(typeof(OrderEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> EditCustomer([FromQuery] int clientID, [FromRoute] int customerID, [FromBody] Customer customer)
