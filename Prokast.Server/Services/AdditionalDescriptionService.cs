@@ -31,7 +31,7 @@ namespace Prokast.Server.Services
                 return responseNull;
             }
 
-            if(_dbContext.AdditionalDescriptions.Any(x => x.Title == description.Title))
+            if(_dbContext.AdditionalDescriptions.Any(x => x.Title == description.Title && x.ClientID == clientID))
             {
                 responseNull.errorMsg = "Nazwa jest zajęta!";
                 return responseNull;
@@ -116,7 +116,7 @@ namespace Prokast.Server.Services
                 return responseNull;
             }
 
-            if (_dbContext.AdditionalDescriptions.Any(x => x.Title == data.Title))
+            if (_dbContext.AdditionalDescriptions.Any(x => x.Title == data.Title && x.ClientID == clientID))
             {
                 responseNull.errorMsg = "Nazwa jest zajęta!";
                 return responseNull;

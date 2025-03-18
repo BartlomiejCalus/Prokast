@@ -35,7 +35,7 @@ namespace Prokast.Server.Services
                 return responseNull;
             }
 
-            if (_dbContext.PriceLists.Any(x => x.Name == priceLists.Name))
+            if (_dbContext.PriceLists.Any(x => x.Name == priceLists.Name && x.ClientID == clientID))
             {
                 responseNull.errorMsg = "Nazwa jest zajęta!";
                 return responseNull;
@@ -68,7 +68,7 @@ namespace Prokast.Server.Services
                 return responseNull;
             }
 
-            if (_dbContext.Prices.Any(x => x.Name == prices.Name))
+            if (_dbContext.Prices.Any(x => x.Name == prices.Name && list.ClientID == clientID))
             {
                 responseNull.errorMsg = "Nazwa jest zajęta!";
                 return responseNull;
@@ -186,14 +186,21 @@ namespace Prokast.Server.Services
         public Response EditPrice(EditPriceDto editPriceDto,int clientID, int priceListID, int priceID)
         {
             var price = _dbContext.Prices.FirstOrDefault(x => x.PriceListID == priceListID && x.ID == priceID);
+            var priceList = _dbContext.PriceLists.FirstOrDefault(x => x.ID == priceListID);
 
-            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiegj ceny!" };
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiej ceny!" };
             if (price == null)
             {
                 return responseNull;
             }
 
-            if (_dbContext.Prices.Any(x => x.Name == editPriceDto.Name))
+            if (priceList == null)
+            {
+                responseNull.errorMsg = "Nie ma takiego cennika!";
+                return responseNull;
+            }
+
+            if (_dbContext.Prices.Any(x => x.Name == editPriceDto.Name && priceList.ClientID == clientID))
             {
                 responseNull.errorMsg = "Nazwa jest zajęta!";
                 return responseNull;

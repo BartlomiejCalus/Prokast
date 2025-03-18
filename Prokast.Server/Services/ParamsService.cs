@@ -31,7 +31,7 @@ namespace Prokast.Server.Services
                 return responseNull;
             }
 
-            if (_dbContext.CustomParams.Any(x => x.Name == customParamsDto.Name))
+            if (_dbContext.CustomParams.Any(x => x.Name == customParamsDto.Name && x.ClientID == clientID))
             {
                 responseNull.errorMsg = "Nazwa jest zajęta!";
                 return responseNull;
@@ -110,7 +110,7 @@ namespace Prokast.Server.Services
                 return responseNull;
             }
 
-            if (_dbContext.CustomParams.Any(x => x.Name == data.Name))
+            if (_dbContext.CustomParams.Any(x => x.Name == data.Name && x.ClientID == clientID))
             {
                 responseNull.errorMsg = "Nazwa jest zajęta!";
                 return responseNull;
