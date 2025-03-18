@@ -33,6 +33,13 @@ namespace Prokast.Server.Services
             {
                 return responseNull;
             }
+
+            if (_dbContext.Products.Any(x => x.Name == productCreateDto.Name))
+            {
+                responseNull.errorMsg = "Nazwa jest zajęta!";
+                return responseNull;
+            }
+
             List<string> AdditionalNamesTitles = new List<string>();
             foreach (var item in productCreateDto.AdditionalNames) 
             {
@@ -301,9 +308,16 @@ namespace Prokast.Server.Services
         public Response EditProduct(ProductEdit productEdit, int clientID, int productID)
         {
             var product = _dbContext.Products.FirstOrDefault(x => x.ID == productID && x.ClientID == clientID);
+
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego produktu!" };
             if (product == null)
             {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego produktu!" };
+                return responseNull;
+            }
+
+            if (_dbContext.Prices.Any(x => x.Name == productEdit.Name))
+            {
+                responseNull.errorMsg = "Nazwa jest zajęta!";
                 return responseNull;
             }
 

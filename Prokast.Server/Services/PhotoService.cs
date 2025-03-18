@@ -54,10 +54,15 @@ namespace Prokast.Server.Services
         {
             var findPhoto = _dbContext.Photos.FirstOrDefault(x => x.ClientID == clientID && x.Id == ID);
 
-
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego zdjęcia!" };
             if (findPhoto == null)
             {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego zdjęcia!" };
+                return responseNull;
+            }
+
+            if (_dbContext.Photos.Any(x => x.Name == data.Name))
+            {
+                responseNull.errorMsg = "Nazwa jest zajęta!";
                 return responseNull;
             }
 

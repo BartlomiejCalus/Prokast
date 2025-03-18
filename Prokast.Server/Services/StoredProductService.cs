@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Prokast.Server.Entities;
 using Prokast.Server.Models;
+using Prokast.Server.Models.ProductModels;
 using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models.ResponseModels.StoredProductResponseModels;
 using Prokast.Server.Models.StoredProductModels;
@@ -29,7 +30,7 @@ namespace Prokast.Server.Services
             {
                 return responseNull;
             }
-            
+
             foreach (var product in storedProducts.StoredProducts)
             {
                 var storedProduct = new StoredProduct

@@ -12,6 +12,7 @@ using System.Linq;
 using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models.ResponseModels.AdditionalNameResponseModels;
 using Prokast.Server.Services.Interfaces;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace Prokast.Server.Services
 {
     public class AdditionalNameService : IAdditionalNameService
@@ -29,10 +30,16 @@ namespace Prokast.Server.Services
         #region Create
         public Response CreateAdditionalName([FromBody] AdditionalNameDto additionalNameDto, int clientID)
         {
-
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
             if (additionalNameDto == null)
             {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
+                
+                return responseNull;
+            }
+
+            if (_dbContext.AdditionalName.Any(x => x.Title == additionalNameDto.Title))
+            {
+                responseNull.errorMsg = "Nazwa jest zajęta!";
                 return responseNull;
             }
 
@@ -111,10 +118,15 @@ namespace Prokast.Server.Services
         {
             var findName = _dbContext.AdditionalName.FirstOrDefault(x => x.ClientID == clientID && x.ID == ID);
 
-
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego modelu!" };
             if (findName == null)
             {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego modelu!" };
+                return responseNull;
+            }
+
+            if (_dbContext.AdditionalName.Any(x => x.Title == data.Title))
+            {
+                responseNull.errorMsg = "Nazwa jest zajęta!";
                 return responseNull;
             }
 

@@ -25,17 +25,23 @@ namespace Prokast.Server.Services
         #region Create
         public Response CreateCustomParam([FromBody] CustomParamsDto customParamsDto, int clientID ) 
         {
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
             if (customParamsDto == null)
             {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
+                return responseNull;
+            }
+
+            if (_dbContext.CustomParams.Any(x => x.Name == customParamsDto.Name))
+            {
+                responseNull.errorMsg = "Nazwa jest zajęta!";
                 return responseNull;
             }
 
             var customParam = new CustomParams
             {
-                Name = customParamsDto.Name.ToString(),
-                Type = customParamsDto.Type.ToString(),
-                Value = customParamsDto.Value.ToString(),
+                Name = customParamsDto.Name,
+                Type = customParamsDto.Type,
+                Value = customParamsDto.Value,
                 ClientID = clientID
             };
             
@@ -97,11 +103,16 @@ namespace Prokast.Server.Services
         public Response EditParams(int clientID, int ID, CustomParamsDto data)
         {
             var findParam = _dbContext.CustomParams.FirstOrDefault(x => x.ClientID == clientID && x.ID == ID);
-            
 
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego modelu!" };
             if (findParam == null)
             {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego modelu!" };
+                return responseNull;
+            }
+
+            if (_dbContext.CustomParams.Any(x => x.Name == data.Name))
+            {
+                responseNull.errorMsg = "Nazwa jest zajęta!";
                 return responseNull;
             }
 

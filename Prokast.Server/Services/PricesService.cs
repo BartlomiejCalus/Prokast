@@ -9,6 +9,7 @@ using Prokast.Server.Models.ResponseModels.PriceResponseModels;
 using Prokast.Server.Models.ResponseModels.PriceResponseModels.PriceListResponseModels;
 using Prokast.Server.Services.Interfaces;
 using System.Web.Http;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using Response = Prokast.Server.Models.Response;
 
 namespace Prokast.Server.Services
@@ -28,11 +29,18 @@ namespace Prokast.Server.Services
         #region Create
         public Response CreatePriceList([FromBody] PriceListsCreateDto priceLists, int clientID)
         {
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
             if (priceLists == null)
             {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
                 return responseNull;
             }
+
+            if (_dbContext.PriceLists.Any(x => x.Name == priceLists.Name))
+            {
+                responseNull.errorMsg = "Nazwa jest zajęta!";
+                return responseNull;
+            }
+
             var priceList = new PriceLists
             {
                 Name = priceLists.Name.ToString(),
@@ -47,17 +55,22 @@ namespace Prokast.Server.Services
 
         public Response CreatePrice([FromBody] PricesDto prices, int priceListID, int clientID)
         {
-            //var input = _mapper.Map<PricesDto>(prices);
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
             if (prices == null)
             {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
                 return responseNull;
             }
 
             var list = _dbContext.PriceLists.FirstOrDefault(x => x.ID == priceListID);
             if (list == null)
             {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiej listy" };
+                responseNull.errorMsg =  "Nie ma takiej listy";
+                return responseNull;
+            }
+
+            if (_dbContext.Prices.Any(x => x.Name == prices.Name))
+            {
+                responseNull.errorMsg = "Nazwa jest zajęta!";
                 return responseNull;
             }
 
@@ -173,9 +186,16 @@ namespace Prokast.Server.Services
         public Response EditPrice(EditPriceDto editPriceDto,int clientID, int priceListID, int priceID)
         {
             var price = _dbContext.Prices.FirstOrDefault(x => x.PriceListID == priceListID && x.ID == priceID);
+
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiegj ceny!" };
             if (price == null)
             {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiegj ceny!" };
+                return responseNull;
+            }
+
+            if (_dbContext.Prices.Any(x => x.Name == editPriceDto.Name))
+            {
+                responseNull.errorMsg = "Nazwa jest zajęta!";
                 return responseNull;
             }
 

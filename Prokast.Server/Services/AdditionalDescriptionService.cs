@@ -23,10 +23,17 @@ namespace Prokast.Server.Services
         #region Create
         public Response CreateAdditionalDescription([FromBody] AdditionalDescriptionCreateDto description, int clientID)
         {
-
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
+            
             if (description == null)
             {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
+                
+                return responseNull;
+            }
+
+            if(_dbContext.AdditionalDescriptions.Any(x => x.Title == description.Title))
+            {
+                responseNull.errorMsg = "Nazwa jest zajęta!";
                 return responseNull;
             }
 
@@ -103,10 +110,15 @@ namespace Prokast.Server.Services
         {
             var findDescription = _dbContext.AdditionalDescriptions.FirstOrDefault(x => x.ClientID == clientID && x.ID == ID);
 
-
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego modelu!" };
             if (findDescription == null)
             {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego modelu!" };
+                return responseNull;
+            }
+
+            if (_dbContext.AdditionalDescriptions.Any(x => x.Title == data.Title))
+            {
+                responseNull.errorMsg = "Nazwa jest zajęta!";
                 return responseNull;
             }
 

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Prokast.Server.Entities;
 using Prokast.Server.Models;
+using Prokast.Server.Models.ProductModels;
 using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models.ResponseModels.WarehouseResponseModels;
 using Prokast.Server.Models.WarehouseModels;
@@ -27,6 +28,12 @@ namespace Prokast.Server.Services
             var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
             if (warehouseCreateDto == null)
             {
+                return responseNull;
+            }
+
+            if (_dbContext.Warehouses.Any(x => x.Name == warehouseCreateDto.Name))
+            {
+                responseNull.errorMsg = "Nazwa jest zajęta!";
                 return responseNull;
             }
 
@@ -142,9 +149,15 @@ namespace Prokast.Server.Services
         public Response EditWarehouse(int clientID, int ID, WarehouseCreateDto warehouseCreateDto)
         {
             var warehouse = _dbContext.Warehouses.FirstOrDefault(x => x.ClientID == clientID && x.ID == ID);
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego magazynu!" };
             if (warehouse == null)
             {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego magazynu!" };
+                return responseNull;
+            }
+
+            if (_dbContext.Prices.Any(x => x.Name == warehouseCreateDto.Name))
+            {
+                responseNull.errorMsg = "Nazwa jest zajęta!";
                 return responseNull;
             }
 
