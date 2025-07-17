@@ -4,6 +4,8 @@ using Prokast.Server.Entities;
 using Prokast.Server.Models;
 using Prokast.Server.Services;
 using Prokast.Server.Services.Interfaces;
+using Scalar.AspNetCore;
+using Microsoft.OpenApi.Models;
 
 
 
@@ -44,21 +46,21 @@ builder.Services.AddScoped<IMailingService, MailingService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+
+builder.Services.AddProkastOpenAPI();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+/*if (app.Environment.IsDevelopment())
 {
 
-}
+}*/
+app.MapOpenApi().CacheOutput();
+app.MapScalarApiReference("/scalar/prokast");
 
-
-
-
-
-
-app.UseSwagger();
-app.UseSwaggerUI();
+//app.UseSwagger();
+//app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 

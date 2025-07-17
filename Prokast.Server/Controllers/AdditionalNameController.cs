@@ -10,6 +10,7 @@ using Prokast.Server.Services.Interfaces;
 namespace Prokast.Server.Controllers
 {
     [Route("api/addName")]
+    [Tags("Additional Names")]
     public class AdditionalNameController : ControllerBase
     {
         private readonly IAdditionalNameService _additionalNameService;
@@ -21,8 +22,10 @@ namespace Prokast.Server.Controllers
 
         
         [HttpPost]
+        [EndpointSummary("Create an additional name")]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A POST operation. Endpoint creates an additional name for a product.")]
         public ActionResult<Response> CreateAdditionalName([FromBody] AdditionalNameDto additionalNameDto, [FromQuery] int clientID)
         {
             try
@@ -36,12 +39,14 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-       
 
-       
+        #region GetParams
+
         [HttpGet]
+        [EndpointSummary("Get all additional names")]
         [ProducesResponseType(typeof(AdditionalNameGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns all additional names of all products assigned to the client.")]
         public ActionResult<Response> GetAllNames([FromQuery] int clientID)
         {
             try
@@ -59,8 +64,10 @@ namespace Prokast.Server.Controllers
 
         
         [HttpGet("{ID}")]
+        [EndpointSummary("Get an additional name")]
         [ProducesResponseType(typeof(AdditionalNameGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns a specific additional name.")]
         public ActionResult<Response> GetNamesByID([FromRoute] int ID, [FromQuery] int clientID )
         {
             try
@@ -75,8 +82,11 @@ namespace Prokast.Server.Controllers
             }
         }
         [HttpGet("Title/{ID}")]
+        [EndpointSummary("Get additional names by titles")]
         [ProducesResponseType(typeof(AdditionalNameGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns a list of additional names with a given title.")]
+
         public ActionResult<Response> GetNamesByIDNames([FromRoute] int ID, [FromQuery] string Title, [FromQuery] int clientID) 
         {
             try
@@ -93,8 +103,10 @@ namespace Prokast.Server.Controllers
         
 
         [HttpGet("Region/{ID}")]
+        [EndpointSummary("Get additional names by region")]
         [ProducesResponseType(typeof(AdditionalNameGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns a list of additional names in the same region.")]
         public ActionResult<Response> GetNamesByIDRegion([FromRoute] int ID, [FromQuery] int Region, [FromQuery] int clientID)
         {
             try
@@ -108,19 +120,14 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-
-
-
-
-
-
-        
+        #endregion
 
         #region EditParams
         [HttpPut("{ID}")]
+        [EndpointSummary("Edit an additional name")]
         [ProducesResponseType(typeof(AdditionalNameEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A PUT operation. Endpoint edits data of a given additional name.")]
         public ActionResult<Response> EditAdditionalName([FromQuery] int clientID, [FromRoute] int ID, [FromBody]  AdditionalNameDto data) 
         {
             if (!ModelState.IsValid)
@@ -144,8 +151,10 @@ namespace Prokast.Server.Controllers
 
         #region DeleteParams
         [HttpDelete("{ID}")]
+        [EndpointSummary("Delete an additional name")]
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A DELETE operation. Endpoint deletes a given additional name")]
         public ActionResult<Response> DeleteParams([FromQuery] int clientID, [FromRoute] int ID)
         {
 

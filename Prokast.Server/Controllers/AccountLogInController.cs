@@ -13,6 +13,7 @@ using Prokast.Server.Models.ResponseModels.AccountResponseModels;
 namespace Prokast.Server.Controllers
 {
     [Route("api/login")]
+    [Tags("Accounts")]
     public class AccountController : ControllerBase
     {
         private readonly ILogInService _LogInService;
@@ -26,8 +27,10 @@ namespace Prokast.Server.Controllers
 
         #region LogIn
         [HttpPost]
+        [EndpointSummary("Login")]
         [ProducesResponseType(typeof(LogInLoginResponse),StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A POST operation for login in. Login in the form of an email for the client, and in the form of a generated name for the employee.")]
         public ActionResult<Response> Log_In([FromBody] LoginRequest loginRequest) 
         {
             try 
@@ -43,8 +46,10 @@ namespace Prokast.Server.Controllers
 
         #region GetAll
         [HttpGet]
+        [EndpointSummary("Get all accounts")]
         [ProducesResponseType(typeof(LogInGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns all accounts assigned to the client, both employees and the client him/herself.")]
         public ActionResult<Response> GetAll([FromQuery] int clientID) 
         {
             try
@@ -61,8 +66,10 @@ namespace Prokast.Server.Controllers
         #endregion
 
         [HttpPost("create")]
+        [EndpointSummary("Create an employee account")]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A POST operation. Endpoint generates login and password based on new employee's personal data and creates an account for him.")]
         public ActionResult<Response> CreateAccount([FromBody] AccountCreateDto accountCreate,[FromQuery] int clientID)
         {
             try
@@ -78,8 +85,10 @@ namespace Prokast.Server.Controllers
         }
 
         [HttpPut]
+        [EndpointSummary("Edit account details")]
         [ProducesResponseType(typeof(AccountEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A PUT operation. Endpoint edits data of a given account.")]
         public ActionResult<Response> EditAccount([FromBody] AccountEditDto accountEdit, [FromQuery] int clientID)
         {
             if (!ModelState.IsValid)
@@ -101,8 +110,10 @@ namespace Prokast.Server.Controllers
         }
 
         [HttpPut("Password")]
+        [EndpointSummary("Change password")]
         [ProducesResponseType(typeof(AccountEditPasswordResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A PUT operation. Endpoint made specifically to change an account's password.")]
         public ActionResult<Response> EditPassword([FromBody] AccountEditPasswordDto editPasswordDto, [FromQuery] int clientID)
         {
             if (!ModelState.IsValid)
@@ -124,8 +135,10 @@ namespace Prokast.Server.Controllers
         }
 
         [HttpDelete("{ID}")]
+        [EndpointSummary("Delete an account")]
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A DELETE operation. Endpoint deletes a given account.")]
         public ActionResult<Response> DeleteAccount([FromQuery] int clientID, [FromRoute] int ID)
         {
             try

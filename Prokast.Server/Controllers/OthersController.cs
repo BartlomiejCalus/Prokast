@@ -7,6 +7,7 @@ using Prokast.Server.Services.Interfaces;
 namespace Prokast.Server.Controllers
 {
     [Route("api/others")]
+    [Tags("Others")]
     public class OthersController: ControllerBase
     {
         private readonly IOthersService _services;
@@ -17,8 +18,10 @@ namespace Prokast.Server.Controllers
         }
 
         [HttpGet]
+        [EndpointSummary("Get regions")]
         [ProducesResponseType(typeof(RegionsResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns all regions in which we can operate.")]
         public ActionResult<Response> GetRegions()
         {
             try

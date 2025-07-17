@@ -8,6 +8,8 @@ using Prokast.Server.Services.Interfaces;
 
 namespace Prokast.Server.Controllers
 {
+    [Route("api/photos")]
+    [Tags("Photos")]
     public class PhotoController : ControllerBase
     {
         private readonly IPhotoService _photoService;
@@ -18,8 +20,10 @@ namespace Prokast.Server.Controllers
         }
 
         [HttpGet]
+        [EndpointSummary("Get all photos")]
         [ProducesResponseType(typeof(PhotoGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns all photos of the client's products.")]
         public ActionResult<Response> GetAllPhotos([FromQuery] int clientID)
         {
             try
@@ -39,8 +43,10 @@ namespace Prokast.Server.Controllers
 
 
         [HttpGet("{ID}")]
+        [EndpointSummary("Get a photo")]
         [ProducesResponseType(typeof(PhotoGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns a specific photo.")]
         public ActionResult<Response> GetPhotosByID([FromQuery] int clientID, [FromRoute] int ID)
         {
             try
@@ -59,8 +65,10 @@ namespace Prokast.Server.Controllers
 
 
         [HttpPut("{ID}")]
+        [EndpointSummary("Edit a photo")]
         [ProducesResponseType(typeof(PhotoEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A PUT operation. Endpoint edits data of a given ptoho.")]
         public ActionResult<Response> EditPhotos([FromQuery] int clientID, [FromRoute] int ID, [FromBody] PhotoEdit data)
         {
             if (!ModelState.IsValid)
@@ -82,8 +90,10 @@ namespace Prokast.Server.Controllers
         }
 
         [HttpDelete("{ID}")]
+        [EndpointSummary("Delete photo")]
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A DELETE operation. Endpoint deletes a given photo.")]
         public ActionResult<Response> DeletePhotos([FromQuery] int clientID, [FromRoute] int ID)
         {
 

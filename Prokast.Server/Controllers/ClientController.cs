@@ -10,6 +10,7 @@ using Prokast.Server.Services.Interfaces;
 namespace Prokast.Server.Controllers
 {
     [Route("api/client")]
+    [Tags("Clients")]
     public class ClientController : ControllerBase
     {
         private readonly IClientService _clientService;
@@ -21,8 +22,10 @@ namespace Prokast.Server.Controllers
 
         #region RegisterClient
         [HttpPost]
+        [EndpointSummary("Register Client")]
         [ProducesResponseType(typeof(ClientRegisterResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A POST operation. Endpoint registers the client into the database.")]
         public ActionResult<Response> RegisterClient([FromBody] Registration registration)
         {
             try 

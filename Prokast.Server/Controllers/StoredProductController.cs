@@ -12,6 +12,7 @@ using Prokast.Server.Models.ClientModels;
 namespace Prokast.Server.Controllers
 {
     [Route("api/storedproducts")]
+    [Tags("[Warehouse] Stored Products")]
     public class StoredProductController: ControllerBase
     {
         private readonly IStoredProductService _storedProductService;
@@ -23,9 +24,11 @@ namespace Prokast.Server.Controllers
 
         #region Create
         [HttpPost]
+        [EndpointSummary("Create a stored product")]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> CreateWarehouse([FromBody] StoredProductCreateMultipleDto storedProducts, [FromQuery] int warehouseID, [FromQuery] int clientID)
+        [EndpointDescription("A POST operation. Endpoint creates a product stored in a given warehouse.")]
+        public ActionResult<Response> CreateStoredProduct([FromBody] StoredProductCreateMultipleDto storedProducts, [FromQuery] int warehouseID, [FromQuery] int clientID)
         {
             try
             {
@@ -42,8 +45,10 @@ namespace Prokast.Server.Controllers
 
         #region Get
         [HttpGet]
+        [EndpointSummary("Get all stored products")]
         [ProducesResponseType(typeof(StoredProductGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns all products stored in a given warehouse.")]
         public ActionResult<Response> GetAllStoredProducts([FromQuery] int clientID,[FromQuery] int warehouseID)
         {
             try
@@ -59,8 +64,10 @@ namespace Prokast.Server.Controllers
         }
 
         [HttpGet("{ID}")]
+        [EndpointSummary("Get a stored product")]
         [ProducesResponseType(typeof(StoredProductGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns a specific product stored in a given warehouse.")]
         public ActionResult<Response> GetStoredProductByID([FromQuery] int clientID, [FromQuery] int warehouseID,[FromRoute] int ID)
         {
             try
@@ -76,8 +83,10 @@ namespace Prokast.Server.Controllers
         }
 
         [HttpGet("below")]
+        [EndpointSummary("Get stored products below minimum")]
         [ProducesResponseType(typeof(StoredProductGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns all products stored in a given warehouse below their minimum quantity value.")]
         public ActionResult<Response> GetStoredProductsBelowMinimum([FromQuery] int clientID,[FromQuery] int warehouseID)
         {
             try
@@ -92,8 +101,10 @@ namespace Prokast.Server.Controllers
             }
         }
         [HttpGet("SKU/{SKU}")]
+        [EndpointSummary("Get a stored product by SKU")]
         [ProducesResponseType(typeof(StoredProductGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns a specific product stored in a given warehouse by the given SKU.")]
         public ActionResult<Response> GetStoredProductBySKU([FromQuery] int clientID, [FromQuery] int warehouseID, [FromRoute] string SKU)
         {
             try
@@ -109,8 +120,10 @@ namespace Prokast.Server.Controllers
         }
 
         [HttpGet("Minimal")]
+        [EndpointSummary("Get all stored products (minimal data)")]
         [ProducesResponseType(typeof(StoredProductGetMinimalResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns minimal data of all products stored in a gicen warehouse.")]
         public ActionResult<Response> GetStoredProductsMinimalData([FromQuery] int clientID, [FromQuery] int warehouseID)
         {
             try
@@ -128,9 +141,11 @@ namespace Prokast.Server.Controllers
 
         #region Edit
         [HttpPut("{ID}")]
+        [EndpointSummary("Edit stored product's quaitity")]
         [ProducesResponseType(typeof(StoredProductEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> EditStoredProductQuality([FromQuery] int clientID, [FromRoute] int ID, [FromQuery] int quantity)
+        [EndpointDescription("A PUT operation. Endpoint edits the quantity of the given stored product.")]
+        public ActionResult<Response> EditStoredProductQuantity([FromQuery] int clientID, [FromRoute] int ID, [FromQuery] int quantity)
         {
             if (!ModelState.IsValid)
             {
@@ -151,8 +166,10 @@ namespace Prokast.Server.Controllers
         }
 
         [HttpPut("minquantity/{ID}")]
+        [EndpointSummary("Edit stored product's minimum quantity")]
         [ProducesResponseType(typeof(StoredProductEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A PUT operation. Endpoint edits the minimum quantity of a given stored product.")]
         public ActionResult<Response> EditStoredProductMinQuality([FromQuery] int clientID, [FromRoute] int ID, [FromQuery] int minQuantity)
         {
             if (!ModelState.IsValid)
@@ -174,8 +191,10 @@ namespace Prokast.Server.Controllers
         }
 
         [HttpPut("minquantity/multiple")]
+        [EndpointSummary("Edit multiple stored products minimum quantity")]
         [ProducesResponseType(typeof(StoredProductEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A PUT operation. Endpoint edits the minimum quantity of multiple given stored products.")]
         public ActionResult<Response> EditMultipleStoredProductMinQuantity([FromQuery]int clientID,[FromBody] List<EditMultipleStoredProductMinQuantityDto> listToEdit)
         {
             if (!ModelState.IsValid)
@@ -199,8 +218,10 @@ namespace Prokast.Server.Controllers
 
         #region Delete
         [HttpDelete("{ID}")]
+        [EndpointSummary("Delete a stored product")]
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A DELETE operation. Endpoint deletes a product stored in a given warehouse.")]
         public ActionResult<Response> DeleteStoredProduct([FromQuery] int clientID, [FromRoute] int ID)
         {
 

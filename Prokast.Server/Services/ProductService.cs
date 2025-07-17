@@ -26,6 +26,12 @@ namespace Prokast.Server.Services
         }
 
         #region Create
+        /// <summary>
+        /// Method creates a semi-empty product, then creates any additional product segments included in dto, then fills the product with them.
+        /// </summary>
+        /// <param name="productCreateDto"></param>
+        /// <param name="clientID"></param>
+        /// <returns></returns>
         public Response CreateProduct([FromBody] ProductCreateDto productCreateDto, int clientID)
         {
             var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };

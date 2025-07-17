@@ -17,6 +17,7 @@ using Prokast.Server.Models.ResponseModels.PriceResponseModels.PriceListResponse
 namespace Prokast.Server.Controllers
 {
     [Route("api/priceLists")]
+    [Tags("Pricelists and prices")]
     public class PricesController : ControllerBase
     {
         private readonly IPricesService _priceService;
@@ -26,8 +27,10 @@ namespace Prokast.Server.Controllers
         }
 
         [HttpPost]
+        [EndpointSummary("Create a pricelist")]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A POST operation. Endpoint creates a pricelist for a product.")]
         public ActionResult<Response> CreatePriceList([FromBody] PriceListsCreateDto priceLists, [FromQuery] int clientID)
         {
             try
@@ -42,8 +45,10 @@ namespace Prokast.Server.Controllers
             }
         }
         [HttpPost("{priceListID}")]
+        [EndpointSummary("Create a price")]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A POST operation. Endpoint creates a price inside a given pricelist.")]
         public ActionResult<Response> CreatePrice([FromBody] PricesDto prices, [FromRoute] int priceListID, [FromQuery] int clientID)
         {
             try
@@ -58,8 +63,10 @@ namespace Prokast.Server.Controllers
             }
         }
         [HttpGet]
+        [EndpointSummary("Get all pricelists")]
         [ProducesResponseType(typeof(PriceListsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns all pricelists of all products assigned to the client.")]
         public ActionResult<Response> GetAllPriceLists([FromQuery]int clientID)
         {
             try
@@ -74,8 +81,10 @@ namespace Prokast.Server.Controllers
             }
         }
         [HttpGet("{name}")]
+        [EndpointSummary("Get pricelists by name")]
         [ProducesResponseType(typeof(PriceListsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns a list of pricelists with a name containing the given word.")]
         public ActionResult<Response> GetPriceListsByName([FromQuery] int clientID, [FromRoute] string name)
         {
             try
@@ -90,8 +99,10 @@ namespace Prokast.Server.Controllers
             }
         }
         [HttpGet("prices/{priceListID}")]
+        [EndpointSummary("Get all prices")]
         [ProducesResponseType(typeof(PriceListsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns all prices in a given pricelist.")]
         public ActionResult<Response> GetAllPrices([FromQuery] int clientID, [FromRoute] int priceListID)
         {
             try
@@ -106,8 +117,10 @@ namespace Prokast.Server.Controllers
             }
         }
         [HttpGet("prices/region/{priceListID}")]
+        [EndpointSummary("Get prices by region")]
         [ProducesResponseType(typeof(PriceListsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns all prices in a given pricelist in the same region.")]
         public ActionResult<Response> GetPricesByRegion ([FromQuery] int clientID, [FromRoute]int priceListID, [FromQuery]int regionID)
         {
             try
@@ -122,8 +135,10 @@ namespace Prokast.Server.Controllers
             }
         }
         [HttpGet("prices/name/{priceListID}")]
+        [EndpointSummary("Get prices by name")]
         [ProducesResponseType(typeof(PriceListsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns all prices in a given pricelist with a name containing a given word.")]
         public ActionResult<Response> GetPricesByName([FromQuery] int clientID, [FromRoute] int priceListID, [FromQuery] string name)
         {
             try
@@ -138,8 +153,10 @@ namespace Prokast.Server.Controllers
             }
         }
         [HttpPut("prices/{priceID}")]
+        [EndpointSummary("Edit price")]
         [ProducesResponseType(typeof(ParamsEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A PUT operation. Endpoint edits data of a given price.")]
         public ActionResult<Response> EditPrice(EditPriceDto editPriceDto, [FromQuery] int clientID, [FromQuery] int priceListID,[FromRoute] int priceID)
         {
             if (!ModelState.IsValid)
@@ -160,8 +177,10 @@ namespace Prokast.Server.Controllers
             }
         }
         [HttpDelete("prices/{priceID}")]
+        [EndpointSummary("Delete price")]
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A DELETE operation. Endpoint deletes a given price.")]
         public ActionResult<Response> DeletePrice([FromQuery] int clientID, [FromQuery] int priceListID, [FromRoute] int priceID)
         {
             try
@@ -180,8 +199,10 @@ namespace Prokast.Server.Controllers
 
 
         [HttpDelete("{priceListID}")]
+        [EndpointSummary("Delete pricelist")]
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A DELETE operation. Endpoint deletes a given pricelist.")]
         public ActionResult<Response> DeletePriceList([FromQuery] int clientID, [FromRoute] int priceListID)
         {
             try
