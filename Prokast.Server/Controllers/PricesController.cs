@@ -98,6 +98,25 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("Product")]
+        [EndpointSummary("Get all prices in product")]
+        [ProducesResponseType(typeof(PriceListsGetResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public ActionResult<Response> GetAllPricesInProduct([FromQuery] int clientID, [FromQuery] int productID)
+        {
+            try
+            {
+                var lista = _priceService.GetAllPricesInProduct(clientID, productID);
+                if (lista is ErrorResponse) return BadRequest(lista);
+                return Ok(lista);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpGet("prices/{priceListID}")]
         [EndpointSummary("Get all prices")]
         [ProducesResponseType(typeof(PriceListsGetResponse), StatusCodes.Status200OK)]

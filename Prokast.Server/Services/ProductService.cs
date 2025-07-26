@@ -74,7 +74,7 @@ namespace Prokast.Server.Services
                     Region = item.Region,
                     Value = item.Value.ToString()
                 };
-                _dbContext.AdditionalName.Add(name);
+                _dbContext.AdditionalNames.Add(name);
                 _dbContext.SaveChanges();
             }
 
@@ -99,7 +99,7 @@ namespace Prokast.Server.Services
                     
 
                     Value = item.Value.ToString(),
-                    ProductId = newProduct.ID,
+                    ProductID = newProduct.ID,
                     ClientID = clientID
                 };
                 _dbContext.Photos.Add(param);
@@ -134,7 +134,7 @@ namespace Prokast.Server.Services
             List<int> additionalNames = new List<int>();
             foreach (var item in productCreateDto.AdditionalNames)
             {
-                additionalNames.Add(_dbContext.AdditionalName.FirstOrDefault(x => x.Title == item.Title && x.ClientID == clientID).ID);
+                additionalNames.Add(_dbContext.AdditionalNames.FirstOrDefault(x => x.Title == item.Title && x.ClientID == clientID).ID);
             }
             
             List<int> dictionaryParams = new List<int>();
@@ -148,7 +148,7 @@ namespace Prokast.Server.Services
             List<int> photos = new List<int>();
             foreach (var item in productCreateDto.Photos)
             {
-                photos.Add(_dbContext.Photos.FirstOrDefault(x => x.Name == item.Name && x.ClientID == clientID).Id);
+                photos.Add(_dbContext.Photos.FirstOrDefault(x => x.Name == item.Name && x.ClientID == clientID).ID);
             }
 
             List<int> customParams = new List<int>();
@@ -211,7 +211,7 @@ namespace Prokast.Server.Services
 
             var returnList = new List<ProductGet>();
 
-            var additionalNames = _dbContext.AdditionalName.ToList();
+            var additionalNames = _dbContext.AdditionalNames.ToList();
             var customParams = _dbContext.CustomParams.ToList();
             var dictionaryParams = _dbContext.DictionaryParams.ToList();
             var priceList = _dbContext.PriceLists.ToList();
@@ -258,6 +258,43 @@ namespace Prokast.Server.Services
             return response;
 
         }
+
+        public Response GetProductsFromPath(int clientID, string name, string sku)
+        {
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak produktów!" };
+            var products = _dbContext.Products.Where(x => x.ClientID == clientID &&
+                                                    (string.IsNullOrEmpty(name) || x.Name.Contains(name)) &&
+                                                    (string.IsNullOrEmpty(sku) || x.SKU.Contains(sku))
+                ).Select(x => new {x.Name, x.SKU, x.Photos, x.AdditionDate}).ToList();
+
+            if(products.Count() == 0)
+            {
+                return responseNull;
+            }
+
+            var productList = new List<ProductGetMin>();
+            foreach( var product in products)
+            {
+                var photoIDs = product.Photos.Split(",").ToList();
+                var productPhotos = _dbContext.Photos.Where(x => photoIDs.Contains(x.ID.ToString())).ToList();
+                var newProductToList = new ProductGetMin()
+                {
+                    Name = product.Name,
+                    SKU = product.SKU,
+                    AdditionDate = product.AdditionDate,
+                };
+                if(productPhotos.Count() != 0)
+                {
+                    newProductToList.Photo = productPhotos.Select(x => x.Value).FirstOrDefault();
+                }
+                productList.Add(newProductToList);
+            }
+
+            var response = new ProductGetMinResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = productList };
+            return response;
+        }
+
+
         #endregion
 
         #region Delete
@@ -274,7 +311,7 @@ namespace Prokast.Server.Services
 
             var _priceList = _dbContext.PriceLists.ToList();
             
-            var additionalNames = _dbContext.AdditionalName.ToList();
+            var additionalNames = _dbContext.AdditionalNames.ToList();
         
             var productAdditionalNames = additionalNames.Where(x => products.AdditionalNames.Split(",").ToList().
                 Contains(x.ID.ToString())).ToList();

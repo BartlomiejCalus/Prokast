@@ -61,6 +61,24 @@ namespace Prokast.Server.Controllers
             }
         }
 
+        [HttpGet("Product")]
+        [EndpointSummary("Get all photos in product")]
+        [ProducesResponseType(typeof(PhotoGetResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public ActionResult<Response> GetAllPhotosInProduct([FromQuery] int clientID, [FromQuery] int productID)
+        {
+            try
+            {
+                var result = _photoService.GetAllPhotosInProduct(clientID, productID);
+                if (result is ErrorResponse) return BadRequest(result);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
 
 
 

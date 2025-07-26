@@ -120,6 +120,25 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("Product")]
+        [EndpointSummary("Get all additional names in product")]
+        [ProducesResponseType(typeof(AdditionalNameGetResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public ActionResult<Response> GetAllNamesInProduct([FromQuery]int clientID, [FromQuery]int productID)
+        {
+            try
+            {
+                var result = _additionalNameService.GetAllNamesInProduct(clientID, productID);
+                if (result is ErrorResponse) return BadRequest(result);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         #endregion
 
         #region EditParams

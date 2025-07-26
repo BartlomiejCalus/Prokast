@@ -45,11 +45,29 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(ProductsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [EndpointDescription("A POST operation. Endpoint returns all products assigned to the client. it can also filter the list by various criteria before returning it.")]
-        public ActionResult<Response> GetProducts([FromBody] ProductGetFilter filter, int clientID)
+        public ActionResult<Response> GetProducts([FromBody] ProductGetFilter filter, [FromQuery]int clientID)
         {
             try
             {
                 var result = _productService.GetProducts(filter, clientID);
+                if (result is ErrorResponse) return BadRequest(result);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("Get/List")]
+        [EndpointSummary("Get minimal data of filtered products")]
+        [ProducesResponseType(typeof(ProductGetMinResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public ActionResult<Response> GetProductsFromPath([FromQuery]int clientID, [FromQuery] string name, [FromQuery] string sku)
+        {
+            try
+            {
+                var result = _productService.GetProductsFromPath(clientID, name, sku);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }

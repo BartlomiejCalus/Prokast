@@ -11,6 +11,7 @@ namespace Prokast.Server.Services.Interfaces
         Response GetProducts([FromBody] ProductGetFilter productGetFilter, int clientID);
         DeleteResponse DeleteProduct(int clientID, int productID);
         Response EditProduct(ProductEdit productEdit, int clientID, int productID);
+        Response GetProductsFromPath(int clientID, string name, string sku);
 
     }
 }

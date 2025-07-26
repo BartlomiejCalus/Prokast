@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Prokast.Server.Entities;
 using Prokast.Server.Models;
+using Prokast.Server.Models.ClientModels;
 using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models.ResponseModels.CustomParamsResponseModels;
 using Prokast.Server.Services.Interfaces;
@@ -100,6 +101,25 @@ namespace Prokast.Server.Controllers
             }
             
         }
+
+        [HttpGet("Product")]
+        [EndpointSummary("Get all custom parameters in product")]
+        [ProducesResponseType(typeof(ParamsGetResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public ActionResult<Response> GetAllParamsInProduct([FromQuery]int clientID, [FromQuery]int productID)
+        {
+            try
+            {
+                var result = _paramsService.GetAllParamsInProduct(clientID, productID);
+                if (result is ErrorResponse) return BadRequest(result);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         #endregion
 
         #region Edit

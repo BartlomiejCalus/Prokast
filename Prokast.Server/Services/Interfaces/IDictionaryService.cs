@@ -12,5 +12,6 @@ namespace Prokast.Server.Services.Interfaces
         Response GetParamsByName(string name);
         Response GetParamsByRegion(int region);
         Response GetValuesByName(string name);
+        Response GetAllParamsInProduct(int clientID, int productID);
     }
 }

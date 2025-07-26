@@ -45,7 +45,7 @@ namespace Prokast.Server.Services
 
             };
 
-            _dbContext.AdditionalName.Add(newName);
+            _dbContext.AdditionalNames.Add(newName);
             _dbContext.SaveChanges();
 
             var response = new Response() { ID = random.Next(1, 100000), ClientID = clientID };
@@ -56,7 +56,7 @@ namespace Prokast.Server.Services
         #region Get
         public Response GetAllNames(int clientID)
         {
-            var addNameList = _dbContext.AdditionalName.Where( x => x.ClientID == clientID).ToList();
+            var addNameList = _dbContext.AdditionalNames.Where( x => x.ClientID == clientID).ToList();
             var response = new AdditionalNameGetResponse() { ID = random.Next(1, 100000), Model = addNameList };
             if (addNameList.Count() == 0)
             {
@@ -68,7 +68,7 @@ namespace Prokast.Server.Services
 
         public Response GetNamesByID(int ID, int clientID)
         {
-            var addName = _dbContext.AdditionalName.Where(x => x.ID == ID && x.ClientID == clientID).ToList();
+            var addName = _dbContext.AdditionalNames.Where(x => x.ID == ID && x.ClientID == clientID).ToList();
             var response = new AdditionalNameGetResponse() { ID = random.Next(1, 100000), Model = addName };
             if (addName.Count() == 0)
             {
@@ -81,7 +81,7 @@ namespace Prokast.Server.Services
 
         public Response GetNamesByIDNames(int ID, string Title, int clientID)
         {
-            var addName = _dbContext.AdditionalName.Where(x => x.ID == ID && x.Title.Contains(Title) && x.ClientID == clientID).ToList();
+            var addName = _dbContext.AdditionalNames.Where(x => x.ID == ID && x.Title.Contains(Title) && x.ClientID == clientID).ToList();
             var response = new AdditionalNameGetResponse() { ID = random.Next(1, 100000), Model = addName };
             if (addName.Count() == 0)
             {
@@ -94,7 +94,7 @@ namespace Prokast.Server.Services
 
         public Response GetNamesByIDRegion(int ID, int Region, int clientID)
         {
-            var addName = _dbContext.AdditionalName.Where(x => x.ID == ID && x.Region == Region && x.ClientID == clientID).ToList();
+            var addName = _dbContext.AdditionalNames.Where(x => x.ID == ID && x.Region == Region && x.ClientID == clientID).ToList();
             var response = new AdditionalNameGetResponse() { ID = random.Next(1, 100000), Model = addName };
             if (addName.Count() == 0)
             {
@@ -104,12 +104,38 @@ namespace Prokast.Server.Services
             return response;
 
         }
+
+        public Response GetAllNamesInProduct(int clientID, int productID)
+        {
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Nie ma takiego parametru" };
+
+            var product = _dbContext.Products.FirstOrDefault(x => x.ClientID == clientID && x.ID == productID);
+            if (product == null)
+            {
+                responseNull.errorMsg = "Nie ma takiego produktu!";
+                return responseNull;
+            }
+            var additionalNamesIDList = product.AdditionalNames.Split(",")
+                                    .Select(x => int.Parse(x)).ToList();            
+
+            var additionalNamesList = _dbContext.AdditionalNames.Where(x => additionalNamesIDList.Contains(x.ID)).ToList();
+            if(additionalNamesList.Count() == 0)
+            {
+                responseNull.errorMsg = "Nie ma takiej nazwy!";
+                return responseNull;
+            }
+
+            var response = new AdditionalNameGetResponse() { ID = random.Next(1, 100000), Model = additionalNamesList };
+            return response;
+
+        }
+
         #endregion
 
         #region Edit
         public Response EditAdditionalName(int clientID, int ID, AdditionalNameDto data)
         {
-            var findName = _dbContext.AdditionalName.FirstOrDefault(x => x.ClientID == clientID && x.ID == ID);
+            var findName = _dbContext.AdditionalNames.FirstOrDefault(x => x.ClientID == clientID && x.ID == ID);
 
 
             if (findName == null)
@@ -132,7 +158,7 @@ namespace Prokast.Server.Services
         #region Delete
         public Response DeleteAdditionalName(int clientID, int ID)
         {
-            var findAdditionalName = _dbContext.AdditionalName.FirstOrDefault(x => x.ClientID == clientID && x.ID == ID);
+            var findAdditionalName = _dbContext.AdditionalNames.FirstOrDefault(x => x.ClientID == clientID && x.ID == ID);
 
 
             if (findAdditionalName == null)
@@ -141,7 +167,7 @@ namespace Prokast.Server.Services
                 return responseNull;
             }
 
-            _dbContext.AdditionalName.Remove(findAdditionalName);
+            _dbContext.AdditionalNames.Remove(findAdditionalName);
             _dbContext.SaveChanges();
 
             var response = new DeleteResponse() { ID = random.Next(1, 100000), ClientID = clientID, deleteMsg = "Parametr został usumięty" };

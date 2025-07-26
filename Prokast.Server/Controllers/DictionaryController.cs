@@ -117,6 +117,24 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("Product")]
+        [EndpointSummary("Get all dictionary parameters in product")]
+        [ProducesResponseType(typeof(DictionaryGetResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public ActionResult<Response> GetAllParamsInProduct([FromQuery]int clientID, [FromQuery]int productID)
+        {
+            try
+            {
+                var param = _paramsService.GetAllParamsInProduct(clientID, productID);
+                if (param is ErrorResponse) return BadRequest(param);
+                return Ok(param);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         #endregion
     }
 }

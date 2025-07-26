@@ -39,6 +39,7 @@ builder.Services.AddScoped<IPricesService, PricesService>();
 builder.Services.AddScoped<IOthersService, OthersService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAdditionalDescriptionService, AdditionalDescriptionService>();
+builder.Services.AddScoped<IAdditionalNameService, AdditionalNameService>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddScoped<IWarehouseService, WarehouseService>();
 builder.Services.AddScoped<IStoredProductService, StoredProductService>();
