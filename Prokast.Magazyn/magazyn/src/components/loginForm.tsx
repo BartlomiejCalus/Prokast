@@ -1,38 +1,40 @@
-'use client'
+'use client';
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Image from "next/image";
-//import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 function LoginForm() {
     const [Login, setLogin] = useState<string>("");
     const [Password, setPassword] = useState<string>("");
     const [isMounted, setIsMounted] = useState(false);
-    
+    const router = useRouter();
 
-    
     useEffect(() => {
         setIsMounted(true);
     }, []);
 
     const handleLogin = async (e: React.FormEvent) => {
-        //const router = useRouter();
         e.preventDefault();
         try {
             const response = await axios.post("/api/login", {
                 Login,
                 Password
             });
-            console.log(response.data);
 
             if (response.status === 200) {
-               // router.replace("/afterLoginPage");  
+                const token = response.data.token; // ← Zakładamy że API zwraca token jako { token: "..." }
+
+                // Zapisz token do localStorage
+                localStorage.setItem("token", token);
+
+                // Przejdź do strony po zalogowaniu
+                router.replace("/afterLoginPage");
             }
         } catch (error) {
             console.error("Login failed:", error);
         }
     };
-
 
     return (
         <div className="grid grid-cols-2 h-screen w-screen place-items-center bg-gray-100">
@@ -48,14 +50,16 @@ function LoginForm() {
                         required
                     />
                     <input
-                        type="Password"
+                        type="password"
                         className="border-solid border border-loginImageColor rounded-lg p-4 text-2xl"
                         value={Password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Hasło"
                         required
                     />
-                    <button className="bg-loginImageColor rounded-lg p-4 text:white mt-5 text-2xl" type="submit">Zaloguj</button>
+                    <button className="bg-loginImageColor rounded-lg p-4 text-white mt-5 text-2xl" type="submit">
+                        Zaloguj
+                    </button>
                 </form>
             </div>
             <div className="bg-loginImageColor w-full h-full place-content-center place-items-center">
@@ -63,8 +67,8 @@ function LoginForm() {
                     src="/loginImage.jpg"
                     width={700}
                     height={700}
-                    alt="Picture of the author"
-                ></Image>
+                    alt="Login graphic"
+                />
             </div>
         </div>
     );
