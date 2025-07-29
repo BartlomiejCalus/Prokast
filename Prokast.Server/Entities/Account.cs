@@ -9,7 +9,7 @@ namespace Prokast.Server.Entities
         [Required]
         public string Login { get; set; }
         [Required]
-        public string Password { get; set; }
+        public required string Password { get; set; }
         public int? WarehouseID { get; set; }
         public int? Role { get; set; }
         public string? FirstName { get; set; }
