@@ -2,13 +2,24 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Prokast.Server.Services.Interfaces;
+using Prokast.Server.Models;
+using Microsoft.Extensions.Options;
+using Microsoft.VisualBasic;
 
 namespace Prokast.Server.Services
 {
-    public class BlobPhotoStorageService// : IBlobPhotoStorageService
+    public class BlobPhotoStorageService : IBlobPhotoStorageService
     {
-        private readonly BlobServiceClient _blobServiceClient = new(Environment.GetEnvironmentVariable("StorageConnection"));
+        private readonly AzureBlobStorageSettings _blobStorageSettings;
+        public BlobPhotoStorageService(IOptions<AzureBlobStorageSettings> options)
+        {
+            _blobStorageSettings = options.Value;
+        }
 
+
+        //private readonly BlobServiceClient _blobServiceClient = new(Environment.GetEnvironmentVariable("StorageConnection"));
+
+        
         /// <summary>
         /// Funkcja odpowiedzialna za upload podanego zdjęcia do Blob-a
         /// </summary>
@@ -16,21 +27,24 @@ namespace Prokast.Server.Services
         /// <param name="containerName"></param>
         /// <param name="photoData"></param>
         /// <returns></returns>
-        public async Task<string> UploadPhotoAsync(string photoName , byte[] photoData) {
+        public async Task<string> UploadPhotoAsync(BLOBPhotoModel photo) {
+            var _blobServiceClient = new BlobServiceClient(_blobStorageSettings.ConnectionString);
+
+
             var container = _blobServiceClient.GetBlobContainerClient("images");
             await container.CreateIfNotExistsAsync();
 
-            var blobClient = container.GetBlobClient(photoName);
-
+            var blobClient = container.GetBlobClient(photo.Name);
+            
             var upload = new BlobUploadOptions
             {
                 HttpHeaders = new BlobHttpHeaders 
                 {
-                    ContentType = photoName.Contains(".jpg") ? "image/jpeg" : "image/png"
+                    ContentType = photo.Name.Contains(".jpg") ? "image/jpeg" : "image/png"
                 }
             };
 
-            await using var stream = new MemoryStream(photoData);
+            await using var stream = new MemoryStream(photo.Value);
             stream.Position = 0;
             await blobClient.UploadAsync(stream, upload);
             
@@ -46,6 +60,8 @@ namespace Prokast.Server.Services
         /// <exception cref="FileNotFoundException"></exception>
         public async Task<byte[]> DownloadPhotoAsync(string photoName) 
         {
+            var _blobServiceClient = new BlobServiceClient(_blobStorageSettings.ConnectionString);
+
             var container = _blobServiceClient.GetBlobContainerClient("images");
             var blobClient = container.GetBlobClient(photoName);
 

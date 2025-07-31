@@ -9,6 +9,7 @@ using Prokast.Server.Models.ResponseModels.CustomParamsResponseModels;
 using Prokast.Server.Models.ResponseModels.PhotoResponseModels;
 using Prokast.Server.Services.Interfaces;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Prokast.Server.Services
 {
@@ -24,6 +25,39 @@ namespace Prokast.Server.Services
             _dbContext = dbContext;
             _mapper = mapper;
             _blobPhotoStorageService = blobPhotoStorageService;
+        }
+
+
+        public Response CreatePhoto([FromBody] PhotoDto photo, int clientID) { 
+            if(photo == null)
+            {
+                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
+                return responseNull;
+            }
+            byte[] ValueByte = Encoding.UTF8.GetBytes(photo.Value);
+            var photoBLOB = new BLOBPhotoModel
+            {
+                Name = photo.Name,
+                Value = ValueByte,
+            };
+            var link = _blobPhotoStorageService.UploadPhotoAsync(photoBLOB);
+            _blobPhotoStorageService.DownloadPhotoAsync(photo.Name);
+            
+            var newPhoto = new Photo { 
+                Name = photo.Name,
+                ClientID = clientID,
+                ProductID = photo.ProductId,
+                Value = link.ToString(),
+            };
+
+            _dbContext.Photos.Add(newPhoto);
+            _dbContext.SaveChanges();
+
+            
+            
+
+            var response = new Response() { ID = random.Next(1, 100000), ClientID = clientID };
+            return response;
         }
 
         #region Get
@@ -95,8 +129,7 @@ namespace Prokast.Server.Services
 
             var response = new PhotoEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, photo = findPhoto };
 
-            var info = System.Text.Encoding.UTF8.GetBytes(findPhoto.Value);
-            _blobPhotoStorageService.UploadPhotoAsync(findPhoto.Name, findPhoto.Name, info);
+            
 
             return response;
         }

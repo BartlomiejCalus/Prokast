@@ -19,6 +19,22 @@ namespace Prokast.Server.Controllers
             _photoService = photoService;
         }
 
+        [HttpPost]
+        [EndpointSummary("Creates new photo")]
+        [ProducesResponseType(typeof(PhotoGetResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A POST operation. Endpoint creates a new photo based on provided data.")]
+        public ActionResult<Response> CreatePhoto([FromBody] PhotoDto photo,[FromQuery] int clientID)
+        {
+            try
+            {
+                var result = _photoService.CreatePhoto(photo, clientID);
+                if (result is ErrorResponse) return BadRequest(result);
+                return Ok(result);
+            }
+            catch (Exception ex) {return BadRequest(ex); }  
+        }
+
         [HttpGet]
         [EndpointSummary("Get all photos")]
         [ProducesResponseType(typeof(PhotoGetResponse), StatusCodes.Status200OK)]

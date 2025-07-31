@@ -29,14 +29,14 @@ namespace Prokast.Server.Controllers
         [EndpointSummary("Upload Photo")]
         [EndpointDescription("A POST operation. Endpoint uploads photo to a BLOB container.")]
 
-        public ActionResult<Task<string>> UploadPhotoAsync(string photoName, string containerName, byte[] photoData)
+        public ActionResult<Task<string>> UploadPhotoAsync(BLOBPhotoModel photo)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _storageService.UploadPhotoAsync( photoName,  containerName,  photoData);
+            _storageService.UploadPhotoAsync( photo);
             return Ok();
         }
 
@@ -50,14 +50,14 @@ namespace Prokast.Server.Controllers
         [EndpointSummary("Download Photo")]
         [EndpointDescription("A GET operation. Endpoint downloads photo from a BLOB container.")]
 
-        public ActionResult<Task<string>> DownloadPhotoAsync(string photoName, string containerName)
+        public ActionResult<Task<string>> DownloadPhotoAsync(string photoName)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _storageService.DownloadPhotoAsync(photoName, containerName);
+            _storageService.DownloadPhotoAsync(photoName);
             return Ok();
         }
 
