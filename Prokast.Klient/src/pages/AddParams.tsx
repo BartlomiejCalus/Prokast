@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 
 const AddParams: React.FC = () => {
@@ -9,11 +10,31 @@ const AddParams: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+
+    
+
   };
 
-  const handleAddParam = (e: React.FormEvent) => {
+  const handleAddParam = async(e: React.FormEvent) => {
     e.preventDefault();
+    ///const {name, type, value} = form;
     console.log('Dodano parametr:', form);
+    try {
+      const response = await axios.post('https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/params',
+        {
+          ...form
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log('Odpowiedź z API:', response.data);
+    }
+    catch (error) {
+      console.error('Błąd podczas zmiany wartości:', error);
+    }
     
     alert('Parametr dodany!');
   };
