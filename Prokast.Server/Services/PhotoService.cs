@@ -5,8 +5,11 @@ using Prokast.Server.Entities;
 using Prokast.Server.Models;
 using Prokast.Server.Models.PhotoModels;
 using Prokast.Server.Models.ResponseModels;
+using Prokast.Server.Models.ResponseModels.CustomParamsResponseModels;
 using Prokast.Server.Models.ResponseModels.PhotoResponseModels;
 using Prokast.Server.Services.Interfaces;
+using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Prokast.Server.Services
 {
@@ -14,12 +17,47 @@ namespace Prokast.Server.Services
     {
         private readonly ProkastServerDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly IBlobPhotoStorageService _blobPhotoStorageService;
         Random random = new Random();
 
-        public PhotoService(ProkastServerDbContext dbContext, IMapper mapper)
+        public PhotoService(ProkastServerDbContext dbContext, IMapper mapper, IBlobPhotoStorageService blobPhotoStorageService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _blobPhotoStorageService = blobPhotoStorageService;
+        }
+
+
+        public Response CreatePhoto([FromBody] PhotoDto photo, int clientID) { 
+            if(photo == null)
+            {
+                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
+                return responseNull;
+            }
+            byte[] ValueByte = Encoding.UTF8.GetBytes(photo.Value);
+            var photoBLOB = new BLOBPhotoModel
+            {
+                Name = photo.Name,
+                Value = ValueByte,
+            };
+            var link = _blobPhotoStorageService.UploadPhotoAsync(photoBLOB);
+            _blobPhotoStorageService.DownloadPhotoAsync(photo.Name);
+            
+            var newPhoto = new Photo { 
+                Name = photo.Name,
+                ClientID = clientID,
+                ProductID = photo.ProductId,
+                Value = link.ToString(),
+            };
+
+            _dbContext.Photos.Add(newPhoto);
+            _dbContext.SaveChanges();
+
+            
+            
+
+            var response = new Response() { ID = random.Next(1, 100000), ClientID = clientID };
+            return response;
         }
 
         #region Get
@@ -37,7 +75,7 @@ namespace Prokast.Server.Services
 
         public Response GetPhotosByID(int clientID, int ID)
         {
-            var param = _dbContext.Photos.Where(x => x.ClientID == clientID && x.Id == ID).ToList();
+            var param = _dbContext.Photos.Where(x => x.ClientID == clientID && x.ID == ID).ToList();
             var response = new PhotoGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = param };
             if (param.Count() == 0)
             {
@@ -47,12 +85,36 @@ namespace Prokast.Server.Services
             return response;
 
         }
+
+        public Response GetAllPhotosInProduct(int clientID, int productID)
+        {
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Nie ma takiego zdjecia" };
+
+            var product = _dbContext.Products.FirstOrDefault(x => x.ClientID == clientID && x.ID == productID);
+            if (product == null)
+            {
+                responseNull.errorMsg = "Nie ma takiego produktu!";
+                return responseNull;
+            }
+            var PhotosIDList = product.Photos.Split(",")
+                              .Select(x => int.Parse(x)).ToList();
+
+            var PhotosList = _dbContext.Photos.Where(x => PhotosIDList.Contains(x.ID)).ToList();
+            if (PhotosList.Count() == 0)
+            {
+                return responseNull;
+            }
+
+            var response = new PhotoGetResponse() { ID = random.Next(1, 100000), Model = PhotosList };
+            return response;
+
+        }
         #endregion
 
         #region Edit
         public Response EditPhotos(int clientID, int ID, PhotoEdit data)
         {
-            var findPhoto = _dbContext.Photos.FirstOrDefault(x => x.ClientID == clientID && x.Id == ID);
+            var findPhoto = _dbContext.Photos.FirstOrDefault(x => x.ClientID == clientID && x.ID == ID);
 
 
             if (findPhoto == null)
@@ -67,6 +129,8 @@ namespace Prokast.Server.Services
 
             var response = new PhotoEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, photo = findPhoto };
 
+            
+
             return response;
         }
         #endregion
@@ -74,7 +138,7 @@ namespace Prokast.Server.Services
         #region delete
         public Response DeletePhotos(int clientID, int ID)
         {
-            var findPhoto = _dbContext.Photos.FirstOrDefault(x => x.ClientID == clientID && x.Id == ID);
+            var findPhoto = _dbContext.Photos.FirstOrDefault(x => x.ClientID == clientID && x.ID == ID);
 
 
             if (findPhoto == null)
