@@ -16,6 +16,7 @@ namespace Prokast.Server.Services.Interfaces
         Response GetAllPrices(int clientID, int priceListID);
         Response GetPricesByRegion(int clientID, int priceListID, int regionID);
         Response GetPricesByName(int clientID, int priceListID, string name);
+        Response GetAllPricesInProduct(int clientID, int productID);
         Response EditPrice(EditPriceDto editPriceDto, int clientID, int priceListID, int priceID);
         Response DeletePrice(int clientID, int priceListID, int priceID);
         Response DeletePriceList(int clientID, int priceListID);

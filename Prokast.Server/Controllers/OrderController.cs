@@ -12,6 +12,7 @@ using Prokast.Server.Enums;
 namespace Prokast.Server.Controllers
 {
     [Route("api/orders")]
+    [Tags("Orders")]
     public class OrderController: ControllerBase
     {
         private readonly IOrderService _orderService;
@@ -23,8 +24,10 @@ namespace Prokast.Server.Controllers
 
         #region Create
         [HttpPost]
+        [EndpointSummary("Create order")]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A POST operation. Endpoint registers an order and registers a buyer if it's his first time buying products.")]
         public ActionResult<Response> CreateOrder([FromBody] OrderCreateDto orderCreateDto, [FromQuery] int clientID)
         {
             try
@@ -42,8 +45,10 @@ namespace Prokast.Server.Controllers
 
         #region Get
         [HttpGet]
+        [EndpointSummary("Get all orders")]
         [ProducesResponseType(typeof(OrderGetAllResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns a minimalistic list of all orders made for a given client.")]
         public ActionResult<Response> GetAllOrders([FromQuery] int clientID)
         {
             try
@@ -59,8 +64,10 @@ namespace Prokast.Server.Controllers
         }
 
         [HttpGet("{orderID}")]
+        [EndpointSummary("Get an order")]
         [ProducesResponseType(typeof(OrderGetOneResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns a specific order.")]
         public ActionResult<Response> GetOrder([FromQuery] int clientID, [FromRoute] int orderID)
         {
             try
@@ -76,8 +83,10 @@ namespace Prokast.Server.Controllers
         }
 
         [HttpGet("trackingID/{trackingID}")]
+        [EndpointSummary("Get order by trackingID")]
         [ProducesResponseType(typeof(OrderGetAllResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns a specific order with a given trackingID.")]
         public ActionResult<Response> GetOrderByTrackingID([FromQuery] int clientID, [FromRoute] string trackingID)
         {
             try
@@ -95,8 +104,10 @@ namespace Prokast.Server.Controllers
 
         #region Edit
         [HttpPut("trackingID{orderID}")]
+        [EndpointSummary("Add trackingID")]
         [ProducesResponseType(typeof(OrderEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A PUT operation. Endpoint adds a trackingID for a given order.")]
         public ActionResult<Response> AddTrackingID([FromQuery] int clientID, [FromRoute] int orderID, [FromQuery] string trackingID)
         {
             if (!ModelState.IsValid)
@@ -119,8 +130,10 @@ namespace Prokast.Server.Controllers
 
 
         [HttpPut("{orderID}/status")]
+        [EndpointSummary("Change order status")]
         [ProducesResponseType(typeof(OrderEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A PUT operation. Endpoint changes the status of a given order.")]
         public ActionResult<Response> ChangeOrderStatus([FromQuery] int clientID, [FromRoute] int orderID,[FromQuery] OrderStatus status)
         {
             if (!ModelState.IsValid)
@@ -142,8 +155,10 @@ namespace Prokast.Server.Controllers
         }
 
         [HttpPut("{orderID}/payment")]
+        [EndpointSummary("Change payment status")]
         [ProducesResponseType(typeof(OrderEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A PUT operation. Endpoint changes the payment status of a given order.")]
         public ActionResult<Response> ChangePaymentStatus([FromQuery] int clientID, [FromRoute] int orderID, [FromQuery] PaymentStatus paymentStatus)
         {
             if (!ModelState.IsValid)
@@ -165,8 +180,10 @@ namespace Prokast.Server.Controllers
         }
 
         [HttpPut("edit/order/{orderID}")]
+        [EndpointSummary("Edit an order")]
         [ProducesResponseType(typeof(OrderEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A PUT operation. Endpoint edits data of a given order.")]
         public ActionResult<Response> EditOrder([FromQuery] int clientID, [FromRoute] int orderID, [FromBody] OrderEditDto orderEditDto)
         {
             if (!ModelState.IsValid)
@@ -188,8 +205,10 @@ namespace Prokast.Server.Controllers
         }
 
         [HttpPut("edit/buyer/{buyerID}")]
+        [EndpointSummary("Edit the buyer")]
         [ProducesResponseType(typeof(OrderEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A PUT operation. Endpoint edits data of a given buyer.")]
         public ActionResult<Response> EditBuyer([FromQuery] int clientID, [FromRoute] int buyerID, [FromBody] Buyer buyer)
         {
             if (!ModelState.IsValid)

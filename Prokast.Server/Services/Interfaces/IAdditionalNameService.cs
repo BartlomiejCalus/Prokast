@@ -11,6 +11,7 @@ namespace Prokast.Server.Services.Interfaces
         Response GetNamesByID(int ID, int clientID);
         Response GetNamesByIDNames(int ID, string Title, int clientID);
         Response GetNamesByIDRegion(int ID, int Region, int clientID);
+        Response GetAllNamesInProduct(int clientID, int productID);
         Response EditAdditionalName(int clientID, int ID, AdditionalNameDto data);
         Response DeleteAdditionalName(int clientID, int ID);
     }

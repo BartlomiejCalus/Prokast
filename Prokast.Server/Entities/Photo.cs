@@ -6,13 +6,13 @@ namespace Prokast.Server.Entities
     public class Photo 
     {
         [Key]
-        public int Id { get; set; }
+        public int ID { get; set; }
         [Required]
         public string Name { get; set; }
         [Required]
         public int ClientID { get; set; }
         [Required]
-        public int ProductId { get; set; }
+        public int ProductID { get; set; }
         [Required]
         public string Value { get; set; }
     }

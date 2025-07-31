@@ -9,6 +9,7 @@ namespace Prokast.Server.Services.Interfaces
     {
         Response GetAllPhotos(int clientID);
         Response GetPhotosByID(int clientID, int ID);
+        Response GetAllPhotosInProduct(int clientID, int productID);
         Response EditPhotos(int clientID, int ID, PhotoEdit data);
         Response DeletePhotos(int clientID, int ID);
     }
