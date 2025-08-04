@@ -71,6 +71,12 @@ namespace Prokast.Server.Services
             return response;
         }
 
+        /// <summary>
+        /// Funkcja pokazuje dodatkowe opisy zawierające podane słowo
+        /// </summary>
+        /// <param name="Title"></param>
+        /// <param name="clientID"></param>
+        /// <returns></returns>
         public Response GetDescriptionsByNames(string Title, int clientID)
         {
             var addDesc = _dbContext.AdditionalDescriptions.Where(x => x.Title.Contains(Title) && x.ClientID == clientID).ToList();
@@ -96,6 +102,14 @@ namespace Prokast.Server.Services
             return response;
 
         }
+
+       /* public Response GetAllDescriptionsInProduct(int clientID, int productID)
+        {
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Nie ma takiego parametru" };
+
+            var product = _dbContext.Products.FirstOrDefault(x => x.ClientID == clientID && x.ID == productID);
+        }
+*/
         #endregion
 
         #region Edit

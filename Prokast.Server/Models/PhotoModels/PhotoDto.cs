@@ -12,6 +12,8 @@ namespace Prokast.Server.Models.PhotoModels
         [Required]
         public int ProductId { get; set; }
         [Required]
-        public string Value { get; set; }
+        public byte[] Value { get; set; }
+        [Required]
+        public string ContentType { get; set; }
     }
 }

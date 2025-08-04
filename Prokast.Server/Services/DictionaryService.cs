@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Prokast.Server.Entities;
 using Prokast.Server.Models;
 using Prokast.Server.Models.ResponseModels;
+using Prokast.Server.Models.ResponseModels.AdditionalNameResponseModels;
 using Prokast.Server.Models.ResponseModels.DictionaryParamsResponseModels;
 using Prokast.Server.Services.Interfaces;
 
@@ -84,7 +85,11 @@ namespace Prokast.Server.Services
             }
             return response;
         }
-
+        /// <summary>
+        /// Funkcja pokazuje wartości wybranego parametru słownikowego
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public Response GetValuesByName (string name)
         {
             var param = _dbContext.DictionaryParams.Where(x => x.Name == name).ToList();
@@ -102,6 +107,31 @@ namespace Prokast.Server.Services
             }
             return response;
         }
+
+        public Response GetAllParamsInProduct(int clientID, int productID)
+        {
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Nie ma takiego parametru" };
+
+            var product = _dbContext.Products.FirstOrDefault(x => x.ClientID == clientID && x.ID == productID);
+            if (product == null)
+            {
+                responseNull.errorMsg = "Nie ma takiego produktu!";
+                return responseNull;
+            }
+            var dictionaryParamsIDList = product.DictionaryParams.Split(",")
+                              .Select(x => int.Parse(x)).ToList();
+
+            var dictionaryParamsList = _dbContext.DictionaryParams.Where(x => dictionaryParamsIDList.Contains(x.ID)).ToList();
+            if (dictionaryParamsList.Count() == 0)
+            {
+                return responseNull;
+            }
+
+            var response = new DictionaryGetResponse() { ID = random.Next(1, 100000), Model = dictionaryParamsList };
+            return response;
+
+        }
+
         #endregion
 
     }

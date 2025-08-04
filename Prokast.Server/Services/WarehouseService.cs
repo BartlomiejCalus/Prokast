@@ -139,6 +139,7 @@ namespace Prokast.Server.Services
         #endregion
 
         #region Edit
+
         public Response EditWarehouse(int clientID, int ID, WarehouseCreateDto warehouseCreateDto)
         {
             var warehouse = _dbContext.Warehouses.FirstOrDefault(x => x.ClientID == clientID && x.ID == ID);

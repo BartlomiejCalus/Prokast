@@ -5,6 +5,7 @@ using Prokast.Server.Models.PriceModels;
 using Prokast.Server.Models.PriceModels.PriceListModels;
 using Prokast.Server.Models.PricesModels;
 using Prokast.Server.Models.ResponseModels;
+using Prokast.Server.Models.ResponseModels.PhotoResponseModels;
 using Prokast.Server.Models.ResponseModels.PriceResponseModels;
 using Prokast.Server.Models.ResponseModels.PriceResponseModels.PriceListResponseModels;
 using Prokast.Server.Services.Interfaces;
@@ -166,6 +167,30 @@ namespace Prokast.Server.Services
             }
             var response = new PricesGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = priceList };
             return response;
+        }
+
+        public Response GetAllPricesInProduct(int clientID, int productID)
+        {
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Nie ma takiego cennika" };
+
+            var product = _dbContext.Products.FirstOrDefault(x => x.ClientID == clientID && x.ID == productID);
+            if (product == null)
+            {
+                responseNull.errorMsg = "Nie ma takiego produktu!";
+                return responseNull;
+            }
+            var pricelistID = product.PriceListID;
+
+            var prices = _dbContext.Prices.Where(x => x.PriceListID == pricelistID).ToList();
+
+            if (prices.Count() == 0)
+            {
+                return responseNull;
+            }
+
+            var response = new PricesGetResponse() { ID = random.Next(1, 100000), Model = prices };
+            return response;
+
         }
         #endregion
 

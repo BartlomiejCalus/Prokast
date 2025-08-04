@@ -23,6 +23,12 @@ namespace Prokast.Server.Services
         }
 
         #region Create
+        /// <summary>
+        /// Funkcja ta tworzy zamówienie dla danego kupca, jeśli jest to pierwsze zamówienie tej osoby jest również rejestrowana jako nowy kupiec
+        /// </summary>
+        /// <param name="orderCreateDto"></param>
+        /// <param name="clientID"></param>
+        /// <returns></returns>
         public Response CreateOrder(OrderCreateDto orderCreateDto, int clientID)
         {
             var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
@@ -261,7 +267,13 @@ namespace Prokast.Server.Services
             var response = new OrderEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = order };
             return response;
         }
-
+        /// <summary>
+        /// Funkcja zmienia status zamówienia
+        /// </summary>
+        /// <param name="clientID"></param>
+        /// <param name="orderID"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public Response ChangeOrderStatus(int clientID, int orderID, OrderStatus request)
         {
 
@@ -279,7 +291,13 @@ namespace Prokast.Server.Services
             var response = new OrderEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = order };
             return response;
         }
-
+        /// <summary>
+        /// Funkcja zmienia status plątności zamówienia
+        /// </summary>
+        /// <param name="clientID"></param>
+        /// <param name="orderID"></param>
+        /// <param name="paymentStatus"></param>
+        /// <returns></returns>
         public Response ChangePaymentStatus(int clientID, int orderID, PaymentStatus paymentStatus)
         {
             var order = _dbContext.Orders.FirstOrDefault(x => x.ID == orderID);
@@ -297,6 +315,13 @@ namespace Prokast.Server.Services
             return response;
         }
 
+        /// <summary>
+        /// Funkcja edytuje zamówienie
+        /// </summary>
+        /// <param name="clientID"></param>
+        /// <param name="orderID"></param>
+        /// <param name="orderEditDto"></param>
+        /// <returns></returns>
         public Response EditOrder(int clientID, int orderID, OrderEditDto orderEditDto)
         {
             var order = _dbContext.Orders.FirstOrDefault(x => x.ID == orderID);

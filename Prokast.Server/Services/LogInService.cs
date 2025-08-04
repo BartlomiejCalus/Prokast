@@ -97,6 +97,12 @@ namespace Prokast.Server.Services
         #endregion
 
         #region create
+        /// <summary>
+        /// Funkcja pozwala na stworzzenie konta użytkownika i wysyła e-mail z danymi logowania na konto mailowe podane podczas kreacji
+        /// </summary>
+        /// <param name="accountCreate"></param>
+        /// <param name="clientID"></param>
+        /// <returns></returns>
         public Response CreateAccount(AccountCreateDto accountCreate, int clientID)
         {
             const string litery = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
