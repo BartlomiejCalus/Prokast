@@ -27,7 +27,7 @@ export default function ProductsForm() {
     setData(null);
 
     try {
-      const response = await fetch("/api/getDataProducts", {
+      const response = await fetch("/api/storedProducts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -59,7 +59,7 @@ export default function ProductsForm() {
             type="text"
             value={clientID}
             onChange={(e) => setClientID(e.target.value)}
-            required
+            
           />
         </div>
         <div>
@@ -69,7 +69,7 @@ export default function ProductsForm() {
             type="text"
             value={productName}
             onChange={(e) => setProductName(e.target.value)}
-            required
+            
           />
         </div>
         <button type="submit">Fetch Data</button>
