@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Prokast.Server;
 using Prokast.Server.Entities;
 using Prokast.Server.Models;
 using Prokast.Server.Services;
 using Prokast.Server.Services.Interfaces;
 using Scalar.AspNetCore;
-using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
 
 
 
@@ -54,6 +55,15 @@ builder.Services.AddScoped<IBlobPhotoStorageService,BlobPhotoStorageService>();
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
 builder.Services.AddProkastOpenAPI();
+
+/*builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    // Ignoruje cykliczne referencje zamiast serializować w nieskończoność
+    options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+
+    // Zwiększa maksymalną głębokość na wszelki wypadek
+    options.SerializerOptions.MaxDepth = 256;
+});*/
 
 var app = builder.Build();
 
