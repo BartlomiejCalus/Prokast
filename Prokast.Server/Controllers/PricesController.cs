@@ -41,14 +41,14 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPost("{priceListID}")]
+        [HttpPost("{productID}")]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> CreatePrice([FromBody] PricesDto prices, [FromRoute] int priceListID, [FromQuery] int clientID)
+        public ActionResult<Response> CreatePrice([FromBody] PricesDto prices, [FromRoute] int productID, [FromQuery] int clientID)
         {
             try
             {
-                var result = _priceService.CreatePrice(prices, priceListID, clientID);
+                var result = _priceService.CreatePrice(prices, productID, clientID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Created();
             }

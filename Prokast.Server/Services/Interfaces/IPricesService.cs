@@ -10,7 +10,7 @@ namespace Prokast.Server.Services.Interfaces
     public interface IPricesService
     {
         Response CreatePriceList([FromBody] PriceListsCreateDto priceLists, int clientID, int productID);
-        Response CreatePrice([FromBody] PricesDto prices, int priceListID, int clientID);
+        Response CreatePrice([FromBody] PricesDto prices, int productID, int clientID);
         Response GetAllPriceLists(int clientID);
         Response GetPriceListsByName(int clientID, string name);
         Response GetAllPrices(int clientID, int priceListID);

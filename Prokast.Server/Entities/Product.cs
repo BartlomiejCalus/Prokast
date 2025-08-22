@@ -24,7 +24,7 @@ namespace Prokast.Server.Entities
         [JsonIgnore]
         public virtual List<Photo> Photos { get; set; }
 
-        public virtual PriceLists PriceLists { get; set; }
+        public virtual PriceList PriceList { get; set; }
 
         public required int ClientID { get; set; }
         public virtual Client Client { get; set; }

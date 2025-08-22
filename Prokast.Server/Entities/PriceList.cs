@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Prokast.Server.Entities
 {
-    public class PriceLists
+    public class PriceList
     {
         public int ID { get; set; }
         public required string Name { get; set; }

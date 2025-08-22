@@ -68,15 +68,14 @@ namespace Prokast.Server.Services
 
 
             //TODO: proszę mi to naprawić
-            //var newPhoto = new Photo { 
-            //    Name = photo.Name,
-            //    ClientID = clientID,
-            //    ProductID = photo.ProductId,
-            //    Value = link.ToString(),
-            //};
+            var newPhoto = new Photo { 
+                Name = photo.Name,
+                ProductID = photo.ProductId,
+                Value = link.ToString(),
+            };
 
-            //_dbContext.Photos.Add(newPhoto);
-            //_dbContext.SaveChanges();
+            _dbContext.Photos.Add(newPhoto);
+            _dbContext.SaveChanges();
 
             
             

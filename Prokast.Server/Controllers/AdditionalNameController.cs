@@ -109,14 +109,6 @@ namespace Prokast.Server.Controllers
             }
         }
 
-
-
-
-
-
-
-        
-
         #region EditParams
         [HttpPut("{ID}")]
         [ProducesResponseType(typeof(AdditionalNameEditResponse), StatusCodes.Status200OK)]

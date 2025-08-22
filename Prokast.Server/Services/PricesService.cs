@@ -34,7 +34,7 @@ namespace Prokast.Server.Services
                 var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
                 return responseNull;
             }
-            var priceList = new PriceLists
+            var priceList = new PriceList
             {
                 Name = priceLists.Name.ToString(),
                 ProductID = productID
@@ -55,8 +55,8 @@ namespace Prokast.Server.Services
                 return responseNull;
             }
 
-            var priceListID = _dbContext.Products.FirstOrDefault(x => x.ID == productID).PriceLists.ID;
-            if (priceListID == null)
+            var priceList = _dbContext.PriceLists.FirstOrDefault(x => x.ProductID == productID);
+            if (priceList == null)
             {
                 var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiej listy" };
                 return responseNull;
@@ -69,9 +69,9 @@ namespace Prokast.Server.Services
                 VAT = prices.VAT,
                 Brutto = prices.Brutto,
                 RegionID = prices.RegionID,
-                PriceListID = priceListID,
+                PriceListID = priceList.ID,
             };
-
+            //priceList.Prices.Add(price);
             _dbContext.Prices.Add(price);
             _dbContext.SaveChanges();
 

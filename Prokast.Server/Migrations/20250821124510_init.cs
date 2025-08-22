@@ -221,8 +221,7 @@ namespace Prokast.Server.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProductID = table.Column<int>(type: "int", nullable: false),
-                    RegionID = table.Column<int>(type: "int", nullable: false),
-                    RegionsID = table.Column<int>(type: "int", nullable: false)
+                    RegionID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -234,15 +233,15 @@ namespace Prokast.Server.Migrations
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AdditionalDescriptions_Regions_RegionsID",
-                        column: x => x.RegionsID,
+                        name: "FK_AdditionalDescriptions_Regions_RegionID",
+                        column: x => x.RegionID,
                         principalTable: "Regions",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AdditionalName",
+                name: "AdditionalNames",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
@@ -250,21 +249,20 @@ namespace Prokast.Server.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProductID = table.Column<int>(type: "int", nullable: false),
-                    RegionID = table.Column<int>(type: "int", nullable: false),
-                    RegionsID = table.Column<int>(type: "int", nullable: false)
+                    RegionID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AdditionalName", x => x.ID);
+                    table.PrimaryKey("PK_AdditionalNames", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_AdditionalName_Products_ProductID",
+                        name: "FK_AdditionalNames_Products_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Products",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AdditionalName_Regions_RegionsID",
-                        column: x => x.RegionsID,
+                        name: "FK_AdditionalNames_Regions_RegionID",
+                        column: x => x.RegionID,
                         principalTable: "Regions",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
@@ -280,8 +278,7 @@ namespace Prokast.Server.Migrations
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProductID = table.Column<int>(type: "int", nullable: false),
-                    RegionID = table.Column<int>(type: "int", nullable: false),
-                    RegionsID = table.Column<int>(type: "int", nullable: false)
+                    RegionID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -293,8 +290,8 @@ namespace Prokast.Server.Migrations
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CustomParams_Regions_RegionsID",
-                        column: x => x.RegionsID,
+                        name: "FK_CustomParams_Regions_RegionID",
+                        column: x => x.RegionID,
                         principalTable: "Regions",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
@@ -311,7 +308,6 @@ namespace Prokast.Server.Migrations
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OptionID = table.Column<int>(type: "int", nullable: false),
                     RegionID = table.Column<int>(type: "int", nullable: false),
-                    RegionsID = table.Column<int>(type: "int", nullable: false),
                     ProductID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -323,8 +319,8 @@ namespace Prokast.Server.Migrations
                         principalTable: "Products",
                         principalColumn: "ID");
                     table.ForeignKey(
-                        name: "FK_DictionaryParams_Regions_RegionsID",
-                        column: x => x.RegionsID,
+                        name: "FK_DictionaryParams_Regions_RegionID",
+                        column: x => x.RegionID,
                         principalTable: "Regions",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
@@ -408,22 +404,20 @@ namespace Prokast.Server.Migrations
                     VAT = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Brutto = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     RegionID = table.Column<int>(type: "int", nullable: false),
-                    RegionsID = table.Column<int>(type: "int", nullable: false),
-                    PriceListID = table.Column<int>(type: "int", nullable: false),
-                    PriceListsID = table.Column<int>(type: "int", nullable: false)
+                    PriceListID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Prices", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Prices_PriceLists_PriceListsID",
-                        column: x => x.PriceListsID,
+                        name: "FK_Prices_PriceLists_PriceListID",
+                        column: x => x.PriceListID,
                         principalTable: "PriceLists",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Prices_Regions_RegionsID",
-                        column: x => x.RegionsID,
+                        name: "FK_Prices_Regions_RegionID",
+                        column: x => x.RegionID,
                         principalTable: "Regions",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
@@ -445,19 +439,19 @@ namespace Prokast.Server.Migrations
                 column: "ProductID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AdditionalDescriptions_RegionsID",
+                name: "IX_AdditionalDescriptions_RegionID",
                 table: "AdditionalDescriptions",
-                column: "RegionsID");
+                column: "RegionID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AdditionalName_ProductID",
-                table: "AdditionalName",
+                name: "IX_AdditionalNames_ProductID",
+                table: "AdditionalNames",
                 column: "ProductID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AdditionalName_RegionsID",
-                table: "AdditionalName",
-                column: "RegionsID");
+                name: "IX_AdditionalNames_RegionID",
+                table: "AdditionalNames",
+                column: "RegionID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CustomParams_ProductID",
@@ -465,9 +459,9 @@ namespace Prokast.Server.Migrations
                 column: "ProductID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CustomParams_RegionsID",
+                name: "IX_CustomParams_RegionID",
                 table: "CustomParams",
-                column: "RegionsID");
+                column: "RegionID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DictionaryParams_ProductID",
@@ -475,9 +469,9 @@ namespace Prokast.Server.Migrations
                 column: "ProductID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DictionaryParams_RegionsID",
+                name: "IX_DictionaryParams_RegionID",
                 table: "DictionaryParams",
-                column: "RegionsID");
+                column: "RegionID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderProducts_OrderID",
@@ -511,14 +505,14 @@ namespace Prokast.Server.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Prices_PriceListsID",
+                name: "IX_Prices_PriceListID",
                 table: "Prices",
-                column: "PriceListsID");
+                column: "PriceListID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Prices_RegionsID",
+                name: "IX_Prices_RegionID",
                 table: "Prices",
-                column: "RegionsID");
+                column: "RegionID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_ClientID",
@@ -553,7 +547,7 @@ namespace Prokast.Server.Migrations
                 name: "AdditionalDescriptions");
 
             migrationBuilder.DropTable(
-                name: "AdditionalName");
+                name: "AdditionalNames");
 
             migrationBuilder.DropTable(
                 name: "CustomParams");

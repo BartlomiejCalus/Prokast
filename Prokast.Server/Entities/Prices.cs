@@ -11,9 +11,9 @@ namespace Prokast.Server.Entities
         public required decimal Brutto { get; set; }
 
         public required int RegionID { get; set; }
-        public virtual Regions Regions { get; set; }
+        public virtual Region Regions { get; set; }
 
         public required int PriceListID { get; set; }
-        public virtual PriceLists PriceLists { get; set; }
+        public virtual PriceList PriceLists { get; set; }
     }
 }

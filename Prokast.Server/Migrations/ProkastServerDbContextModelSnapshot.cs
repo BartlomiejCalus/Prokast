@@ -76,9 +76,6 @@ namespace Prokast.Server.Migrations
                     b.Property<int>("RegionID")
                         .HasColumnType("int");
 
-                    b.Property<int>("RegionsID")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -91,7 +88,7 @@ namespace Prokast.Server.Migrations
 
                     b.HasIndex("ProductID");
 
-                    b.HasIndex("RegionsID");
+                    b.HasIndex("RegionID");
 
                     b.ToTable("AdditionalDescriptions");
                 });
@@ -110,9 +107,6 @@ namespace Prokast.Server.Migrations
                     b.Property<int>("RegionID")
                         .HasColumnType("int");
 
-                    b.Property<int>("RegionsID")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -125,9 +119,9 @@ namespace Prokast.Server.Migrations
 
                     b.HasIndex("ProductID");
 
-                    b.HasIndex("RegionsID");
+                    b.HasIndex("RegionID");
 
-                    b.ToTable("AdditionalName");
+                    b.ToTable("AdditionalNames");
                 });
 
             modelBuilder.Entity("Prokast.Server.Entities.Buyer", b =>
@@ -251,9 +245,6 @@ namespace Prokast.Server.Migrations
                     b.Property<int>("RegionID")
                         .HasColumnType("int");
 
-                    b.Property<int>("RegionsID")
-                        .HasColumnType("int");
-
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -266,7 +257,7 @@ namespace Prokast.Server.Migrations
 
                     b.HasIndex("ProductID");
 
-                    b.HasIndex("RegionsID");
+                    b.HasIndex("RegionID");
 
                     b.ToTable("CustomParams");
                 });
@@ -292,9 +283,6 @@ namespace Prokast.Server.Migrations
                     b.Property<int>("RegionID")
                         .HasColumnType("int");
 
-                    b.Property<int>("RegionsID")
-                        .HasColumnType("int");
-
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -307,7 +295,7 @@ namespace Prokast.Server.Migrations
 
                     b.HasIndex("ProductID");
 
-                    b.HasIndex("RegionsID");
+                    b.HasIndex("RegionID");
 
                     b.ToTable("DictionaryParams");
                 });
@@ -421,7 +409,7 @@ namespace Prokast.Server.Migrations
                     b.ToTable("Photos");
                 });
 
-            modelBuilder.Entity("Prokast.Server.Entities.PriceLists", b =>
+            modelBuilder.Entity("Prokast.Server.Entities.PriceList", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -465,13 +453,7 @@ namespace Prokast.Server.Migrations
                     b.Property<int>("PriceListID")
                         .HasColumnType("int");
 
-                    b.Property<int>("PriceListsID")
-                        .HasColumnType("int");
-
                     b.Property<int>("RegionID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RegionsID")
                         .HasColumnType("int");
 
                     b.Property<decimal>("VAT")
@@ -479,9 +461,9 @@ namespace Prokast.Server.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("PriceListsID");
+                    b.HasIndex("PriceListID");
 
-                    b.HasIndex("RegionsID");
+                    b.HasIndex("RegionID");
 
                     b.ToTable("Prices");
                 });
@@ -533,7 +515,7 @@ namespace Prokast.Server.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("Prokast.Server.Entities.Regions", b =>
+            modelBuilder.Entity("Prokast.Server.Entities.Region", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -642,9 +624,9 @@ namespace Prokast.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Prokast.Server.Entities.Regions", "Regions")
+                    b.HasOne("Prokast.Server.Entities.Region", "Regions")
                         .WithMany()
-                        .HasForeignKey("RegionsID")
+                        .HasForeignKey("RegionID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -661,9 +643,9 @@ namespace Prokast.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Prokast.Server.Entities.Regions", "Regions")
+                    b.HasOne("Prokast.Server.Entities.Region", "Regions")
                         .WithMany()
-                        .HasForeignKey("RegionsID")
+                        .HasForeignKey("RegionID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -680,9 +662,9 @@ namespace Prokast.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Prokast.Server.Entities.Regions", "Regions")
+                    b.HasOne("Prokast.Server.Entities.Region", "Regions")
                         .WithMany()
-                        .HasForeignKey("RegionsID")
+                        .HasForeignKey("RegionID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -697,9 +679,9 @@ namespace Prokast.Server.Migrations
                         .WithMany("DictionaryParams")
                         .HasForeignKey("ProductID");
 
-                    b.HasOne("Prokast.Server.Entities.Regions", "Regions")
+                    b.HasOne("Prokast.Server.Entities.Region", "Regions")
                         .WithMany()
-                        .HasForeignKey("RegionsID")
+                        .HasForeignKey("RegionID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -755,11 +737,11 @@ namespace Prokast.Server.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Prokast.Server.Entities.PriceLists", b =>
+            modelBuilder.Entity("Prokast.Server.Entities.PriceList", b =>
                 {
                     b.HasOne("Prokast.Server.Entities.Product", "Product")
-                        .WithOne("PriceLists")
-                        .HasForeignKey("Prokast.Server.Entities.PriceLists", "ProductID")
+                        .WithOne("PriceList")
+                        .HasForeignKey("Prokast.Server.Entities.PriceList", "ProductID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -768,15 +750,15 @@ namespace Prokast.Server.Migrations
 
             modelBuilder.Entity("Prokast.Server.Entities.Prices", b =>
                 {
-                    b.HasOne("Prokast.Server.Entities.PriceLists", "PriceLists")
+                    b.HasOne("Prokast.Server.Entities.PriceList", "PriceLists")
                         .WithMany("Prices")
-                        .HasForeignKey("PriceListsID")
+                        .HasForeignKey("PriceListID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Prokast.Server.Entities.Regions", "Regions")
+                    b.HasOne("Prokast.Server.Entities.Region", "Regions")
                         .WithMany()
-                        .HasForeignKey("RegionsID")
+                        .HasForeignKey("RegionID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -845,7 +827,7 @@ namespace Prokast.Server.Migrations
                     b.Navigation("OrderProducts");
                 });
 
-            modelBuilder.Entity("Prokast.Server.Entities.PriceLists", b =>
+            modelBuilder.Entity("Prokast.Server.Entities.PriceList", b =>
                 {
                     b.Navigation("Prices");
                 });
@@ -864,7 +846,7 @@ namespace Prokast.Server.Migrations
 
                     b.Navigation("Photos");
 
-                    b.Navigation("PriceLists")
+                    b.Navigation("PriceList")
                         .IsRequired();
                 });
 
