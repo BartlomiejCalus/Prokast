@@ -28,15 +28,22 @@ namespace Prokast.Server.Services
 
         #region Create
         public Response CreateAdditionalName([FromBody] AdditionalNameDto additionalNameDto, int clientID, int regionID, int productID)
-        {
+        {    
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
 
             if (additionalNameDto == null)
             {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
                 return responseNull;
             }
 
-            var newName = new AdditionalName
+            var product = _dbContext.Products.FirstOrDefault(x => x.ID == productID && x.ClientID == clientID);
+            if (product == null)
+            {
+                responseNull.errorMsg = "Nie ma takiego produktu!";
+                return responseNull;
+            }
+
+            var additionalName = new AdditionalName
             {
                 Title = additionalNameDto.Title.ToString(),
                 Value = additionalNameDto.Value.ToString(),
@@ -44,7 +51,17 @@ namespace Prokast.Server.Services
                 ProductID = productID
             };
 
-            _dbContext.AdditionalNames.Add(newName);
+            _dbContext.AdditionalNames.Add(additionalName);
+            _dbContext.SaveChanges();
+
+            var createdName = _dbContext.AdditionalNames.OrderByDescending(x => x.ID).FirstOrDefault();
+            if (createdName == null)
+            {
+                responseNull.errorMsg = "Błąd nazwy!";
+                return responseNull;
+            }
+
+            product.AdditionalNames.Add(createdName);
             _dbContext.SaveChanges();
 
             var response = new Response() { ID = random.Next(1, 100000), ClientID = clientID };

@@ -26,9 +26,16 @@ namespace Prokast.Server.Services
         #region Create
         public Response CreateCustomParam([FromBody] CustomParamsDto customParamsDto, int clientID, int regionID, int productID) 
         {
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
             if (customParamsDto == null)
             {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
+                return responseNull;
+            }
+
+            var product = _dbContext.Products.FirstOrDefault(x => x.ID == productID && x.ClientID == clientID);
+            if (product == null)
+            {
+                responseNull.errorMsg = "Nie ma takiego produktu!";
                 return responseNull;
             }
 
@@ -41,8 +48,17 @@ namespace Prokast.Server.Services
                 ProductID = productID
             };
             
-
             _dbContext.CustomParams.Add(customParam);
+            _dbContext.SaveChanges();
+
+            var createdParam = _dbContext.CustomParams.OrderByDescending(x => x.ID).FirstOrDefault();
+            if (createdParam == null)
+            {
+                responseNull.errorMsg = "Błąd parametru!";
+                return responseNull;
+            }
+
+            product.CustomParams.Add(createdParam);
             _dbContext.SaveChanges();
 
             var response = new Response() { ID = random.Next(1,100000), ClientID = clientID};

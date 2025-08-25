@@ -28,7 +28,7 @@ namespace Prokast.Server.Services
         }
 
 
-        public Response CreatePhoto([FromBody] PhotoDto photo, int clientID) {
+        public Response CreatePhoto([FromBody] PhotoDto photo, int clientID, int productID) {
             var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
 
 
@@ -64,21 +64,15 @@ namespace Prokast.Server.Services
             };
             var link = _blobPhotoStorageService.UploadPhotoAsync(photoBLOB);
             _blobPhotoStorageService.DownloadPhotoAsync(photo.Name);
-            
 
-
-            //TODO: proszę mi to naprawić
             var newPhoto = new Photo { 
                 Name = photo.Name,
-                ProductID = photo.ProductId,
+                ProductID = productID,
                 Value = link.ToString(),
             };
 
             _dbContext.Photos.Add(newPhoto);
             _dbContext.SaveChanges();
-
-            
-            
 
             var response = new Response() { ID = random.Next(1, 100000), ClientID = clientID };
             return response;
@@ -114,25 +108,28 @@ namespace Prokast.Server.Services
 
         }
 
-        //TODO: ustalić co to jest i po co to jest
+
         public Response GetAllPhotosInProduct(int clientID, int productID)
         {
-            //var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Nie ma takiego zdjecia" };
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Nie ma takiego zdjecia" };
 
-            //var product = _dbContext.Products.FirstOrDefault(x => x.ClientID == clientID && x.ID == productID);
-            //if (product == null)
-            //{
-            //    responseNull.errorMsg = "Nie ma takiego produktu!";
-            //    return responseNull;
-            //}
-            //var PhotosIDList = product.Photos.Split(",")
-            //                  .Select(x => int.Parse(x)).ToList();
+            /*var product = _dbContext.Products.FirstOrDefault(x => x.ClientID == clientID && x.ID == productID);
+            if (product == null)
+            {
+                responseNull.errorMsg = "Nie ma takiego produktu!";
+                return responseNull;
+            }
+            var PhotosIDList = product.Photos.Split(",")
+                              .Select(x => int.Parse(x)).ToList();
 
-            //var PhotosList = _dbContext.Photos.Where(x => PhotosIDList.Contains(x.ID)).ToList();
-            //if (PhotosList.Count() == 0)
-            //{
-            //    return responseNull;
-            //}
+            var PhotosList = _dbContext.Photos.Where(x => PhotosIDList.Contains(x.ID)).ToList();*/
+
+            var phohoList = _dbContext.Products.FirstOrDefault(x => x.ClientID == clientID && x.ID == productID).Photos;
+
+            if (phohoList.Count == 0)
+            {
+                return responseNull;
+            }
 
             var response = new PhotoGetResponse() { ID = random.Next(1, 100000), Model = null };
             return response;

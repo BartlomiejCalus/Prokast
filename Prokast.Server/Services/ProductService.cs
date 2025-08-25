@@ -186,6 +186,13 @@ namespace Prokast.Server.Services
                 return responseNull;
             }
 
+            var client = _dbContext.Clients.FirstOrDefault(x => x.ID == clientID);
+            if (client == null)
+            {
+                responseNull.errorMsg = "Nie ma takiego klienta!";
+                return responseNull;
+            }
+
             var product = new Product
             {
                 ClientID = clientID,
@@ -232,6 +239,16 @@ namespace Prokast.Server.Services
             {
                 _priceService.CreatePrice(price, clientID, newProduct.ID);
             }
+
+            var createdProduct = _dbContext.Products.OrderByDescending(x => x.ID).FirstOrDefault();
+            if (createdProduct == null)
+            {
+                responseNull.errorMsg = "Błąd produktu!";
+                return responseNull;
+            }
+
+            client.Products.Add(createdProduct);
+            _dbContext.SaveChanges();
 
             var response = new Response() { ID = random.Next(1, 100000), ClientID = clientID };
             return response;
