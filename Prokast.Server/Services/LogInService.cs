@@ -106,9 +106,17 @@ namespace Prokast.Server.Services
         public Response CreateAccount(AccountCreateDto accountCreate, int clientID)
         {
             const string litery = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
             if (accountCreate == null)
             {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
+                return responseNull;
+            }
+
+            var client = _dbContext.Clients.FirstOrDefault(x => x.ID == clientID);
+            if (client == null)
+            {
+                responseNull.errorMsg = "Klient nie istnieje!";
                 return responseNull;
             }
 
@@ -151,8 +159,16 @@ namespace Prokast.Server.Services
                 Subject = "Dane Logowania",
                 Body = $"Login: {login}\n Hasło: {password}"
             };
-
             _mailingService.SendEmail(message);
+
+            var createdAccount = _dbContext.Accounts.OrderByDescending(x => x.ID).FirstOrDefault();
+            if (createdAccount == null)
+            {
+                responseNull.errorMsg = "Błąd konta!";
+                return responseNull;
+            }
+            client.Accounts.Add(createdAccount);
+            _dbContext.SaveChanges();
 
             var response = new AccountCredentialsResponse() {ID =  random.Next(1,100000), ClientID = clientID, Model = creds};
             return response;

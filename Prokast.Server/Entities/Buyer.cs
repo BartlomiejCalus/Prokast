@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
 
 namespace Prokast.Server.Entities
 {
@@ -19,6 +21,7 @@ namespace Prokast.Server.Entities
         [RegularExpression(@"^[A-Z]{2}-\d{3}-\d{6}-\d$", ErrorMessage = "NIP must have format XX-123-456789-5.")]
         public string? NIP { get; set; }
 
+        [JsonIgnore]
         public virtual List<Order> Orders { get; set; }
     }
 }

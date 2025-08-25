@@ -23,10 +23,15 @@ namespace Prokast.Server.Services
         #region Create
         public Response CreateAdditionalDescription([FromBody] AdditionalDescriptionCreateDto description, int clientID, int regionID, int productID)
         {
-
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
             if (description == null)
             {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
+                return responseNull;
+            }
+            var product = _dbContext.Products.FirstOrDefault(x => x.ID == productID && x.ClientID == clientID);
+            if (product == null)
+            {
+                responseNull.errorMsg = "Nie ma takiego produktu!";
                 return responseNull;
             }
 
@@ -39,6 +44,16 @@ namespace Prokast.Server.Services
             };
 
             _dbContext.AdditionalDescriptions.Add(additionalDescription);
+            _dbContext.SaveChanges();
+
+            var createdDescription = _dbContext.AdditionalDescriptions.OrderByDescending(x => x.ID).FirstOrDefault();
+            if (createdDescription == null)
+            {
+                responseNull.errorMsg = "Błąd opisu!";
+                return responseNull;
+            }
+            
+            product.AdditionalDescriptions.Add(createdDescription);
             _dbContext.SaveChanges();
 
             var response = new Response() { ID = random.Next(1, 100000), ClientID = clientID };

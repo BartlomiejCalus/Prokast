@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Prokast.Server.Entities
 {
@@ -18,8 +19,10 @@ namespace Prokast.Server.Entities
         public required int ClientID { get; set; }
         public virtual Client Client { get; set; }
 
+        [JsonIgnore]
         public virtual List<StoredProduct> StoredProducts { get; set; }
 
+        [JsonIgnore]
         public virtual List<Account> Accounts { get; set; }
     }
 }

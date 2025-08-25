@@ -37,6 +37,13 @@ namespace Prokast.Server.Services
                 return responseNull;
             }
 
+            var client = _dbContext.Clients.FirstOrDefault(x => x.ID == clientID);
+            if (client == null)
+            {
+                responseNull.errorMsg = "Nie ma takiego klienta!";
+                return responseNull;
+            }
+
             var buyer = _dbContext.Buyers.FirstOrDefault(x => x.Email == orderCreateDto.Email && x.PhoneNumber == orderCreateDto.PhoneNumber);
             if (buyer == null)
             {
@@ -105,6 +112,18 @@ namespace Prokast.Server.Services
             }
 
             _dbContext.Orders.Add(order);
+            _dbContext.SaveChanges();
+
+
+
+            /*var createdOrder = _dbContext.Orders.OrderByDescending(x => x.ID).FirstOrDefault();
+            if(createdOrder == null)
+            {
+                responseNull.errorMsg = "Błąd zamówienia!";
+                return responseNull;
+            }*/
+
+            client.Orders.Add(order);
             _dbContext.SaveChanges();
 
             var response = new Response() { ID = random.Next(1, 100000), ClientID = clientID };

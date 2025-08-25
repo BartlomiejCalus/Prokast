@@ -4,9 +4,9 @@ using Prokast.Server.Entities;
 
 namespace Prokast.Server.Configurations
 {
-    public class PriceListsConfiguration: IEntityTypeConfiguration<PriceLists>
+    public class PriceListsConfiguration: IEntityTypeConfiguration<PriceList>
     {
-        public void Configure(EntityTypeBuilder<PriceLists> builder)
+        public void Configure(EntityTypeBuilder<PriceList> builder)
         {
             builder.HasIndex(x => x.ID).IsUnique();
             builder.Property(x => x.Name).IsRequired().HasMaxLength(100);

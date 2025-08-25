@@ -5,7 +5,7 @@ namespace Prokast.Server.Entities
 {
     public class Photo 
     {
-        public required int Id { get; set; }
+        public int Id { get; set; }
         public required string Name { get; set; }
         public required string Value { get; set; }
 

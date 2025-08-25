@@ -15,6 +15,6 @@ namespace Prokast.Server.Entities
 
         public int RegionID { get; set; }
         
-        public virtual Regions Regions { get; set; }
+        public virtual Region Regions { get; set; }
     }
 }
