@@ -229,12 +229,12 @@ namespace Prokast.Server.Services
                 _dbContext.SaveChanges();
             }
 
-            /*foreach(var photo in productCreateDto.Photos)
+            foreach (var photo in productCreateDto.Photos)
             {
-                _photoService.
-            }*/
+                _photoService.CreatePhoto(photo, clientID, newProduct.ID);
+            }
 
-        _priceService.CreatePriceList(productCreateDto.PriceList, clientID, newProduct.ID);
+            _priceService.CreatePriceList(productCreateDto.PriceList, clientID, newProduct.ID);
             foreach(var price in productCreateDto.PriceList.Prices)
             {
                 _priceService.CreatePrice(price, clientID, newProduct.ID);

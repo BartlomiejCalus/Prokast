@@ -7,8 +7,13 @@ namespace Prokast.Server.Models.PhotoModels
     {
         [Required]
         public string Name { get; set; }
-
         [Required]
-        public string Value { get; set; }
+        public int ClientID { get; set; }
+        [Required]
+        public int ProductId { get; set; }
+        [Required]
+        public byte[] Value { get; set; }
+        [Required]
+        public string ContentType { get; set; }
     }
 }

@@ -21,7 +21,7 @@ namespace Prokast.Server.Models.ProductModels
         public List<DictionaryParams>? DictionaryParams { get; set; }
         public List<CustomParamsDto>? CustomParams { get; set; }
 
-        public List<PhotoAdd>? Photos { get; set; }
+        public List<PhotoDto>? Photos { get; set; }
         /*[Required]
         public List<PricesDto>? Prices { get; set; }*/
         [Required]
