@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Navbar from '../Components/Navbar';
 
 const AddParams: React.FC = () => {
   const [form, setForm] = useState({
@@ -19,7 +20,10 @@ const AddParams: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-white to-blue-200">
+    
+    <div className="min-h-screen flex flex-col  bg-gradient-to-br from-blue-100 via-white to-blue-200">
+      <Navbar />
+      <main className="flex flex-col items-center justify-center w-screen mt-10">
       <form
         onSubmit={handleAddParam}
         className="w-full max-w-md p-6 bg-white/80 backdrop-blur-md shadow-lg rounded-2xl space-y-4"
@@ -63,6 +67,7 @@ const AddParams: React.FC = () => {
           Dodaj parametr
         </button>
       </form>
+      </main>
     </div>
   );
 };
