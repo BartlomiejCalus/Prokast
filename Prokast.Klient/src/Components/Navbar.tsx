@@ -26,12 +26,22 @@ const Navbar: React.FC = () => {
         </li>
         <li>
           <Link
+            to="/addProducts"
+            className="text-gray-700 hover:text-blue-500 transition font-medium"
+          >
+            Dodaj Produkt
+          </Link>
+          
+        </li>
+        <li>
+          <Link
             to="/logout"
             className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-xl transition"
           >
             Wyloguj
           </Link>
         </li>
+        
       </ul>
     </nav>
   );
