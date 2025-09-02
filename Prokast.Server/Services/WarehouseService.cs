@@ -48,17 +48,7 @@ namespace Prokast.Server.Services
                 ClientID = clientID,
             };
 
-            _dbContext.Warehouses.Add(warehouse);
-            _dbContext.SaveChanges();
-
-            var createdWarehouse = _dbContext.Warehouses.OrderByDescending(x => x.ID).FirstOrDefault();
-            if (createdWarehouse == null)
-            {
-                responseNull.errorMsg = "Błąd magazynu!";
-                return responseNull;        
-            }
-
-            client.Warehouses.Add(createdWarehouse);
+            client.Warehouses.Add(warehouse);
             _dbContext.SaveChanges();
 
             var response = new Response() { ID = random.Next(1,100000), ClientID = clientID };

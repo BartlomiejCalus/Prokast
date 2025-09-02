@@ -42,18 +42,8 @@ namespace Prokast.Server.Services
                 RegionID = regionID,
                 ProductID = productID
             };
-
-            _dbContext.AdditionalDescriptions.Add(additionalDescription);
-            _dbContext.SaveChanges();
-
-            var createdDescription = _dbContext.AdditionalDescriptions.OrderByDescending(x => x.ID).FirstOrDefault();
-            if (createdDescription == null)
-            {
-                responseNull.errorMsg = "Błąd opisu!";
-                return responseNull;
-            }
             
-            product.AdditionalDescriptions.Add(createdDescription);
+            product.AdditionalDescriptions.Add(additionalDescription);
             _dbContext.SaveChanges();
 
             var response = new Response() { ID = random.Next(1, 100000), ClientID = clientID };

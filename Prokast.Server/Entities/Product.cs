@@ -29,7 +29,6 @@ namespace Prokast.Server.Entities
         public required int ClientID { get; set; }
         public virtual Client Client { get; set; }
 
-        public int? StoredProductID { get; set; }
         public virtual StoredProduct? StoredProduct { get; set; }
         
         [JsonIgnore]

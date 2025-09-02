@@ -7,7 +7,7 @@ namespace Prokast.Server.Services.Interfaces
 {
     public interface IPhotoService
     {
-        Response CreatePhoto([FromBody] PhotoDto photo, int clientID, int productID);
+        Response CreatePhoto(PhotoDto photo, int clientID, int productID);
         Response GetAllPhotos(int clientID);
         Response GetPhotosByID(int clientID, int ID);
         Response GetAllPhotosInProduct(int clientID, int productID);

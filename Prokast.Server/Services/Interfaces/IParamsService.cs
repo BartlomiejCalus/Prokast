@@ -6,7 +6,7 @@ namespace Prokast.Server.Services.Interfaces
 {
     public interface IParamsService
     {
-        Response CreateCustomParam([FromBody] CustomParamsDto customParamsDto, int clientID, int regionID, int productID);
+        Response CreateCustomParam(CustomParamsDto customParamsDto, int clientID, int regionID, int productID);
         Response GetAllParams(int clientID);
         Response GetParamsByID(int clientID, int ID);
         Response GetParamsByName(int clientID, string name);

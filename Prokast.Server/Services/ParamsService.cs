@@ -48,17 +48,7 @@ namespace Prokast.Server.Services
                 ProductID = productID
             };
             
-            _dbContext.CustomParams.Add(customParam);
-            _dbContext.SaveChanges();
-
-            var createdParam = _dbContext.CustomParams.OrderByDescending(x => x.ID).FirstOrDefault();
-            if (createdParam == null)
-            {
-                responseNull.errorMsg = "Błąd parametru!";
-                return responseNull;
-            }
-
-            product.CustomParams.Add(createdParam);
+            product.CustomParams.Add(customParam);
             _dbContext.SaveChanges();
 
             var response = new Response() { ID = random.Next(1,100000), ClientID = clientID};

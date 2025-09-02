@@ -11,6 +11,7 @@ using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models.ResponseModels.AccountResponseModels;
 using Prokast.Server.Services.Interfaces;
 using Prokast.Server.Models.AccountModels;
+using Microsoft.EntityFrameworkCore;
 
 
 
@@ -144,7 +145,13 @@ namespace Prokast.Server.Services
                 ClientID = clientID
             };
 
-            _dbContext.Accounts.Add(newAccount);
+            if(client.Accounts == null)
+            {
+                responseNull.errorMsg = "Błąd - brak kont!";
+                return responseNull;
+            }
+
+            client.Accounts.Add(newAccount);
             _dbContext.SaveChanges();
 
             var creds = new AccountCredentials()
@@ -161,14 +168,6 @@ namespace Prokast.Server.Services
             };
             _mailingService.SendEmail(message);
 
-            var createdAccount = _dbContext.Accounts.OrderByDescending(x => x.ID).FirstOrDefault();
-            if (createdAccount == null)
-            {
-                responseNull.errorMsg = "Błąd konta!";
-                return responseNull;
-            }
-            client.Accounts.Add(createdAccount);
-            _dbContext.SaveChanges();
 
             var response = new AccountCredentialsResponse() {ID =  random.Next(1,100000), ClientID = clientID, Model = creds};
             return response;

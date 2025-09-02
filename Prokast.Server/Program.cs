@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Prokast.Server;
+using Prokast.Server.Filters;
 using Prokast.Server.Entities;
 using Prokast.Server.Models;
 using Prokast.Server.Services;
@@ -25,10 +26,13 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SchemaFilter<ExcludeEntitiesFilter>();
+});
 builder.Services.AddDbContext<ProkastServerDbContext>(opt=>
 {
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("LocalConnection"));
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 }
 );
 

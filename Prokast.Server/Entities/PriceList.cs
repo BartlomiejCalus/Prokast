@@ -12,6 +12,6 @@ namespace Prokast.Server.Entities
         public virtual Product Product { get; set; }
 
         [JsonIgnore]
-        public virtual List<Prices> Prices { get; set; } 
+        public virtual List<Prices> Prices { get; set; }
     }
 }

@@ -51,17 +51,7 @@ namespace Prokast.Server.Services
                 ProductID = productID
             };
 
-            _dbContext.AdditionalNames.Add(additionalName);
-            _dbContext.SaveChanges();
-
-            var createdName = _dbContext.AdditionalNames.OrderByDescending(x => x.ID).FirstOrDefault();
-            if (createdName == null)
-            {
-                responseNull.errorMsg = "Błąd nazwy!";
-                return responseNull;
-            }
-
-            product.AdditionalNames.Add(createdName);
+            product.AdditionalNames.Add(additionalName);
             _dbContext.SaveChanges();
 
             var response = new Response() { ID = random.Next(1, 100000), ClientID = clientID };

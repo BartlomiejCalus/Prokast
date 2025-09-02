@@ -47,17 +47,10 @@ namespace Prokast.Server.Services
                 Name = priceLists.Name.ToString(),
                 ProductID = productID
             };
-            _dbContext.PriceLists.Add(priceList);
+
+
+            product.PriceList = priceList;
             _dbContext.SaveChanges();
-
-            var createdPriceList = _dbContext.PriceLists.OrderByDescending(x => x.ID).FirstOrDefault();
-            if (createdPriceList == null)
-            {
-                responseNull.errorMsg = "Błąd cennika!";
-                return responseNull;
-            }
-
-            product.PriceList = createdPriceList;
 
             var response = new Response() { ID = random.Next(1, 100000), ClientID = clientID };
             return response;
@@ -88,18 +81,8 @@ namespace Prokast.Server.Services
                 RegionID = prices.RegionID,
                 PriceListID = priceList.ID,
             };
-            //priceList.Prices.Add(price);
-            _dbContext.Prices.Add(price);
-            _dbContext.SaveChanges();
 
-            var createdPrice = _dbContext.Prices.OrderByDescending(x => x.ID).FirstOrDefault();
-            if (createdPrice == null)
-            {
-                responseNull.errorMsg = "Błąd ceny!";
-                return responseNull;
-            }
-
-            priceList.Prices.Add(createdPrice);
+            priceList.Prices.Add(price);
             _dbContext.SaveChanges();
 
             var response = new Response() { ID = random.Next(1, 100000), ClientID = clientID };

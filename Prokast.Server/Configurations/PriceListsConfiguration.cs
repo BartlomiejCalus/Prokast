@@ -10,8 +10,8 @@ namespace Prokast.Server.Configurations
         {
             builder.HasIndex(x => x.ID).IsUnique();
             builder.Property(x => x.Name).IsRequired().HasMaxLength(100);
-            //builder.HasOne(x => x.Product).WithOne(y => y.PriceLists).HasForeignKey<PriceLists>(z => z.ProductID).OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(x => x.Prices).WithOne(y => y.PriceLists).HasForeignKey(z => z.PriceListID).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(x => x.Product).WithOne(y => y.PriceList).HasForeignKey<PriceList>(z => z.ProductID).OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

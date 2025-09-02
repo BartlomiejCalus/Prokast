@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Prokast.Server.Entities;
 
@@ -11,9 +12,11 @@ using Prokast.Server.Entities;
 namespace Prokast.Server.Migrations
 {
     [DbContext(typeof(ProkastServerDbContext))]
-    partial class ProkastServerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250901182944_fixConfiguration")]
+    partial class fixConfiguration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -550,8 +553,7 @@ namespace Prokast.Server.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("ProductID")
-                        .IsUnique();
+                    b.HasIndex("ProductID");
 
                     b.HasIndex("WarehouseID");
 
@@ -780,8 +782,8 @@ namespace Prokast.Server.Migrations
             modelBuilder.Entity("Prokast.Server.Entities.StoredProduct", b =>
                 {
                     b.HasOne("Prokast.Server.Entities.Product", "Product")
-                        .WithOne("StoredProduct")
-                        .HasForeignKey("Prokast.Server.Entities.StoredProduct", "ProductID")
+                        .WithMany("StoredProducts")
+                        .HasForeignKey("ProductID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -850,7 +852,7 @@ namespace Prokast.Server.Migrations
                     b.Navigation("PriceList")
                         .IsRequired();
 
-                    b.Navigation("StoredProduct");
+                    b.Navigation("StoredProducts");
                 });
 
             modelBuilder.Entity("Prokast.Server.Entities.Warehouse", b =>
