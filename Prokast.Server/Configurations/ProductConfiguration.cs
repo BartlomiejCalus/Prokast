@@ -20,7 +20,7 @@ namespace Prokast.Server.Configurations
             builder.HasMany(x => x.CustomParams).WithOne(y => y.Product).HasForeignKey(z => z.ProductID).OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(x => x.DictionaryParams).WithMany();
             builder.HasMany(x => x.Photos).WithOne(y => y.Product).HasForeignKey(z => z.ProductID).OnDelete(DeleteBehavior.Cascade);
-            builder.HasOne(x => x.StoredProduct).WithOne(y => y.Product).HasForeignKey<StoredProduct>(z => z.ProductID).OnDelete(DeleteBehavior.Restrict);
+            //builder.HasOne(x => x.StoredProduct).WithOne(y => y.Product).HasForeignKey<Product>(z => z.StoredProductID).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

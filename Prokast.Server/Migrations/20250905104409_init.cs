@@ -106,6 +106,31 @@ namespace Prokast.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SKU = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EAN = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AdditionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ClientID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Products_Clients_ClientID",
+                        column: x => x.ClientID,
+                        principalTable: "Clients",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Warehouses",
                 columns: table => new
                 {
@@ -128,88 +153,6 @@ namespace Prokast.Server.Migrations
                         principalTable: "Clients",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Accounts",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Login = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Role = table.Column<int>(type: "int", nullable: true),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ClientID = table.Column<int>(type: "int", nullable: true),
-                    WarehouseID = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Accounts", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_Accounts_Clients_ClientID",
-                        column: x => x.ClientID,
-                        principalTable: "Clients",
-                        principalColumn: "ID");
-                    table.ForeignKey(
-                        name: "FK_Accounts_Warehouses_WarehouseID",
-                        column: x => x.WarehouseID,
-                        principalTable: "Warehouses",
-                        principalColumn: "ID");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "StoredProducts",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    MinQuantity = table.Column<int>(type: "int", nullable: false),
-                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    WarehouseID = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_StoredProducts", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_StoredProducts_Warehouses_WarehouseID",
-                        column: x => x.WarehouseID,
-                        principalTable: "Warehouses",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Products",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SKU = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EAN = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AdditionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ClientID = table.Column<int>(type: "int", nullable: false),
-                    StoredProductID = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Products", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_Products_Clients_ClientID",
-                        column: x => x.ClientID,
-                        principalTable: "Clients",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Products_StoredProducts_StoredProductID",
-                        column: x => x.StoredProductID,
-                        principalTable: "StoredProducts",
-                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -332,8 +275,8 @@ namespace Prokast.Server.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    OrderID = table.Column<int>(type: "int", nullable: false),
-                    ProductID = table.Column<int>(type: "int", nullable: false)
+                    OrderID = table.Column<int>(type: "int", nullable: true),
+                    ProductID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -342,14 +285,12 @@ namespace Prokast.Server.Migrations
                         name: "FK_OrderProducts_Orders_OrderID",
                         column: x => x.OrderID,
                         principalTable: "Orders",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "ID");
                     table.ForeignKey(
                         name: "FK_OrderProducts_Products_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Products",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -389,6 +330,63 @@ namespace Prokast.Server.Migrations
                         name: "FK_PriceLists_Products_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Products",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Accounts",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Login = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Role = table.Column<int>(type: "int", nullable: true),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClientID = table.Column<int>(type: "int", nullable: true),
+                    WarehouseID = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Accounts", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Accounts_Clients_ClientID",
+                        column: x => x.ClientID,
+                        principalTable: "Clients",
+                        principalColumn: "ID");
+                    table.ForeignKey(
+                        name: "FK_Accounts_Warehouses_WarehouseID",
+                        column: x => x.WarehouseID,
+                        principalTable: "Warehouses",
+                        principalColumn: "ID");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StoredProducts",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    MinQuantity = table.Column<int>(type: "int", nullable: false),
+                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    WarehouseID = table.Column<int>(type: "int", nullable: false),
+                    ProductID = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StoredProducts", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_StoredProducts_Products_ProductID",
+                        column: x => x.ProductID,
+                        principalTable: "Products",
+                        principalColumn: "ID");
+                    table.ForeignKey(
+                        name: "FK_StoredProducts_Warehouses_WarehouseID",
+                        column: x => x.WarehouseID,
+                        principalTable: "Warehouses",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -520,11 +518,11 @@ namespace Prokast.Server.Migrations
                 column: "ClientID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_StoredProductID",
-                table: "Products",
-                column: "StoredProductID",
+                name: "IX_StoredProducts_ProductID",
+                table: "StoredProducts",
+                column: "ProductID",
                 unique: true,
-                filter: "[StoredProductID] IS NOT NULL");
+                filter: "[ProductID] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StoredProducts_WarehouseID",
@@ -565,6 +563,9 @@ namespace Prokast.Server.Migrations
                 name: "Prices");
 
             migrationBuilder.DropTable(
+                name: "StoredProducts");
+
+            migrationBuilder.DropTable(
                 name: "Orders");
 
             migrationBuilder.DropTable(
@@ -574,16 +575,13 @@ namespace Prokast.Server.Migrations
                 name: "Regions");
 
             migrationBuilder.DropTable(
+                name: "Warehouses");
+
+            migrationBuilder.DropTable(
                 name: "Buyers");
 
             migrationBuilder.DropTable(
                 name: "Products");
-
-            migrationBuilder.DropTable(
-                name: "StoredProducts");
-
-            migrationBuilder.DropTable(
-                name: "Warehouses");
 
             migrationBuilder.DropTable(
                 name: "Clients");

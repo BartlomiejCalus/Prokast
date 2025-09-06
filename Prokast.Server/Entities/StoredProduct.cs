@@ -12,7 +12,7 @@ namespace Prokast.Server.Entities
         public int WarehouseID { get; set; }
         public virtual Warehouse Warehouse { get; set; }
 
-        public int ProductID { get; set; }
-        public virtual Product Product { get; set; }
+        public int? ProductID { get; set; }
+        public virtual Product? Product { get; set; }
     }
 }

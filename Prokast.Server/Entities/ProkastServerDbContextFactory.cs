@@ -12,7 +12,7 @@ namespace Prokast.Server.Entities
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            var connectionString = configuration.GetConnectionString("LocalConnection");
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
 
             var optionsBuilder = new DbContextOptionsBuilder<ProkastServerDbContext>();
             optionsBuilder.UseSqlServer(connectionString);
