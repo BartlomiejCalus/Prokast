@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Prokast.Server.Entities;
 
@@ -11,9 +12,11 @@ using Prokast.Server.Entities;
 namespace Prokast.Server.Migrations
 {
     [DbContext(typeof(ProkastServerDbContext))]
-    partial class ProkastServerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250901184053_fixStoredProduct")]
+    partial class fixStoredProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -368,10 +371,10 @@ namespace Prokast.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int?>("OrderID")
+                    b.Property<int>("OrderID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProductID")
+                    b.Property<int>("ProductID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
@@ -539,8 +542,7 @@ namespace Prokast.Server.Migrations
                     b.Property<int>("MinQuantity")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProductID")
-
+                    b.Property<int>("ProductID")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
@@ -552,9 +554,7 @@ namespace Prokast.Server.Migrations
                     b.HasKey("ID");
 
                     b.HasIndex("ProductID")
-                        .IsUnique()
-                        .HasFilter("[ProductID] IS NOT NULL");
-
+                        .IsUnique();
 
                     b.HasIndex("WarehouseID");
 
@@ -713,11 +713,15 @@ namespace Prokast.Server.Migrations
                 {
                     b.HasOne("Prokast.Server.Entities.Order", "Order")
                         .WithMany("OrderProducts")
-                        .HasForeignKey("OrderID");
+                        .HasForeignKey("OrderID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Prokast.Server.Entities.Product", "Product")
                         .WithMany("OrderProducts")
-                        .HasForeignKey("ProductID");
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Order");
 
@@ -780,8 +784,9 @@ namespace Prokast.Server.Migrations
                 {
                     b.HasOne("Prokast.Server.Entities.Product", "Product")
                         .WithOne("StoredProduct")
-                        .HasForeignKey("Prokast.Server.Entities.StoredProduct", "ProductID");
-
+                        .HasForeignKey("Prokast.Server.Entities.StoredProduct", "ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Prokast.Server.Entities.Warehouse", "Warehouse")
                         .WithMany("StoredProducts")

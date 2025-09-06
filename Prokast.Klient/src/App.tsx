@@ -8,6 +8,7 @@ import EditParams from './pages/EditParams';
 import CreateEmployee from './pages/CreateEmployee';
 import PriceList from './pages/PriceList';
 import ProductsList from './pages/ProductsList';
+import AddProducts from './pages/AddProducts';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/CreateEmployee" element={<CreateEmployee />} />
         <Route path="/PriceList" element={<PriceList />} />
         <Route path="/ProductsList" element={<ProductsList />} />
+        <Route path="/AddProducts" element={<AddProducts />} />
       </Routes>
     </Router>
   );
