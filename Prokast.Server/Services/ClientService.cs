@@ -68,24 +68,17 @@ namespace Prokast.Server.Services
             _dbContext.Clients.Add(client);
             _dbContext.SaveChanges();
 
-            var newClient = _dbContext.Clients.OrderByDescending(x => x.ID).FirstOrDefault();
-            if(newClient == null)
-            {
-                responseNull.errorMsg = "Błąd klient nwm";
-                return responseNull;
-            }
-
             var account = new Account
             {
                 Login = registration.Login,
                 Password = getHashed(registration.Password),
-                ClientID = newClient.ID
+                ClientID = client.ID
             };
 
             _dbContext.Accounts.Add(account);
             _dbContext.SaveChanges();
 
-            var response = new ClientRegisterResponse() { ID = random.Next(1, 100000), ClientID = account.ID, Registration = registration };
+            var response = new ClientRegisterResponse() { ID = random.Next(1, 100000), ClientID = client.ID, Registration = registration };
             return response;
 
         }
