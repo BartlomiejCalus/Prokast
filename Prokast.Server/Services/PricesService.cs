@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Azure;
+using Microsoft.EntityFrameworkCore;
 using Prokast.Server.Entities;
 using Prokast.Server.Models.PriceModels;
 using Prokast.Server.Models.PriceModels.PriceListModels;
@@ -35,7 +36,7 @@ namespace Prokast.Server.Services
                 return responseNull;
             }
 
-            var product = _dbContext.Products.FirstOrDefault(x => x.ID == productID && x.ClientID == clientID);
+            var product = _dbContext.Products.Include(p => p.PriceList).FirstOrDefault(x => x.ID == productID && x.ClientID == clientID);
             if (product == null)
             {
                 responseNull.errorMsg = "Nie ma takiego produktu!";
@@ -65,7 +66,7 @@ namespace Prokast.Server.Services
                 return responseNull;
             }
 
-            var priceList = _dbContext.PriceLists.FirstOrDefault(x => x.ProductID == productID && x.Product.ClientID == clientID);
+            var priceList = _dbContext.PriceLists.Include(p => p.Prices).FirstOrDefault(x => x.ProductID == productID && x.Product.ClientID == clientID);
             if (priceList == null)
             {
                 responseNull.errorMsg = "Nie ma takiej listy!";
