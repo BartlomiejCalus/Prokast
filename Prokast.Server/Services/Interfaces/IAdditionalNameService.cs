@@ -6,7 +6,7 @@ namespace Prokast.Server.Services.Interfaces
 {
     public interface IAdditionalNameService
     {
-        Response CreateAdditionalName([FromBody] AdditionalNameDto additionalNameDto, int clientID);
+        Response CreateAdditionalName(AdditionalNameDto additionalNameDto, int clientID, int regionID, int productID);
         Response GetAllNames(int clientID);
         Response GetNamesByID(int ID, int clientID);
         Response GetNamesByIDNames(int ID, string Title, int clientID);

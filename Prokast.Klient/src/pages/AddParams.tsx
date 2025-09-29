@@ -1,4 +1,6 @@
+import axios from 'axios';
 import React, { useState } from 'react';
+import Navbar from '../Components/Navbar';
 
 const AddParams: React.FC = () => {
   const [form, setForm] = useState({
@@ -9,17 +11,40 @@ const AddParams: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+
+    
+
   };
 
-  const handleAddParam = (e: React.FormEvent) => {
+  const handleAddParam = async(e: React.FormEvent) => {
     e.preventDefault();
+    ///const {name, type, value} = form;
     console.log('Dodano parametr:', form);
+    try {
+      const response = await axios.post('https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/params',
+        {
+          ...form
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log('Odpowiedź z API:', response.data);
+    }
+    catch (error) {
+      console.error('Błąd podczas zmiany wartości:', error);
+    }
     
     alert('Parametr dodany!');
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-white to-blue-200">
+    
+    <div className="min-h-screen flex flex-col  bg-gradient-to-br from-blue-100 via-white to-blue-200">
+      <Navbar />
+      <main className="flex flex-col items-center justify-center w-screen mt-10">
       <form
         onSubmit={handleAddParam}
         className="w-full max-w-md p-6 bg-white/80 backdrop-blur-md shadow-lg rounded-2xl space-y-4"
@@ -63,6 +88,7 @@ const AddParams: React.FC = () => {
           Dodaj parametr
         </button>
       </form>
+      </main>
     </div>
   );
 };

@@ -5,6 +5,6 @@ namespace Prokast.Server.Services.Interfaces
 {
     public interface IMailingService
     {
-        void SendEmail([FromBody] EmailMessage emailMessage);
+        void SendEmail(EmailMessage emailMessage);
     }
 }

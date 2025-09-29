@@ -11,6 +11,7 @@ using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models.ResponseModels.AccountResponseModels;
 using Prokast.Server.Services.Interfaces;
 using Prokast.Server.Models.AccountModels;
+using Microsoft.EntityFrameworkCore;
 
 
 
@@ -71,7 +72,7 @@ namespace Prokast.Server.Services
                 return responseNull;
             }
 
-            var client = _dbContext.Clients.FirstOrDefault(x => x.AccountID == account.ID);
+            var client = _dbContext.Clients.FirstOrDefault(x => x.Accounts.Any(y => y.ID == account.ID));
             if (client == null)
             {
                 var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = -1, errorMsg = "Błędny login" };
@@ -97,12 +98,26 @@ namespace Prokast.Server.Services
         #endregion
 
         #region create
+        /// <summary>
+        /// Funkcja pozwala na stworzzenie konta użytkownika i wysyła e-mail z danymi logowania na konto mailowe podane podczas kreacji
+        /// </summary>
+        /// <param name="accountCreate"></param>
+        /// <param name="clientID"></param>
+        /// <returns></returns>
         public Response CreateAccount(AccountCreateDto accountCreate, int clientID)
         {
             const string litery = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
             if (accountCreate == null)
             {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
+                return responseNull;
+            }
+
+            var client = _dbContext.Clients.FirstOrDefault(x => x.ID == clientID);
+            if (client == null)
+            {
+                responseNull.errorMsg = "Klient nie istnieje!";
                 return responseNull;
             }
 
@@ -130,7 +145,13 @@ namespace Prokast.Server.Services
                 ClientID = clientID
             };
 
-            _dbContext.Accounts.Add(newAccount);
+            if(client.Accounts == null)
+            {
+                responseNull.errorMsg = "Błąd - brak kont!";
+                return responseNull;
+            }
+
+            client.Accounts.Add(newAccount);
             _dbContext.SaveChanges();
 
             var creds = new AccountCredentials()
@@ -145,8 +166,8 @@ namespace Prokast.Server.Services
                 Subject = "Dane Logowania",
                 Body = $"Login: {login}\n Hasło: {password}"
             };
-
             _mailingService.SendEmail(message);
+
 
             var response = new AccountCredentialsResponse() {ID =  random.Next(1,100000), ClientID = clientID, Model = creds};
             return response;

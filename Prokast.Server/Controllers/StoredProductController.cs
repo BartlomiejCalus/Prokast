@@ -25,11 +25,11 @@ namespace Prokast.Server.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> CreateWarehouse([FromBody] StoredProductCreateMultipleDto storedProducts, [FromQuery] int warehouseID, [FromQuery] int clientID)
+        public ActionResult<Response> CreateWarehouse([FromBody] StoredProductCreateMultipleDto storedProducts, [FromQuery] int warehouseID, [FromQuery] int clientID, [FromQuery] int productID)
         {
             try
             {
-                var result = _storedProductService.CreateStoredProduct(storedProducts, warehouseID, clientID);
+                var result = _storedProductService.CreateStoredProduct(storedProducts, warehouseID, clientID, productID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Created();
             }

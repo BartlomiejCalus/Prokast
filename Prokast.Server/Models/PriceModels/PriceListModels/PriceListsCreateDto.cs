@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Prokast.Server.Models.PricesModels;
+using System.ComponentModel.DataAnnotations;
 
 namespace Prokast.Server.Models.PriceModels.PriceListModels
 {
@@ -6,5 +7,8 @@ namespace Prokast.Server.Models.PriceModels.PriceListModels
     {
         [Required]
         public string Name { get; set; }
+        [Required]
+        public List<PricesDto>? Prices { get; set; }
+
     }
 }

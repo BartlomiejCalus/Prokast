@@ -6,7 +6,10 @@ namespace Prokast.Server.Models.ProductModels
 {
     public class ProductGet
     {
-        [Required]
+        
+        public List<Product> Products { get; set; }
+        
+        /*[Required]
         public int ID { get; set; }
         [Required]
         public int ClientID { get; set; }
@@ -26,6 +29,6 @@ namespace Prokast.Server.Models.ProductModels
         [Required]
         public PriceListAll PriceList { get; set; }
         public DateTime AdditionDate { get; set; } = DateTime.Now;
-        public DateTime ModificationDate { get; set; } = DateTime.Now;
+        public DateTime ModificationDate { get; set; } = DateTime.Now;*/
     }
 }

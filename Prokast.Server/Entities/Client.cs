@@ -1,34 +1,32 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Prokast.Server.Entities
 {
     public class Client
     {
-        [Key]
         public int ID { get; set; }
-        [Required]
-        public int AccountID { get; set; }
-        [Required]
-        public string FirstName { get; set; }
-        [Required]
-        public string LastName { get; set; }
-        [Required]
-        public string BusinessName { get; set; }
-        [Required]
+        public required string FirstName { get; set; }
+        public required string LastName { get; set; }
+        public required string BusinessName { get; set; }
         [RegularExpression(@"^[A-Z]{2}-\d{3}-\d{6}-\d$", ErrorMessage = "NIP must have format XX-123-456789-5.")]
-        public string NIP { get; set; }
-        [Required]
-        public string Address { get; set; }
-        [Required]
+        public required string NIP { get; set; }
+        public required string Address { get; set; }
         [RegularExpression(@"\d{3}-\d{3}-\d{3}$", ErrorMessage = "Phone Number must have format: 123-456-789.")]
-        public string PhoneNumber { get; set; }
-        [Required]
+        public required string PhoneNumber { get; set; }
         [RegularExpression(@"^\d{2}-\d{3}$", ErrorMessage = "Postal Code must have format XX-XXX.")]
-        public string PostalCode { get; set; }
-        [Required]
-        public string City { get; set; }
-        [Required]
-        public string Country { get; set; }
+        public required string PostalCode { get; set; }
+        public required string City { get; set; }
+        public required string Country { get; set; }
         public DateTime? Subscription { get; set; }
+
+        [JsonIgnore]
+        public virtual List<Order>? Orders { get; set; }
+        [JsonIgnore]
+        public virtual List<Product>? Products { get; set; }
+        [JsonIgnore]
+        public virtual List<Account>? Accounts { get; set; }
+        [JsonIgnore]
+        public virtual List<Warehouse>? Warehouses { get; set; }
     }
 }

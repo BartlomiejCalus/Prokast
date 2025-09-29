@@ -6,7 +6,7 @@ namespace Prokast.Server.Services.Interfaces
 {
     public interface IStoredProductService
     {
-        Response CreateStoredProduct([FromBody] StoredProductCreateMultipleDto storedProducts, int warehouseID, int clientID);
+        Response CreateStoredProduct(StoredProductCreateMultipleDto storedProducts, int warehouseID, int clientID, int productID);
         Response GetAllStoredProducts(int clientID, int warehouseID);
         Response GetStoredProductByID(int clientID,int warehouseID, int ID);
         Response GetStoredProductsBelowMinimum(int clientID, int warehouseID);

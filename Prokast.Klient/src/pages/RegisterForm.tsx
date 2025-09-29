@@ -1,50 +1,115 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../Components/Navbar';
 
 const RegisterForm: React.FC = () => {
-  const navigate = useNavigate();
-
   const [form, setForm] = useState({
-    email: '',
+    login: '',
     password: '',
-    confirmPassword: '',
     firstName: '',
     lastName: '',
     businessName: '',
     nip: '',
     address: '',
-    phone: '',
+    phoneNumber: '',
     postalCode: '',
     city: '',
     country: ''
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const normalizeInput = (name: string, value: string) => {
+    switch (name) {
+      case 'nip': {
+        const cleaned = value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        const parts = [
+          cleaned.slice(0, 2),      // WS
+          cleaned.slice(2, 5),      // 017
+          cleaned.slice(5, 11),     // 240378
+          cleaned.slice(11, 12)     // 1
+        ];
+        return parts.filter(Boolean).join('-');
+      }
+
+      case 'phoneNumber': {
+        const digits = value.replace(/\D/g, '').slice(0, 9);
+        if (digits.length < 4) return digits;
+        if (digits.length <= 6)
+          return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+        return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+      }
+
+      case 'postalCode': {
+        const digits = value.replace(/\D/g, '').slice(0, 5);
+        if (digits.length >= 3)
+          return `${digits.slice(0, 2)}-${digits.slice(2)}`;
+        return digits;
+      }
+
+      case 'firstName':
+      case 'lastName':
+      case 'city':
+      case 'country':
+        return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+
+      case 'login':
+      case 'address':
+      case 'businessName':
+        return value.trim();
+
+      default:
+        return value;
+    }
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const normalizedValue = normalizeInput(name, value);
+    setForm({ ...form, [name]: normalizedValue });
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (form.password !== form.confirmPassword) {
-      alert('Hasła się nie zgadzają');
-      return;
-    }
+    try {
+      const response = await axios.post(
+        'https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/client',
+        { ...form },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'text/plain'
+          }
+        }
+      );
 
-    navigate('/dashboard');
+      if (response.status >= 200 && response.status <= 204) {
+        console.log('Rejestracja zakończona sukcesem!');
+      }
+
+      console.log('Odpowiedź z API:', response.data);
+    } catch (error: any) {
+      console.error('Błąd podczas rejestracji:', error);
+      if (error.response) {
+        console.error('Kod odpowiedzi:', error.response.status);
+        console.error('Treść błędu:', error.response.data);
+      }
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-white to-blue-200">
-      <form onSubmit={handleRegister} className="w-full max-w-md p-6 bg-white/80 backdrop-blur-md shadow-lg rounded-2xl space-y-4">
+    <div className="min-h-screen flex flex-col  bg-gradient-to-br from-blue-100 via-white to-blue-200">
+      <Navbar />
+      <main className="flex flex-col items-center justify-center w-screen mt-10">
+      <form onSubmit={handleRegister} className="w-full max-w-md p-6 bg-white/80 backdrop-blur-md shadow-lg rounded-2xl space-y-2">
         <h2 className="text-2xl font-bold text-center text-gray-800">Rejestracja</h2>
 
         <input
-          type="email"
-          name="email"
-          placeholder="Email"
+          type="text"
+          name="login"
+          placeholder="Login"
           className="w-full p-2 border rounded-xl"
-          value={form.email}
+          value={form.login}
           onChange={handleChange}
           required
         />
@@ -55,16 +120,6 @@ const RegisterForm: React.FC = () => {
           placeholder="Hasło"
           className="w-full p-2 border rounded-xl"
           value={form.password}
-          onChange={handleChange}
-          required
-        />
-
-        <input
-          type="password"
-          name="confirmPassword"
-          placeholder="Powtórz hasło"
-          className="w-full p-2 border rounded-xl"
-          value={form.confirmPassword}
           onChange={handleChange}
           required
         />
@@ -121,10 +176,10 @@ const RegisterForm: React.FC = () => {
 
         <input
           type="tel"
-          name="phone"
+          name="phoneNumber"
           placeholder="Numer telefonu"
           className="w-full p-2 border rounded-xl"
-          value={form.phone}
+          value={form.phoneNumber}
           onChange={handleChange}
           required
         />
@@ -166,6 +221,7 @@ const RegisterForm: React.FC = () => {
           Stwórz konto
         </button>
       </form>
+      </main>
     </div>
   );
 };

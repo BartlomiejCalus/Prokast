@@ -6,6 +6,6 @@ namespace Prokast.Server.Services.Interfaces
 {
     public interface IClientService
     {
-        Response RegisterClient([FromBody] Registration registration);
+        Response RegisterClient(Registration registration);
     }
 }

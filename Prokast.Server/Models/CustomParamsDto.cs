@@ -10,5 +10,7 @@ namespace Prokast.Server.Models
         public string Type { get; set; }
         [Required]
         public string Value { get; set; }
+        [Required]
+        public int RegionID { get; set; }
     }
 }

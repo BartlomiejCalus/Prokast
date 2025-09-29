@@ -5,6 +5,7 @@ using Prokast.Server.Entities;
 using Prokast.Server.Models;
 using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models.ResponseModels.CustomParamsResponseModels;
+using Prokast.Server.Models.ResponseModels.DictionaryParamsResponseModels;
 using Prokast.Server.Services.Interfaces;
 
 
@@ -23,11 +24,18 @@ namespace Prokast.Server.Services
         }
 
         #region Create
-        public Response CreateCustomParam([FromBody] CustomParamsDto customParamsDto, int clientID ) 
+        public Response CreateCustomParam([FromBody] CustomParamsDto customParamsDto, int clientID, int regionID, int productID) 
         {
+            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
             if (customParamsDto == null)
             {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
+                return responseNull;
+            }
+
+            var product = _dbContext.Products.Include(p => p.CustomParams).FirstOrDefault(x => x.ID == productID && x.ClientID == clientID);
+            if (product == null)
+            {
+                responseNull.errorMsg = "Nie ma takiego produktu!";
                 return responseNull;
             }
 
@@ -36,11 +44,11 @@ namespace Prokast.Server.Services
                 Name = customParamsDto.Name.ToString(),
                 Type = customParamsDto.Type.ToString(),
                 Value = customParamsDto.Value.ToString(),
-                ClientID = clientID
+                RegionID = regionID,
+                ProductID = productID
             };
             
-
-            _dbContext.CustomParams.Add(customParam);
+            product.CustomParams.Add(customParam);
             _dbContext.SaveChanges();
 
             var response = new Response() { ID = random.Next(1,100000), ClientID = clientID};
@@ -51,13 +59,14 @@ namespace Prokast.Server.Services
         #region Get
         public Response GetAllParams(int clientID)
         {
-            var paramList = _dbContext.CustomParams.Where(x => x.ClientID == clientID).ToList();
-            var response = new ParamsGetResponse() { ID = random.Next(1,100000), ClientID = clientID, Model = paramList };
+            var paramList = _dbContext.CustomParams.Where(x => x.Product.ClientID == clientID).ToList();
             if(paramList.Count() == 0)
             {
                 var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Klient nie ma parametrów" };
                 return responseNull;
             }
+
+            var response = new ParamsGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = paramList };
             return response;
         }
         
@@ -65,13 +74,14 @@ namespace Prokast.Server.Services
         
         public Response GetParamsByID(int clientID, int ID)
         {
-            var param = _dbContext.CustomParams.Where(x => x.ClientID == clientID && x.ID == ID).ToList();
-            var response = new ParamsGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = param };
+            var param = _dbContext.CustomParams.Where(x => x.Product.ClientID == clientID && x.ID == ID).ToList();
             if (param.Count() == 0)
             {
                 var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego parametru" };
                 return responseNull;
-            }   
+            }
+
+            var response = new ParamsGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = param };
             return response;
 
         }
@@ -80,23 +90,46 @@ namespace Prokast.Server.Services
         
         public Response GetParamsByName(int clientID, string name) 
         {
-            var param = _dbContext.CustomParams.Where(x => x.ClientID == clientID && x.Name.Contains(name)).ToList();
-
-            
-            var response = new ParamsGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = param };
+            var param = _dbContext.CustomParams.Where(x => x.Product.ClientID == clientID && x.Name.Contains(name)).ToList();
             if (param.Count() == 0)
             {
                 var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma modelu z taką nazwą" };
                 return responseNull;
             }
+            var response = new ParamsGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = param };
             return response;
         }
+
+        //TODO: poprawić
+        //public Response GetAllParamsInProduct(int clientID, int productID)
+        //{
+        //    var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Nie ma takiego parametru" };
+
+        //    var product = _dbContext.Products.FirstOrDefault(x => x.ClientID == clientID && x.ID == productID);
+        //    if (product == null)
+        //    {
+        //        responseNull.errorMsg = "Nie ma takiego produktu!";
+        //        return responseNull;
+        //    }
+        //    var customParamsIDList = product.CustomParams.Split(",")
+        //                      .Select(x => int.Parse(x)).ToList();
+
+        //    var customParamsList = _dbContext.CustomParams.Where(x => customParamsIDList.Contains(x.ID)).ToList();
+        //    if (customParamsList.Count() == 0)
+        //    {
+        //        return responseNull;
+        //    }
+
+        //    var response = new ParamsGetResponse() { ID = random.Next(1, 100000), Model = customParamsList };
+        //    return response;
+
+        //}
         #endregion
 
         #region Edit
         public Response EditParams(int clientID, int ID, CustomParamsDto data)
         {
-            var findParam = _dbContext.CustomParams.FirstOrDefault(x => x.ClientID == clientID && x.ID == ID);
+            var findParam = _dbContext.CustomParams.FirstOrDefault(x => x.Product.ClientID == clientID && x.ID == ID);
             
 
             if (findParam == null)
@@ -119,7 +152,7 @@ namespace Prokast.Server.Services
         #region Delete
         public Response DeleteParams(int clientID, int ID)
         {
-            var findParam = _dbContext.CustomParams.FirstOrDefault(x => x.ClientID == clientID && x.ID == ID);
+            var findParam = _dbContext.CustomParams.FirstOrDefault(x => x.Product.ClientID == clientID && x.ID == ID);
 
 
             if (findParam == null)

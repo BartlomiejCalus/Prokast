@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Prokast.Server.Entities
 {
@@ -6,21 +7,22 @@ namespace Prokast.Server.Entities
     {
         [Key]
         public int ID { get; set; }
-        [Required]
-        public int ClientID { get; set; }
-        [Required]
-        public string Name { get; set; }
-        [Required]
-        public string Address { get; set; }
-        [Required]
+        public required string Name { get; set; }
+        public required string Address { get; set; }
         [RegularExpression(@"^\d{2}-\d{3}$", ErrorMessage = "Postal Code must have format XX-XXX.")]
-        public string PostalCode { get; set; }
-        [Required]
-        public string City { get; set; }
-        [Required]
-        public string Country { get; set; }
-        [Required]
+        public required string PostalCode { get; set; }
+        public required string City { get; set; }
+        public required string Country { get; set; }
         [RegularExpression(@"\d{3}-\d{3}-\d{3}$", ErrorMessage = "Phone Number must have format: 123-456-789.")]
-        public string PhoneNumber { get; set; }
+        public required string PhoneNumber { get; set; }
+
+        public required int ClientID { get; set; }
+        public virtual Client Client { get; set; }
+
+        [JsonIgnore]
+        public virtual List<StoredProduct> StoredProducts { get; set; }
+
+        [JsonIgnore]
+        public virtual List<Account> Accounts { get; set; }
     }
 }

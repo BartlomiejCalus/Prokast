@@ -16,17 +16,15 @@ namespace Prokast.Server.Models.ProductModels
         public string EAN { get; set; }
         [Required]
         public string Description { get; set; }
-        [Required]
-        public List<AdditionalNameDto> AdditionalNames { get; set; }
-        public List<DictionaryParamsDto>? DictionaryParams { get; set; }
-
-
+        public List<AdditionalDescriptionCreateDto>? AdditionalDescriptions { get; set; }
+        public List<AdditionalNameDto>? AdditionalNames { get; set; }
+        public List<DictionaryParams>? DictionaryParams { get; set; }
         public List<CustomParamsDto>? CustomParams { get; set; }
 
-        public List<PhotoAdd> Photos { get; set; }
+        public List<PhotoDto>? Photos { get; set; }
+        /*[Required]
+        public List<PricesDto>? Prices { get; set; }*/
         [Required]
-        public List<PricesDto> Prices { get; set; }
-        [Required]
-        public PriceListsCreateDto PriceList { get; set; }
+        public PriceListsCreateDto? PriceList { get; set; }
     }
 }

@@ -80,11 +80,11 @@ namespace Prokast.Server.Controllers
         [HttpGet("Region/{region}")]
         [ProducesResponseType(typeof(DictionaryGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetParamsByRegion ( [FromRoute] int region)
+        public ActionResult<Response> GetParamsByRegion ( [FromRoute] int regionID)
         {
             try
             {
-                var param = _paramsService.GetParamsByRegion(region);
+                var param = _paramsService.GetParamsByRegion(regionID);
                 if (param is ErrorResponse) return BadRequest(param);
                 return Ok(param);
             }

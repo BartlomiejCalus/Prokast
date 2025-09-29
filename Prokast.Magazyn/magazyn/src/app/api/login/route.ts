@@ -7,7 +7,7 @@ export async function POST(req: Request) {
   try {
     const { Login, Password } = await req.json();
 
-    // Log request details
+
     console.log("Sending request to external API...");
     console.log("Request URL:", 'https://prokast-axgwbmd6cnezbmet.polandcentral-01.azurewebsites.net/api/login');
     console.log("Request Headers:", {
@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     });
     console.log("Request Body:", { Login, Password });
 
-    // Send request to external API
+
     const response = await axios.post(
       'https://prokast-axgwbmd6cnezbmet.polandcentral-01.azurewebsites.net/api/login',
       { Login, Password },
@@ -27,10 +27,10 @@ export async function POST(req: Request) {
     console.log("Status:", response.status);
     console.log("Data:", response.data);
 
-    // Return the response from the external API
+
     return NextResponse.json(response.data, { status: 200 });
   } catch (error: any) {
-    // Log detailed error information
+
     if (axios.isAxiosError(error)) {
       console.error("Axios error details:", {
         message: error.message,

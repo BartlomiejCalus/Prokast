@@ -23,11 +23,24 @@ namespace Prokast.Server.Services
         }
 
         #region Create
+        /// <summary>
+        /// Funkcja ta tworzy zamówienie dla danego kupca, jeśli jest to pierwsze zamówienie tej osoby jest również rejestrowana jako nowy kupiec
+        /// </summary>
+        /// <param name="orderCreateDto"></param>
+        /// <param name="clientID"></param>
+        /// <returns></returns>
         public Response CreateOrder(OrderCreateDto orderCreateDto, int clientID)
         {
             var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
             if (orderCreateDto == null)
             {
+                return responseNull;
+            }
+
+            var client = _dbContext.Clients.FirstOrDefault(x => x.ID == clientID);
+            if (client == null)
+            {
+                responseNull.errorMsg = "Nie ma takiego klienta!";
                 return responseNull;
             }
 
@@ -81,21 +94,36 @@ namespace Prokast.Server.Services
             {
                 OrderID = orderCreateDto.OrderID,
                 OrderDate = orderCreateDto.OrderDate,
+                OrderStatus = OrderStatus.pending,
                 TotalPrice = orderCreateDto.TotalPrice,
                 TotalWeightKg = orderCreateDto.TotalWeightKg,
                 PaymentMethod = orderCreateDto.PaymentMethod,
+                PaymentStatus = PaymentStatus.pending,
                 UpdateDate = orderCreateDto.UpdateDate,
                 ClientID = clientID,
-                BuyerID = buyer.ID,
+                IsBusiness = false,
+                BuyerID = buyer.ID
             };
 
             if(business != null)
             {
                 order.BusinessID = business.ID;
-                order.IsBusiness = orderCreateDto.IsBusiness;
+                order.IsBusiness = true;
             }
 
             _dbContext.Orders.Add(order);
+            _dbContext.SaveChanges();
+
+
+
+            /*var createdOrder = _dbContext.Orders.OrderByDescending(x => x.ID).FirstOrDefault();
+            if(createdOrder == null)
+            {
+                responseNull.errorMsg = "Błąd zamówienia!";
+                return responseNull;
+            }*/
+
+            client.Orders.Add(order);
             _dbContext.SaveChanges();
 
             var response = new Response() { ID = random.Next(1, 100000), ClientID = clientID };
@@ -261,7 +289,13 @@ namespace Prokast.Server.Services
             var response = new OrderEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = order };
             return response;
         }
-
+        /// <summary>
+        /// Funkcja zmienia status zamówienia
+        /// </summary>
+        /// <param name="clientID"></param>
+        /// <param name="orderID"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public Response ChangeOrderStatus(int clientID, int orderID, OrderStatus request)
         {
 
@@ -279,7 +313,13 @@ namespace Prokast.Server.Services
             var response = new OrderEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = order };
             return response;
         }
-
+        /// <summary>
+        /// Funkcja zmienia status plątności zamówienia
+        /// </summary>
+        /// <param name="clientID"></param>
+        /// <param name="orderID"></param>
+        /// <param name="paymentStatus"></param>
+        /// <returns></returns>
         public Response ChangePaymentStatus(int clientID, int orderID, PaymentStatus paymentStatus)
         {
             var order = _dbContext.Orders.FirstOrDefault(x => x.ID == orderID);
@@ -297,6 +337,13 @@ namespace Prokast.Server.Services
             return response;
         }
 
+        /// <summary>
+        /// Funkcja edytuje zamówienie
+        /// </summary>
+        /// <param name="clientID"></param>
+        /// <param name="orderID"></param>
+        /// <param name="orderEditDto"></param>
+        /// <returns></returns>
         public Response EditOrder(int clientID, int orderID, OrderEditDto orderEditDto)
         {
             var order = _dbContext.Orders.FirstOrDefault(x => x.ID == orderID);

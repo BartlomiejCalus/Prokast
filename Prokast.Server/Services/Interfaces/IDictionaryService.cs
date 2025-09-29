@@ -10,7 +10,7 @@ namespace Prokast.Server.Services.Interfaces
         Response GetAllParams();
         Response GetParamsByID(int ID);
         Response GetParamsByName(string name);
-        Response GetParamsByRegion(int region);
+        Response GetParamsByRegion(int regionID);
         Response GetValuesByName(string name);
     }
 }

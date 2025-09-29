@@ -7,8 +7,6 @@ namespace Prokast.Server.Models.StoredProductModels
         //[Required]
         //public int WarehouseID { get; set; }
         [Required]
-        public int ProductID { get; set; }
-        [Required]
         public int Quantity { get; set; }
         [Required]
         public int MinQuantity { get; set; }

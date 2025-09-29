@@ -14,7 +14,5 @@ namespace Prokast.Server.Models.PricesModels
         public decimal VAT { get; set; }
         [Required]
         public decimal Brutto { get; set; }
-        [Required]
-        public int PriceListID { get; set; }
     }
 }

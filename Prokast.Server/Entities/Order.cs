@@ -6,32 +6,27 @@ namespace Prokast.Server.Entities
 {
     public class Order
     {
-        [Key]
         public int ID { get; set; }
-        [Required]
-        public string OrderID { get; set; }
-        [Required]
-        public DateTime OrderDate { get; set; }
-        [Required]
+        public required string OrderID { get; set; }
+        public required DateTime OrderDate { get; set; }
         [JsonConverter(typeof(JsonStringEnumConverter))]
-        public OrderStatus OrderStatus { get; set; } = OrderStatus.pending;
-        [Required]
-        public decimal TotalPrice { get; set; }
-        [Required]
-        public decimal TotalWeightKg { get; set; }
-        [Required]
-        public string PaymentMethod { get; set; }
-        [Required]
-        public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.pending;
-        [Required]
-        public DateTime UpdateDate { get; set; }
+        public required OrderStatus OrderStatus { get; set; } = OrderStatus.pending;
+        public required decimal TotalPrice { get; set; }
+        public required decimal TotalWeightKg { get; set; }
+        public required string PaymentMethod { get; set; }
+        public required PaymentStatus PaymentStatus { get; set; } = PaymentStatus.pending;
+        public required DateTime UpdateDate { get; set; }
         public string? TrackingID { get; set; }
-        [Required]
-        public int ClientID { get; set; }
-        [Required]
-        public int BuyerID { get; set; }
+        public required bool IsBusiness { get; set; }
         public int? BusinessID { get; set; }
-        [Required]
-        public bool IsBusiness { get; set; }
+
+        public required int ClientID { get; set; }
+        public virtual Client Client { get; set; }
+
+        public required int BuyerID { get; set; }
+        public virtual Buyer Buyer { get; set; }
+
+        [JsonIgnore]
+        public virtual List<OrderProduct>? OrderProducts  { get; set; } = [];
     }
 }

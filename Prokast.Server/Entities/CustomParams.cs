@@ -4,15 +4,15 @@ namespace Prokast.Server.Entities
 {
     public class CustomParams
     {
-        [Key]
         public int ID { get; set; }
-        [Required]
-        public string Name { get; set; }
-        [Required]
-        public string Type { get; set; }
-        [Required]
-        public string Value { get; set; }
-        [Required]
-        public int ClientID { get; set; }
+        public required string Name { get; set; }
+        public required string Type { get; set; }
+        public required string Value { get; set; }
+
+        public required int ProductID { get; set; }
+        public virtual Product Product { get; set; }
+
+        public required int RegionID { get; set; }
+        public virtual Region Regions { get; set; }
     }
 }
