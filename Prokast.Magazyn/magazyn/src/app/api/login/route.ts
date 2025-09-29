@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 export async function POST(req: Request) {
   console.log("Login API route accessed");
@@ -29,19 +29,17 @@ export async function POST(req: Request) {
 
     // Return the response from the external API
     return NextResponse.json(response.data, { status: 200 });
-  } catch (error: any) {
-    // Log detailed error information
-    if (axios.isAxiosError(error)) {
-      console.error("Axios error details:", {
-        message: error.message,
-        code: error.code,
-        status: error.response?.status,
-        data: error.response?.data,
-      });
-    } else {
-      console.error("Non-Axios error:", error);
-    }
-
-    return NextResponse.json({ message: "An error occurred while processing the request." }, { status: 500 });
+  } catch (error: unknown) {
+  if (axios.isAxiosError(error)) {
+    const axiosError = error as AxiosError; // 👈 tutaj dopiero rzutowanie
+    console.error("Axios error details:", {
+      message: axiosError.message,
+      code: axiosError.code,
+      status: axiosError.response?.status,
+      data: axiosError.response?.data,
+    });
+  } else {
+    console.error("Non-Axios error:", error);
   }
+}
 }

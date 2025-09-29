@@ -7,7 +7,7 @@ import Image from "next/image";
 function LoginForm() {
     const [Login, setLogin] = useState<string>("");
     const [Password, setPassword] = useState<string>("");
-    const [isMounted, setIsMounted] = useState(false);
+    const [, setIsMounted] = useState(false);
     
 
     
