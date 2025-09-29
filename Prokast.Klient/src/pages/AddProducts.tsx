@@ -140,6 +140,7 @@ useEffect(() => {
       try {
         const resp = await axios.get(
           "https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/additionaldescriptions?clientID=1"
+          
         );
         const data = resp.data.model;
 
