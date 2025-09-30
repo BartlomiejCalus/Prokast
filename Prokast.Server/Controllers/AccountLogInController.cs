@@ -7,6 +7,12 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using Prokast.Server.Services.Interfaces;
 using Prokast.Server.Models.AccountModels;
 using Prokast.Server.Models.ResponseModels.AccountResponseModels;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.IdentityModel.Tokens.Jwt;
+using Prokast.Server.Models.JWT;
+using Microsoft.AspNetCore.Authorization;
 //using Microsoft.EntityFrameworkCore;
 
 
@@ -15,29 +21,41 @@ namespace Prokast.Server.Controllers
     [Route("api/login")]
     public class AccountController : ControllerBase
     {
+        public static AccountCreateDto user = new();
+
         private readonly ILogInService _LogInService;
 
+        private readonly IConfiguration _configuration;
 
-
-        public AccountController(ILogInService logInService)
+        public AccountController(IConfiguration configuration, ILogInService logInService)
         {
             _LogInService = logInService;
+            _configuration = configuration;
         }
 
         #region LogIn
         [HttpPost]
         [ProducesResponseType(typeof(LogInLoginResponse),StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> Log_In([FromBody] LoginRequest loginRequest) 
+        public ActionResult<TokenResponseDto> Log_In([FromBody] LoginRequest loginRequest) 
         {
+            
             try 
             { 
-                var response = _LogInService.Log_In(loginRequest);
-                if (response is ErrorResponse) return BadRequest(response);
+                var response =  _LogInService.Log_In(loginRequest);
+                if (response is null) return BadRequest();
+
+                
+
                 return Ok(response);
-            }catch (Exception ex) { 
+                //return Ok(response);
+            }
+            catch (Exception ex) { 
                 return BadRequest(ex.Message);
             }
+
+            
+
         }
         #endregion
 
@@ -141,5 +159,40 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-    }
+
+        [Authorize]
+        [HttpGet("authenticated")]
+        public IActionResult AuthenticatedOnlyEndpoint()
+        {
+            return Ok("You are authenticated!");
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("admin-only")]
+        public IActionResult AdminOnlyEndpoint()
+        {
+            return Ok("You are and admin!");
+        }
+
+        /*private string CreateToken(AccountCreateDto accountCreateDto)
+        {
+            var claims = new List<Claim> {
+                new Claim(ClaimTypes.Name, accountCreateDto.FirstName)
+            };
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(_configuration.GetValue<string>("AppSettings:Token")!));
+        
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var tokenDescriptor = new JwtSecurityToken(
+                issuer: _configuration.GetValue<string>("AppSettings:Issuer"),
+                audience: _configuration.GetValue<string>("AppSettings:Audience"),
+                claims: claims,
+                expires: DateTime.UtcNow.AddDays(1),
+                signingCredentials: creds
+                );
+
+            return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
+        }*/
+    }   
 }
