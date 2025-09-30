@@ -21,11 +21,12 @@ namespace Prokast.Server.Services
         private readonly ProkastServerDbContext _dbContext;
         private readonly IMapper _mapper;
         Random random = new Random();
-
-        public ClientService(ProkastServerDbContext dbContext, IMapper mapper)
+        private readonly IConfiguration _configuration;
+        public ClientService(ProkastServerDbContext dbContext, IMapper mapper, IConfiguration configuration)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _configuration = configuration;
         }
 
         public static string getHashed(string text)
@@ -43,42 +44,40 @@ namespace Prokast.Server.Services
 
         #region RegisterClient
         public Response RegisterClient([FromBody] Registration registration) 
-        {
-            //var reg = _mapper.Map<Registration>(registration);
-            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Błędne dane rejestracji" };
-            if (registration == null)
+        { 
+            
+            var reg = _mapper.Map<Registration>(registration);
+            if (reg == null)
             {
+                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Błędne dane rejestracji" };
                 return responseNull;
             }
-            
-            //var test = _dbContext.Accounts.FirstOrDefault(x => x.Login == account.Login);
-
-            var client = new Client
-            {
-                FirstName = registration.FirstName,
-                LastName = registration.LastName,
-                BusinessName = registration.BusinessName,
-                NIP = registration.NIP,
-                Address = registration.Address,
-                PhoneNumber = registration.PhoneNumber,
-                PostalCode = registration.PostalCode,
-                City = registration.City,
-                Country = registration.Country
-            };
-            _dbContext.Clients.Add(client);
-            _dbContext.SaveChanges();
-
             var account = new Account
             {
                 Login = registration.Login,
-                Password = getHashed(registration.Password),
-                ClientID = client.ID
+                Password = getHashed(registration.Password)
             };
 
             _dbContext.Accounts.Add(account);
             _dbContext.SaveChanges();
+            var test = _dbContext.Accounts.FirstOrDefault(x => x.Login == account.Login);
 
-            var response = new ClientRegisterResponse() { ID = random.Next(1, 100000), ClientID = client.ID, Registration = registration };
+            var client = new Client
+            {
+                FirstName = reg.FirstName,
+                LastName = reg.LastName,
+                BusinessName = reg.BusinessName,
+                NIP = reg.NIP,
+                Address = reg.Address,
+                PhoneNumber = reg.PhoneNumber,
+                PostalCode = reg.PostalCode,
+                City = reg.City,
+                Country = reg.Country
+            };
+            _dbContext.Clients.Add(client);
+            _dbContext.SaveChanges(); 
+
+            var response = new ClientRegisterResponse() { ID = random.Next(1, 100000), ClientID = test.ID, Registration = reg };
             return response;
 
         }
