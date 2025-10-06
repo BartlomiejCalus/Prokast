@@ -17,7 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Prokast.Server.Models.JWT;
-//using Azure;
+
 
 
 
@@ -70,45 +70,48 @@ namespace Prokast.Server.Services
         #endregion
 
         #region LogIn
-        public string Log_In([FromBody] LoginRequest loginRequest)
+        public Response Log_In([FromBody] LoginRequest loginRequest)
         {
 
             var account = _dbContext.Accounts.FirstOrDefault(x => x.Login == loginRequest.Login);
             if (account == null)
             {
-                //var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = -1, errorMsg = "Nie ma takiego konta" };
-                return "nie ma takiego konta";
+                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = -1, errorMsg = "Nie ma takiego konta" };
+                return responseNull;
             }
 
             var client = _dbContext.Clients.FirstOrDefault(x => x.Accounts.Any(y => y.ID == account.ID));
             if (client == null)
             {
-                //var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = -1, errorMsg = "Błędny login" };
-                return "nie ma takiego klienta";
+                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = -1, errorMsg = "Błędny login" };
+                return responseNull;
             }
                 
 
             if (account.Password != getHashed(loginRequest.Password))
             {
-                //var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = -1, errorMsg = "Błędne hasło" };
-                return "Błąd hasła";
+                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = -1, errorMsg = "Błędne hasło" };
+                return responseNull;
             }
 
-            if (client.Subscription is null || client.Subscription < DateTime.Now)
+            /*if (client.Subscription is null || client.Subscription < DateTime.Now)
             {
                 var responseFalse = new LogInLoginResponse() { ID = random.Next(1, 100000), ClientID = client.ID, IsSubscribed = false };
-                return "nie ma subskrypcji";
-            }
+                return responseFalse;
+            }*/
+            
+            var tokn = CreateToken(account).ToString();
+            var response = new LogInLoginResponse() {ID = random.Next(1,100000), ClientID = client.ID, IsSubscribed = true, Token = tokn };
 
-            //var response = new LogInLoginResponse() {ID = random.Next(1,100000), ClientID = client.ID, IsSubscribed = true };
-            return  CreateTokenResponse(account).ToString();
+
+
+            return response;
         }
         private TokenResponseDto CreateTokenResponse(Account? user)
         {
             return new TokenResponseDto
             {
                 AccessToken = CreateToken(user),
-                //RefreshToken = await GenerateAndSaveRefreshTokenAsync(user)
             };
         }
 
@@ -122,21 +125,21 @@ namespace Prokast.Server.Services
         /// <param name="accountCreate"></param>
         /// <param name="clientID"></param>
         /// <returns></returns>
-        public Account CreateAccount(AccountCreateDto accountCreate, int clientID)
+        public Response CreateAccount(AccountCreateDto accountCreate, int clientID)
         {
             const string litery = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
             var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
             if (accountCreate == null)
             {
-                return null;
+                return responseNull;
             }
 
             var client = _dbContext.Clients.FirstOrDefault(x => x.ID == clientID);
             if (client == null)
             {
                 responseNull.errorMsg = "Klient nie istnieje!";
-                return null;
+                return responseNull;
             }
 
             string login = new string(accountCreate.FirstName.Take(3).Concat(accountCreate.LastName.Take(2)).
@@ -157,7 +160,7 @@ namespace Prokast.Server.Services
                 Login = login,
                 Password = getHashed(password.ToString()),
                 WarehouseID = accountCreate.WarehouseID,
-                Role = accountCreate.Role,
+                Role = 1,
                 FirstName = accountCreate.FirstName,
                 LastName = accountCreate.LastName,
                 ClientID = clientID
@@ -166,7 +169,7 @@ namespace Prokast.Server.Services
             if(client.Accounts == null)
             {
                 responseNull.errorMsg = "Błąd - brak kont!";
-                return null;
+                return responseNull;
             }
 
             client.Accounts.Add(newAccount);
@@ -188,22 +191,22 @@ namespace Prokast.Server.Services
 
 
             var response = new AccountCredentialsResponse() {ID =  random.Next(1,100000), ClientID = clientID, Model = creds};
-            return newAccount;
+            return response;
         }
 
         private string CreateToken(Account user)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.FirstName, user.LastName),
+                new Claim(ClaimTypes.Name, user.Login),
                 new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
                 new Claim(ClaimTypes.Role, user.Role.ToString())
             };
 
             var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_configuration.GetValue<string>("AppSettings:Token")!));
+                Encoding.UTF8.GetBytes(_configuration.GetValue<string>("AppSettings:Key")!));
 
-            var creds = new SigningCredentials(key, SecurityAlgorithms.Sha256);
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var tokenDescriptor = new JwtSecurityToken(
                 issuer: _configuration.GetValue<string>("AppSettings:Issuer"),
                 audience: _configuration.GetValue<string>("AppSettings:Audience"),

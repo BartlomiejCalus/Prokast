@@ -55,7 +55,8 @@ namespace Prokast.Server.Services
             var account = new Account
             {
                 Login = registration.Login,
-                Password = getHashed(registration.Password)
+                Password = getHashed(registration.Password),
+                Role = 1
             };
 
             _dbContext.Accounts.Add(account);
