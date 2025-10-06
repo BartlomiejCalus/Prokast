@@ -13,15 +13,11 @@ Projekt jest podzielony na trzy główne podprojekty:
 
 ## Zespół
 
-- **Opieka projektu**:
-  - [Bartłomiej Całus](https://github.com/BartlomiejCalus)
-
-- **Aplikacja Klienta**: 
+- **FontEnd**: 
+  - [Jacek Pelikan](https://github.com/Jacek912)
   - [Jakub Reszczyński](https://github.com/JakubReszczynski)
   
-- **Aplikacja Magazynowa**: 
-  - [Jacek Pelikan](https://github.com/Jacek912)
-
-- **API do Udostępniania Zasobów**: 
+- **BackEnd**: 
   - [Marek Grys](https://github.com/MarekGrys)
   - [Hubert Ciura](https://github.com/HubertCiura)
+  - [Bartłomiej Całus](https://github.com/BartlomiejCalus)

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import Navbar from '../Components/Navbar';
 import axios from 'axios';
 
@@ -34,7 +34,7 @@ const AddProducts: React.FC = () => {
       { regionID: 0 , name: '', type: '', value: '' }
     ],
     customParams: [
-      {id: 1, name: '', type: '', value: '', clientID: 1 }
+      { name: '', type: '', value: '' }
     ],
     photos: [
       { name: '', value: '' }
@@ -53,6 +53,14 @@ const AddProducts: React.FC = () => {
     { regionID: 1, name: 'Kolor', type: 'tekst', value: 'czerwony' },
     { regionID: 2, name: 'Rozmiar', type: 'liczba', value: '42' }
   ]);
+
+  const regions = [
+  { id: 1, name: "Europa" },
+  { id: 2, name: "Azja" },
+  { id: 3, name: "Afryka" },
+  { id: 4, name: "Ameryka" }
+];
+
 
   const [showAdditionalNameModal, setShowAdditionalNameModal] = useState(false);
   const [showDictionaryParamModal, setShowDictionaryParamModal] = useState(false);
@@ -140,6 +148,7 @@ useEffect(() => {
       try {
         const resp = await axios.get(
           "https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/additionaldescriptions?clientID=1"
+          
         );
         const data = resp.data.model;
 
@@ -384,7 +393,7 @@ const handleAddCustomParam = () => {
           >
             <option value="">-- Wybierz własny parametr --</option>
             {availableCustomParams.map((item, i) => (
-              <option key={item.id} value={item.id}>
+            <option key={i} value={item.name}>
                 {item.name} ({item.type}) – {item.value}
               </option>
             ))}
@@ -458,14 +467,17 @@ const handleAddCustomParam = () => {
                 onChange={(e) => setNewAdditionalName(prev => ({ ...prev, title: e.target.value }))}
                 className="w-full p-2 border rounded-xl"
               />
-              <input
-                type="number"
-                //do zmiany wybrać z listy regionów obecnie dostepnych a potem dopiero wstawic id tego regionu
-                placeholder="Region"
+              <select
                 value={newAdditionalName.region}
                 onChange={(e) => setNewAdditionalName(prev => ({ ...prev, region: Number(e.target.value) }))}
                 className="w-full p-2 border rounded-xl"
-              />
+              >
+                <option value={0}>-- Wybierz region --</option>
+                {regions.map(r => (
+                  <option key={r.id} value={r.id}>{r.name}</option>
+                ))}
+              </select>
+
               <input
                 type="text"
                 placeholder="Wartość"
@@ -507,17 +519,20 @@ const handleAddCustomParam = () => {
                 onChange={(e) => setNewDictionaryParam(prev => ({ ...prev, value: e.target.value }))}
                 className="w-full p-2 border rounded-xl"
               />
-              <div className="flex items-center w-full max-w-md">
-              <input
-                type="number"
-                placeholder="Region ID"
-                //do zmiany wybrać z listy regionów obecnie dostepnych a potem dopiero wstawic id tego regionu
+              <div className="flex flex-col">
+                
+                <select
                 value={newDictionaryParam.regionID}
                 onChange={(e) => setNewDictionaryParam(prev => ({ ...prev, regionID: Number(e.target.value) }))}
                 className="w-full p-2 border rounded-xl"
-              />
-              <p className="p-2 font-semibold bg-gray-100 border rounded-r-xl whitespace-nowrap">Region ID</p>
+                >
+                  <option value={0}>-- Wybierz region --</option>
+                  {regions.map(r => (
+                    <option key={r.id} value={r.id}>{r.name}</option>
+                  ))}
+                </select>
               </div>
+
               <div className="flex justify-end gap-2">
                 <button type="button" onClick={() => setShowDictionaryParamModal(false)} className="px-4 py-2 bg-gray-300 rounded-xl">Anuluj</button>
                 <button type="button" onClick={handleAddDictionaryParam} className="px-4 py-2 bg-blue-500 text-white rounded-xl">Dodaj</button>
@@ -601,15 +616,20 @@ const handleAddCustomParam = () => {
                 onChange={(e) => setNewPrice(prev => ({ ...prev, name: e.target.value }))}
                 className="w-full p-2 border rounded-xl"
               />
-              <input
-                type="text"
-                //do zmiany wybrać z listy regionów obecnie dostepnych a potem dopiero wstawic id tego regionu
-                placeholder="Region ID"
-                inputMode="numeric"
+              <div className="flex flex-col">
+                
+                <select
                 value={newPrice.regionID}
                 onChange={(e) => setNewPrice(prev => ({ ...prev, regionID: Number(e.target.value) }))}
-                className="w-full p-2 border rounded-xl "
-              />
+                  className="w-full p-2 border rounded-xl"
+                >
+                  <option value={0}>-- Wybierz region --</option>
+                  {regions.map(r => (
+                    <option key={r.id} value={r.id}>{r.name}</option>
+                  ))}
+                </select>
+              </div>
+
               <div className="flex items-center w-full max-w-md">
               <input
                 type="number"

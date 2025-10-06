@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import axios from "axios";
+import ChoiceMenu from "@/components/choiceMenu";
 
 interface StoredProduct {
   id: number;
@@ -64,7 +65,10 @@ export default function StoredProductsPage() {
   };
 
   return (
-    <div className="p-6 min-h-screen" style={{ backgroundColor: '#F0F6FD', color: 'var(--foreground)' }}>
+    
+    <div className=" min-h-screen" style={{ backgroundColor: '#F0F6FD', color: 'var(--foreground)' }}>
+      <ChoiceMenu />
+      <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Stored Products</h1>
 
       <div className="my-4 flex flex-wrap gap-2">
@@ -179,6 +183,7 @@ export default function StoredProductsPage() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Prokast.Server.Entities;
 using Prokast.Server.Models;
 using Prokast.Server.Models.ResponseModels;
@@ -28,7 +29,7 @@ namespace Prokast.Server.Services
             {
                 return responseNull;
             }
-            var product = _dbContext.Products.FirstOrDefault(x => x.ID == productID && x.ClientID == clientID);
+            var product = _dbContext.Products.Include(p => p.AdditionalDescriptions).FirstOrDefault(x => x.ID == productID && x.ClientID == clientID);
             if (product == null)
             {
                 responseNull.errorMsg = "Nie ma takiego produktu!";
