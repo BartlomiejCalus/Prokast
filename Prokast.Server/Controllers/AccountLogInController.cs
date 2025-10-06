@@ -1,5 +1,4 @@
-﻿//using AutoMapper;
-using Prokast.Server.Entities;
+﻿using Prokast.Server.Entities;
 using Prokast.Server.Models;
 using Microsoft.AspNetCore.Mvc;
 using Prokast.Server.Models.ResponseModels;
@@ -13,24 +12,17 @@ using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using Prokast.Server.Models.JWT;
 using Microsoft.AspNetCore.Authorization;
-//using Microsoft.EntityFrameworkCore;
-
 
 namespace Prokast.Server.Controllers
 {
     [Route("api/login")]
     public class AccountController : ControllerBase
     {
-        public static AccountCreateDto user = new();
-
         private readonly ILogInService _LogInService;
 
-        private readonly IConfiguration _configuration;
-
-        public AccountController(IConfiguration configuration, ILogInService logInService)
+        public AccountController(ILogInService logInService)
         {
             _LogInService = logInService;
-            _configuration = configuration;
         }
 
         #region LogIn
@@ -38,29 +30,22 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(LogInLoginResponse),StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<TokenResponseDto> Log_In([FromBody] LoginRequest loginRequest) 
-        {
-            
+        {            
             try 
             { 
                 var response =  _LogInService.Log_In(loginRequest);
                 if (response is null) return BadRequest();
-
-                
-
-                return Ok(response);
-                //return Ok(response);
+                    return Ok(response);
             }
             catch (Exception ex) { 
                 return BadRequest(ex.Message);
             }
-
-            
-
         }
         #endregion
 
         #region GetAll
         [HttpGet]
+        [Authorize]
         [ProducesResponseType(typeof(LogInGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetAll([FromQuery] int clientID) 
@@ -77,8 +62,8 @@ namespace Prokast.Server.Controllers
             }   
         }
         #endregion
-
         [HttpPost("create")]
+        [Authorize]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> CreateAccount([FromBody] AccountCreateDto accountCreate,[FromQuery] int clientID)
@@ -94,8 +79,8 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [Authorize]
         [HttpPut]
+        [Authorize]
         [ProducesResponseType(typeof(AccountEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> EditAccount([FromBody] AccountEditDto accountEdit, [FromQuery] int clientID)
@@ -117,8 +102,8 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [Authorize]
         [HttpPut("Password")]
+        [Authorize]
         [ProducesResponseType(typeof(AccountEditPasswordResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> EditPassword([FromBody] AccountEditPasswordDto editPasswordDto, [FromQuery] int clientID)
@@ -140,8 +125,8 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [Authorize]
         [HttpDelete("{ID}")]
+        [Authorize]
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> DeleteAccount([FromQuery] int clientID, [FromRoute] int ID)
@@ -160,20 +145,18 @@ namespace Prokast.Server.Controllers
             }
         }
 
-        [Authorize]
         [HttpGet("authenticated")]
+        [Authorize]
         public IActionResult AuthenticatedOnlyEndpoint()
         {
             return Ok("You are authenticated!");
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpGet("admin-only")]
+        [Authorize(Roles = "Admin")]
         public IActionResult AdminOnlyEndpoint()
         {
             return Ok("You are and admin!");
-        }
-
-        
+        } 
     }   
 }

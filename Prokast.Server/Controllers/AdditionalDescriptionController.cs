@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Prokast.Server.Controllers
 {
+    [Authorize]
     [Route("api/additionaldescriptions")]
     [Tags("Additional Descriptions")]
     public class AdditionalDescriptionController : ControllerBase
@@ -18,7 +19,7 @@ namespace Prokast.Server.Controllers
         {
             _additionalDescriptionService = descriptionService;
         }
-        [Authorize]
+
         [HttpPost]
         [EndpointSummary("Create an additional description")]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
@@ -37,7 +38,6 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [Authorize]
 
         [HttpGet]
         [EndpointSummary("Get all additional descriptions")]
@@ -58,8 +58,6 @@ namespace Prokast.Server.Controllers
             }
         }
 
-        [Authorize]
-
         [HttpGet("{ID}")]
         [EndpointSummary("Get an additional description")]
         [ProducesResponseType(typeof(AdditionalDescriptionGetResponse), StatusCodes.Status200OK)]
@@ -78,8 +76,6 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-        [Authorize]
 
         [HttpGet("Titles")]
         [EndpointSummary("Get additional descriptions by titles")]
@@ -100,8 +96,6 @@ namespace Prokast.Server.Controllers
             }
         }
 
-        [Authorize]
-
         [HttpGet("Region")]
         [EndpointSummary("Get additional descriptions by region")]
         [ProducesResponseType(typeof(AdditionalDescriptionGetResponse), StatusCodes.Status200OK)]
@@ -120,8 +114,6 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-        [Authorize]
 
         [HttpPut("{ID}")]
         [EndpointSummary("Edit an additional description")]
@@ -148,8 +140,6 @@ namespace Prokast.Server.Controllers
             }
         }
 
-        [Authorize]
-
         [HttpDelete("{ID}")]
         [EndpointSummary("Delete an additional description")]
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
@@ -157,7 +147,6 @@ namespace Prokast.Server.Controllers
         [EndpointDescription("A DELETE operation. Endpoint deletes a given additional description")]
         public ActionResult<Response> DeleteDescription([FromQuery] int clientID, [FromRoute] int ID)
         {
-
             try
             {
                 var result = _additionalDescriptionService.DeleteAdditionalDescription(clientID, ID);
