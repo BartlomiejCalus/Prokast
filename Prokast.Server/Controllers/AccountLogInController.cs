@@ -94,7 +94,7 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
+        [Authorize]
         [HttpPut]
         [ProducesResponseType(typeof(AccountEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -117,7 +117,7 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
+        [Authorize]
         [HttpPut("Password")]
         [ProducesResponseType(typeof(AccountEditPasswordResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -140,7 +140,7 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
+        [Authorize]
         [HttpDelete("{ID}")]
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -174,25 +174,6 @@ namespace Prokast.Server.Controllers
             return Ok("You are and admin!");
         }
 
-        /*private string CreateToken(AccountCreateDto accountCreateDto)
-        {
-            var claims = new List<Claim> {
-                new Claim(ClaimTypes.Name, accountCreateDto.FirstName)
-            };
-            var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_configuration.GetValue<string>("AppSettings:Token")!));
         
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var tokenDescriptor = new JwtSecurityToken(
-                issuer: _configuration.GetValue<string>("AppSettings:Issuer"),
-                audience: _configuration.GetValue<string>("AppSettings:Audience"),
-                claims: claims,
-                expires: DateTime.UtcNow.AddDays(1),
-                signingCredentials: creds
-                );
-
-            return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
-        }*/
     }   
 }

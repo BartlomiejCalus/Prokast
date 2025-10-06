@@ -4,6 +4,7 @@ using Prokast.Server.Models;
 using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models.ResponseModels.AdditionalDescriptionResponseModels;
 using Prokast.Server.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Prokast.Server.Controllers
 {
@@ -17,7 +18,7 @@ namespace Prokast.Server.Controllers
         {
             _additionalDescriptionService = descriptionService;
         }
-
+        [Authorize]
         [HttpPost]
         [EndpointSummary("Create an additional description")]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
@@ -36,6 +37,7 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [Authorize]
 
         [HttpGet]
         [EndpointSummary("Get all additional descriptions")]
@@ -56,6 +58,8 @@ namespace Prokast.Server.Controllers
             }
         }
 
+        [Authorize]
+
         [HttpGet("{ID}")]
         [EndpointSummary("Get an additional description")]
         [ProducesResponseType(typeof(AdditionalDescriptionGetResponse), StatusCodes.Status200OK)]
@@ -74,6 +78,8 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [Authorize]
 
         [HttpGet("Titles")]
         [EndpointSummary("Get additional descriptions by titles")]
@@ -94,6 +100,8 @@ namespace Prokast.Server.Controllers
             }
         }
 
+        [Authorize]
+
         [HttpGet("Region")]
         [EndpointSummary("Get additional descriptions by region")]
         [ProducesResponseType(typeof(AdditionalDescriptionGetResponse), StatusCodes.Status200OK)]
@@ -112,6 +120,8 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [Authorize]
 
         [HttpPut("{ID}")]
         [EndpointSummary("Edit an additional description")]
@@ -137,6 +147,8 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [Authorize]
 
         [HttpDelete("{ID}")]
         [EndpointSummary("Delete an additional description")]
