@@ -5,9 +5,11 @@ using Prokast.Server.Models.ProductModels;
 using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models.ResponseModels.ProductResponseModels;
 using Prokast.Server.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Prokast.Server.Controllers
 {
+    [Authorize]
     [Route("api/products")]
     public class ProductController : ControllerBase
     {

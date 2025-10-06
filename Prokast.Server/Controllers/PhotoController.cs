@@ -5,9 +5,11 @@ using Prokast.Server.Models.PhotoModels;
 using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models.ResponseModels.PhotoResponseModels;
 using Prokast.Server.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Prokast.Server.Controllers
 {
+    [Authorize]
     [Route("api/photos")]
     [Tags("Photos")]
     public class PhotoController : ControllerBase

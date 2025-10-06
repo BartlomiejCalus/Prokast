@@ -2,6 +2,7 @@
 using Prokast.Server.Entities;
 using Prokast.Server.Models;
 using Prokast.Server.Models.AccountModels;
+using Prokast.Server.Models.JWT;
 
 namespace Prokast.Server.Services.Interfaces
 {
@@ -13,5 +14,6 @@ namespace Prokast.Server.Services.Interfaces
         Response EditAccount(AccountEditDto accountEdit, int clientID);
         Response EditPassword(AccountEditPasswordDto editPasswordDto, int clientID);
         Response DeleteAccount(int clientID, int ID);
+
     }
 }

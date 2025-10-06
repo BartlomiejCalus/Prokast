@@ -4,10 +4,12 @@ using Prokast.Server.Models;
 using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models.ResponseModels.CustomParamsResponseModels;
 using Prokast.Server.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace Prokast.Server.Controllers
 {
+    [Authorize]
     [Route("api/params")]
     public class ParamsController: ControllerBase
     {

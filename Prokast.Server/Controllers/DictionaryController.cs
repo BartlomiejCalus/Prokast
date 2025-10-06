@@ -4,10 +4,12 @@ using Prokast.Server.Models;
 using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models.ResponseModels.DictionaryParamsResponseModels;
 using Prokast.Server.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace Prokast.Server.Controllers
 {
+    [Authorize]
     [Route("api/dictionary")]
     public class DictionaryController : ControllerBase
     {

@@ -5,10 +5,12 @@ using Prokast.Server.Models;
 using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models.ResponseModels.AdditionalNameResponseModels;
 using Prokast.Server.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace Prokast.Server.Controllers
 {
+    [Authorize]
     [Route("api/addName")]
     public class AdditionalNameController : ControllerBase
     {

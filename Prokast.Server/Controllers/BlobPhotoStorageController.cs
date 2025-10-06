@@ -2,11 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Prokast.Server.Models;
 using Prokast.Server.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Prokast.Server.Controllers
 {
 
-
+    [Authorize]
     [Route("api/photoStorage")]
     [Tags("PhotoStorage")]
     public class BlobPhotoStorageController : ControllerBase

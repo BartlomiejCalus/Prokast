@@ -4,9 +4,11 @@ using Prokast.Server.Models;
 using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models.ResponseModels.AdditionalDescriptionResponseModels;
 using Prokast.Server.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Prokast.Server.Controllers
 {
+    [Authorize]
     [Route("api/additionaldescriptions")]
     [Tags("Additional Descriptions")]
     public class AdditionalDescriptionController : ControllerBase
@@ -145,7 +147,6 @@ namespace Prokast.Server.Controllers
         [EndpointDescription("A DELETE operation. Endpoint deletes a given additional description")]
         public ActionResult<Response> DeleteDescription([FromQuery] int clientID, [FromRoute] int ID)
         {
-
             try
             {
                 var result = _additionalDescriptionService.DeleteAdditionalDescription(clientID, ID);

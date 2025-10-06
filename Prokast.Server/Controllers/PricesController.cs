@@ -10,12 +10,14 @@ using Prokast.Server.Models.PriceModels.PriceListModels;
 using Prokast.Server.Models.PriceModels;
 using Prokast.Server.Models.ResponseModels.CustomParamsResponseModels;
 using Prokast.Server.Models.ResponseModels.PriceResponseModels.PriceListResponseModels;
+using Microsoft.AspNetCore.Authorization;
 
 
 
 
 namespace Prokast.Server.Controllers
 {
+    [Authorize]
     [Route("api/priceLists")]
     public class PricesController : ControllerBase
     {
