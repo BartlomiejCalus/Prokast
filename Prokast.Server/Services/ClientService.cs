@@ -20,12 +20,14 @@ namespace Prokast.Server.Services
     {
         private readonly ProkastServerDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly ILogInService _logInService;
         Random random = new Random();
 
-        public ClientService(ProkastServerDbContext dbContext, IMapper mapper)
+        public ClientService(ProkastServerDbContext dbContext, IMapper mapper, ILogInService logInService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _logInService = logInService;
         }
 
         public static string getHashed(string text)
