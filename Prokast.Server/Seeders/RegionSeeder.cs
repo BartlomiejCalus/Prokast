@@ -2,9 +2,9 @@
 
 namespace Prokast.Server.Seeders
 {
-    public class RegionSeeder
+    public class RegionSeeder: ISeeder
     {
-        public static void Seed(ProkastServerDbContext dbContext)
+        public void Seed(ProkastServerDbContext dbContext)
         {
             if (!dbContext.Regions.Any())
             {

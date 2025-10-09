@@ -2,9 +2,9 @@
 
 namespace Prokast.Server.Seeders
 {
-    public class DictionaryParamSeeder
+    public class DictionaryParamSeeder: ISeeder
     {
-        public static void Seed(ProkastServerDbContext dbContext)
+        public void Seed(ProkastServerDbContext dbContext)
         {
             if(!dbContext.DictionaryParams.Any())
             {
@@ -298,8 +298,681 @@ namespace Prokast.Server.Seeders
                         OptionID = 9,
                         RegionID = 4,
                     },
-
+                    new()
+                    {
+                        Name = "Pojemność",
+                        Type = "String",
+                        Value = "100ml",
+                        OptionID = 1,
+                        RegionID = 1,
+                    },
+                    new()
+                    {
+                        Name = "Volume",
+                        Type = "String",
+                        Value = "100ml",
+                        OptionID = 1,
+                        RegionID = 2,
+                    },
+                    new()
+                    {
+                        Name = "Volumen",
+                        Type = "String",
+                        Value = "100ml",
+                        OptionID = 1,
+                        RegionID = 3,
+                    },
+                    new()
+                    {
+                        Name = "Objem",
+                        Type = "String",
+                        Value = "100ml",
+                        OptionID = 1,
+                        RegionID = 4,
+                    },
+                    new()
+                    {
+                        Name = "Pojemność",
+                        Type = "String",
+                        Value = "200ml",
+                        OptionID = 2,
+                        RegionID = 1,
+                    },
+                    new()
+                    {
+                        Name = "Volume",
+                        Type = "String",
+                        Value = "200ml",
+                        OptionID = 2,
+                        RegionID = 2,
+                    },
+                    new()
+                    {
+                        Name = "Volumen",
+                        Type = "String",
+                        Value = "200ml",
+                        OptionID = 2,
+                        RegionID = 3,
+                    },
+                    new()
+                    {
+                        Name = "Objem",
+                        Type = "String",
+                        Value = "200ml",
+                        OptionID = 2,
+                        RegionID = 4,
+                    },
+                    new()
+                    {
+                        Name = "Pojemność",
+                        Type = "String",
+                        Value = "250ml",
+                        OptionID = 3,
+                        RegionID = 1,
+                    },
+                    new()
+                    {
+                        Name = "Volume",
+                        Type = "String",
+                        Value = "250ml",
+                        OptionID = 3,
+                        RegionID = 2,
+                    },
+                    new()
+                    {
+                        Name = "Volumen",
+                        Type = "String",
+                        Value = "250ml",
+                        OptionID = 3,
+                        RegionID = 3,
+                    },
+                    new()
+                    {
+                        Name = "Objem",
+                        Type = "String",
+                        Value = "250ml",
+                        OptionID = 3,
+                        RegionID = 4,
+                    },
+                    new()
+                    {
+                        Name = "Pojemność",
+                        Type = "String",
+                        Value = "300ml",
+                        OptionID = 4,
+                        RegionID = 1,
+                    },
+                    new()
+                    {
+                        Name = "Volume",
+                        Type = "String",
+                        Value = "300ml",
+                        OptionID = 4,
+                        RegionID = 2,
+                    },
+                    new()
+                    {
+                        Name = "Volumen",
+                        Type = "String",
+                        Value = "300ml",
+                        OptionID = 4,
+                        RegionID = 3,
+                    },
+                    new()
+                    {
+                        Name = "Objem",
+                        Type = "String",
+                        Value = "300ml",
+                        OptionID = 4,
+                        RegionID = 4,
+                    },
+                    new()
+                    {
+                        Name = "Pojemność",
+                        Type = "String",
+                        Value = "400ml",
+                        OptionID = 5,
+                        RegionID = 1,
+                    },
+                    new()
+                    {
+                        Name = "Volume",
+                        Type = "String",
+                        Value = "400ml",
+                        OptionID = 5,
+                        RegionID = 2,
+                    },
+                    new()
+                    {
+                        Name = "Volumen",
+                        Type = "String",
+                        Value = "400ml",
+                        OptionID = 5,
+                        RegionID = 3,
+                    },
+                    new()
+                    {
+                        Name = "Objem",
+                        Type = "String",
+                        Value = "400ml",
+                        OptionID = 5,
+                        RegionID = 4,
+                    },
+                    new()
+                    {
+                        Name = "Pojemność",
+                        Type = "String",
+                        Value = "500ml",
+                        OptionID = 6,
+                        RegionID = 1,
+                    },
+                    new()
+                    {
+                        Name = "Volume",
+                        Type = "String",
+                        Value = "500ml",
+                        OptionID = 6,
+                        RegionID = 2,
+                    },
+                    new()
+                    {
+                        Name = "Volumen",
+                        Type = "String",
+                        Value = "500ml",
+                        OptionID = 6,
+                        RegionID = 3,
+                    },
+                    new()
+                    {
+                        Name = "Objem",
+                        Type = "String",
+                        Value = "500ml",
+                        OptionID = 6,
+                        RegionID = 4,
+                    },
+                    new()
+                    {
+                        Name = "Pojemność",
+                        Type = "String",
+                        Value = "750ml",
+                        OptionID = 7,
+                        RegionID = 1,
+                    },
+                    new()
+                    {
+                        Name = "Volume",
+                        Type = "String",
+                        Value = "750ml",
+                        OptionID = 7,
+                        RegionID = 2,
+                    },
+                    new()
+                    {
+                        Name = "Volumen",
+                        Type = "String",
+                        Value = "750ml",
+                        OptionID = 7,
+                        RegionID = 3,
+                    },
+                    new()
+                    {
+                        Name = "Objem",
+                        Type = "String",
+                        Value = "750ml",
+                        OptionID = 7,
+                        RegionID = 4,
+                    },
+                    new()
+                    {
+                        Name = "Pojemność",
+                        Type = "String",
+                        Value = "1l",
+                        OptionID = 8,
+                        RegionID = 1,
+                    },
+                    new()
+                    {
+                        Name = "Volume",
+                        Type = "String",
+                        Value = "1l",
+                        OptionID = 8,
+                        RegionID = 2,
+                    },
+                    new()
+                    {
+                        Name = "Volumen",
+                        Type = "String",
+                        Value = "1l",
+                        OptionID = 8,
+                        RegionID = 3,
+                    },
+                    new()
+                    {
+                        Name = "Objem",
+                        Type = "String",
+                        Value = "1l",
+                        OptionID = 8,
+                        RegionID = 4,
+                    },
+                    new()
+                    {
+                        Name = "Pojemność",
+                        Type = "String",
+                        Value = "1,5l",
+                        OptionID = 9,
+                        RegionID = 1,
+                    },
+                    new()
+                    {
+                        Name = "Volume",
+                        Type = "String",
+                        Value = "1,5l",
+                        OptionID = 9,
+                        RegionID = 2,
+                    },
+                    new()
+                    {
+                        Name = "Volumen",
+                        Type = "String",
+                        Value = "1,5l",
+                        OptionID = 9,
+                        RegionID = 3,
+                    },
+                    new()
+                    {
+                        Name = "Objem",
+                        Type = "String",
+                        Value = "1,5l",
+                        OptionID = 9,
+                        RegionID = 4,
+                    },
+                    new()
+                    {
+                        Name = "Pojemność",
+                        Type = "String",
+                        Value = "2l",
+                        OptionID = 10,
+                        RegionID = 1,
+                    },
+                    new()
+                    {
+                        Name = "Volume",
+                        Type = "String",
+                        Value = "2l",
+                        OptionID = 10,
+                        RegionID = 2,
+                    },
+                    new()
+                    {
+                        Name = "Volumen",
+                        Type = "String",
+                        Value = "2l",
+                        OptionID = 10,
+                        RegionID = 3,
+                    },
+                    new()
+                    {
+                        Name = "Objem",
+                        Type = "String",
+                        Value = "2l",
+                        OptionID = 10,
+                        RegionID = 4,
+                    },
+                    new()
+                    {
+                        Name = "Pojemność",
+                        Type = "String",
+                        Value = "2,5l",
+                        OptionID = 11,
+                        RegionID = 1,
+                    },
+                    new()
+                    {
+                        Name = "Volume",
+                        Type = "String",
+                        Value = "2,5l",
+                        OptionID = 11,
+                        RegionID = 2,
+                    },
+                    new()
+                    {
+                        Name = "Volumen",
+                        Type = "String",
+                        Value = "2,5l",
+                        OptionID = 11,
+                        RegionID = 3,
+                    },
+                    new()
+                    {
+                        Name = "Objem",
+                        Type = "String",
+                        Value = "2,5l",
+                        OptionID = 11,
+                        RegionID = 4,
+                    },
+                    new()
+                    {
+                        Name = "Pojemność",
+                        Type = "String",
+                        Value = "5l",
+                        OptionID = 12,
+                        RegionID = 1,
+                    },
+                    new()
+                    {
+                        Name = "Volume",
+                        Type = "String",
+                        Value = "5l",
+                        OptionID = 12,
+                        RegionID = 2,
+                    },
+                    new()
+                    {
+                        Name = "Volumen",
+                        Type = "String",
+                        Value = "5l",
+                        OptionID = 12,
+                        RegionID = 3,
+                    },
+                    new()
+                    {
+                        Name = "Objem",
+                        Type = "String",
+                        Value = "5l",
+                        OptionID = 12,
+                        RegionID = 4,
+                    },
+                    new()
+                    {
+                        Name = "Pojemność",
+                        Type = "String",
+                        Value = "10l",
+                        OptionID = 13,
+                        RegionID = 1,
+                    },
+                    new()
+                    {
+                        Name = "Volume",
+                        Type = "String",
+                        Value = "10l",
+                        OptionID = 13,
+                        RegionID = 2,
+                    },
+                    new()
+                    {
+                        Name = "Volumen",
+                        Type = "String",
+                        Value = "10l",
+                        OptionID = 13,
+                        RegionID = 3,
+                    },
+                    new()
+                    {
+                        Name = "Objem",
+                        Type = "String",
+                        Value = "10l",
+                        OptionID = 13,
+                        RegionID = 4,
+                    },
+                    new()
+                    {
+                        Name = "Sezon",
+                        Type = "String",
+                        Value = "Wiosna",
+                        OptionID = 1,
+                        RegionID = 1,
+                    },
+                    new()
+                    {
+                        Name = "Season",
+                        Type = "String",
+                        Value = "Spring",
+                        OptionID = 1,
+                        RegionID = 2,
+                    },
+                    new()
+                    {
+                        Name = "Jahreszeit",
+                        Type = "String",
+                        Value = "Frühling",
+                        OptionID = 1,
+                        RegionID = 3,
+                    },
+                    new()
+                    {
+                        Name = "Sezóna",
+                        Type = "String",
+                        Value = "Jaro",
+                        OptionID = 1,
+                        RegionID = 4,
+                    },
+                    new()
+                    {
+                        Name = "Sezon",
+                        Type = "String",
+                        Value = "Lato",
+                        OptionID = 2,
+                        RegionID = 1,
+                    },
+                    new()
+                    {
+                        Name = "Season",
+                        Type = "String",
+                        Value = "Summer",
+                        OptionID = 2,
+                        RegionID = 2,
+                    },
+                    new()
+                    {
+                        Name = "Jahreszeit",
+                        Type = "String",
+                        Value = "Sommer",
+                        OptionID = 1,
+                        RegionID = 3,
+                    },
+                    new()
+                    {
+                        Name = "Sezóna",
+                        Type = "String",
+                        Value = "Letní",
+                        OptionID = 2,
+                        RegionID = 4,
+                    },
+                    new()
+                    {
+                        Name = "Sezon",
+                        Type = "String",
+                        Value = "Jesień",
+                        OptionID = 3,
+                        RegionID = 1,
+                    },
+                    new()
+                    {
+                        Name = "Season",
+                        Type = "String",
+                        Value = "Autumn",
+                        OptionID = 2,
+                        RegionID = 2,
+                    },
+                    new()
+                    {
+                        Name = "Jahreszeit",
+                        Type = "String",
+                        Value = "Herbst",
+                        OptionID = 1,
+                        RegionID = 3,
+                    },
+                    new()
+                    {
+                        Name = "Sezóna",
+                        Type = "String",
+                        Value = "Podzim",
+                        OptionID = 2,
+                        RegionID = 4,
+                    },
+                    new()
+                    {
+                        Name = "Sezon",
+                        Type = "String",
+                        Value = "Zima",
+                        OptionID = 4,
+                        RegionID = 1,
+                    },
+                    new()
+                    {
+                        Name = "Season",
+                        Type = "String",
+                        Value = "Winter",
+                        OptionID = 4,
+                        RegionID = 2,
+                    },
+                    new()
+                    {
+                        Name = "Jahreszeit",
+                        Type = "String",
+                        Value = "Winter",
+                        OptionID = 4,
+                        RegionID = 3,
+                    },
+                    new()
+                    {
+                        Name = "Sezóna",
+                        Type = "String",
+                        Value = "Zima",
+                        OptionID = 4,
+                        RegionID = 4,
+                    },
+                    new()
+                    {
+                        Name = "Grupa docelowa",
+                        Type = "String",
+                        Value = "Dzieci",
+                        OptionID = 1,
+                        RegionID = 1,
+                    },
+                    new()
+                    {
+                        Name = "Target group",
+                        Type = "String",
+                        Value = "Children",
+                        OptionID = 1,
+                        RegionID = 2,
+                    },
+                    new()
+                    {
+                        Name = "Zielgruppe",
+                        Type = "String",
+                        Value = "Kinder",
+                        OptionID = 1,
+                        RegionID = 3,
+                    },
+                    new()
+                    {
+                        Name = "Cílová skupina",
+                        Type = "String",
+                        Value = "Děti",
+                        OptionID = 1,
+                        RegionID = 4,
+                    },
+                    new()
+                    {
+                        Name = "Grupa docelowa",
+                        Type = "String",
+                        Value = "Młodzież",
+                        OptionID = 2,
+                        RegionID = 1,
+                    },
+                    new()
+                    {
+                        Name = "Target group",
+                        Type = "String",
+                        Value = "Youth",
+                        OptionID = 2,
+                        RegionID = 2,
+                    },
+                    new()
+                    {
+                        Name = "Zielgruppe",
+                        Type = "String",
+                        Value = "Jugend",
+                        OptionID = 2,
+                        RegionID = 3,
+                    },
+                    new()
+                    {
+                        Name = "Cílová skupina",
+                        Type = "String",
+                        Value = "Mládí",
+                        OptionID = 1,
+                        RegionID = 4,
+                    },
+                    new()
+                    {
+                        Name = "Grupa docelowa",
+                        Type = "String",
+                        Value = "Dorośli",
+                        OptionID = 3,
+                        RegionID = 1,
+                    },
+                    new()
+                    {
+                        Name = "Target group",
+                        Type = "String",
+                        Value = "Adults",
+                        OptionID = 3,
+                        RegionID = 2,
+                    },
+                    new()
+                    {
+                        Name = "Zielgruppe",
+                        Type = "String",
+                        Value = "Erwachsene",
+                        OptionID = 3,
+                        RegionID = 3,
+                    },
+                    new()
+                    {
+                        Name = "Cílová skupina",
+                        Type = "String",
+                        Value = "Dospělí",
+                        OptionID = 3,
+                        RegionID = 4,
+                    },
+                    new()
+                    {
+                        Name = "Grupa docelowa",
+                        Type = "String",
+                        Value = "Seniorzy",
+                        OptionID = 4,
+                        RegionID = 1,
+                    },
+                    new()
+                    {
+                        Name = "Target group",
+                        Type = "String",
+                        Value = "Seniors",
+                        OptionID = 4,
+                        RegionID = 2,
+                    },
+                    new()
+                    {
+                        Name = "Zielgruppe",
+                        Type = "String",
+                        Value = "Senioren",
+                        OptionID = 4,
+                        RegionID = 3,
+                    },
+                    new()
+                    {
+                        Name = "Cílová skupina",
+                        Type = "String",
+                        Value = "Senioři",
+                        OptionID = 4,
+                        RegionID = 4,
+                    },
                 };
+                //dbContext.DictionaryParams.AddRange(dictionaryParamList);
+                //dbContext.SaveChanges();
             }
         }
     }

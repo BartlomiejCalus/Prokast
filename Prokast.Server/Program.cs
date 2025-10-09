@@ -1,12 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Prokast.Server;
-using Prokast.Server.Filters;
 using Prokast.Server.Entities;
+using Prokast.Server.Filters;
 using Prokast.Server.Models;
+using Prokast.Server.Seeders;
 using Prokast.Server.Services;
 using Prokast.Server.Services.Interfaces;
 using Scalar.AspNetCore;
+using System;
 using System.Text.Json.Serialization;
 
 
@@ -56,6 +58,9 @@ builder.Services.AddScoped<IStoredProductService, StoredProductService>();
 builder.Services.AddScoped<IMailingService, MailingService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IBlobPhotoStorageService,BlobPhotoStorageService>();
+builder.Services.AddScoped<ISeeder, RegionSeeder>();
+builder.Services.AddScoped<ISeeder, DictionaryParamSeeder>();
+builder.Services.AddScoped<MainSeeder>();
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
 builder.Services.AddProkastOpenAPI();
@@ -70,6 +75,12 @@ builder.Services.AddProkastOpenAPI();
 });*/
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var seeder = scope.ServiceProvider.GetRequiredService<MainSeeder>();
+    seeder.SeedDB();
+}
 
 // Configure the HTTP request pipeline.
 /*if (app.Environment.IsDevelopment())
