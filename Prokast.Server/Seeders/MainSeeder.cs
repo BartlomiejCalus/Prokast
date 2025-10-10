@@ -16,7 +16,8 @@ namespace Prokast.Server.Seeders
 
         public void SeedDB()
         {
-            foreach (var seeder in _seeders)
+            var orderedSeeders = _seeders.OrderBy(x => x.SeedOrder);
+            foreach (var seeder in orderedSeeders)
             {
                 seeder.Seed(_dbContext);
             }

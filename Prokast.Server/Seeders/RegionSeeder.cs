@@ -4,6 +4,8 @@ namespace Prokast.Server.Seeders
 {
     public class RegionSeeder: ISeeder
     {
+        public int SeedOrder { get; init; } = 1;
+        
         public void Seed(ProkastServerDbContext dbContext)
         {
             if (!dbContext.Regions.Any())

@@ -4,6 +4,8 @@ namespace Prokast.Server.Seeders
 {
     public class DictionaryParamSeeder: ISeeder
     {
+        public int SeedOrder { get; init; } = 2;
+
         public void Seed(ProkastServerDbContext dbContext)
         {
             if(!dbContext.DictionaryParams.Any())
@@ -971,8 +973,8 @@ namespace Prokast.Server.Seeders
                         RegionID = 4,
                     },
                 };
-                //dbContext.DictionaryParams.AddRange(dictionaryParamList);
-                //dbContext.SaveChanges();
+                dbContext.DictionaryParams.AddRange(dictionaryParamList);
+                dbContext.SaveChanges();
             }
         }
     }
