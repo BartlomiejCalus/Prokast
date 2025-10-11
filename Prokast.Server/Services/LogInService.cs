@@ -49,7 +49,7 @@ namespace Prokast.Server.Services
         #region GetAll
         public Response GetLogIns(int clientID)
         {
-            var logins = _dbContext.Accounts.ToList();
+            var logins = _dbContext.Accounts.Where(x => x.ClientID == clientID).ToList();
             if (logins.Count() == 0)
             {
                 var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Klient nie ma parametrów" };
