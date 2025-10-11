@@ -9,7 +9,7 @@ namespace Prokast.Server.Entities
         public required string Name { get; set; }
         public required string Value { get; set; }
 
-        public required int ProductID { get; set; }
+        public int ProductID { get; set; }
         public virtual Product Product { get; set; }
     }
 }

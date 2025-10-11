@@ -8,10 +8,10 @@ namespace Prokast.Server.Entities
         public required string Title { get; set; }
         public required string Value { get; set; }
 
-        public required int ProductID {get; set;}
+        public int ProductID {get; set;}
         public virtual Product Product { get; set; }
 
-        public required int RegionID { get; set; }
+        public int RegionID { get; set; }
         public virtual Region Regions { get; set; }
     }
 }

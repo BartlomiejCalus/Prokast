@@ -26,7 +26,7 @@ namespace Prokast.Server.Entities
 
         public virtual PriceList PriceList { get; set; }
 
-        public required int ClientID { get; set; }
+        public int ClientID { get; set; }
         public virtual Client Client { get; set; }
 
         //public int? StoredProductID { get; set; }

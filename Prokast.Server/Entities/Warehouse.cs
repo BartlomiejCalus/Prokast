@@ -16,7 +16,7 @@ namespace Prokast.Server.Entities
         [RegularExpression(@"\d{3}-\d{3}-\d{3}$", ErrorMessage = "Phone Number must have format: 123-456-789.")]
         public required string PhoneNumber { get; set; }
 
-        public required int ClientID { get; set; }
+        public int ClientID { get; set; }
         public virtual Client Client { get; set; }
 
         [JsonIgnore]
