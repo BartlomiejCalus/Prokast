@@ -60,8 +60,11 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IBlobPhotoStorageService,BlobPhotoStorageService>();
 builder.Services.AddScoped<ISeeder, RegionSeeder>();
 builder.Services.AddScoped<ISeeder, DictionaryParamSeeder>();
+builder.Services.AddScoped<ISeeder, ClientSeeder>();
 builder.Services.AddScoped<ISeeder, ProductSeeder>();
 builder.Services.AddScoped<ISeeder, WarehouseSeeder>();
+builder.Services.AddScoped<ISeeder, StoredProductSeeder>();
+builder.Services.AddScoped<ISeeder, OrderSeeder>();
 builder.Services.AddScoped<MainSeeder>();
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
