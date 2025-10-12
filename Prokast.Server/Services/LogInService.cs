@@ -135,7 +135,7 @@ namespace Prokast.Server.Services
                 return responseNull;
             }
 
-            var client = _dbContext.Clients.FirstOrDefault(x => x.ID == clientID);
+            var client = _dbContext.Clients.Include(p => p.Accounts).FirstOrDefault(x => x.ID == clientID);
             if (client == null)
             {
                 responseNull.errorMsg = "Klient nie istnieje!";
