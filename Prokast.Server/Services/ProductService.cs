@@ -287,13 +287,13 @@ namespace Prokast.Server.Services
 
         #region Get
 
-        public Response GetProducts(int clientID, string name, string sku, string ean)
+        public Response GetProducts(int clientID, string name, string sku)
         {
 
             var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak produktów!" };
             var products = _dbContext.Products.Where(x => x.ClientID == clientID &&
                                                     (string.IsNullOrEmpty(name) || x.Name.Contains(name)) &&
-                                                    (string.IsNullOrEmpty(sku) || x.SKU.Contains(sku)) && (string.IsNullOrEmpty(ean) || x.SKU.Contains(ean))
+                                                    (string.IsNullOrEmpty(sku) || x.SKU.Contains(sku))
                 ).Select(x => new { x.ID, x.Name, x.SKU,x.EAN, x.Photos, x.AdditionDate }).ToList();
 
             if (products.Count() == 0)
