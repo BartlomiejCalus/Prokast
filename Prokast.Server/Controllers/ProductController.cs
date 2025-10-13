@@ -67,11 +67,11 @@ namespace Prokast.Server.Controllers
         [HttpGet("productsListFiltered")]
         [ProducesResponseType(typeof(ProductEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> Getproducts(int clientID, string name, string sku, string ean)
+        public ActionResult<Response> Getproducts(int clientID, string name, string sku)
         {
             try
             {
-                var products = _productService.GetProducts( clientID,  name,  sku,  ean);
+                var products = _productService.GetProducts( clientID,  name,  sku);
                 if (products is ErrorResponse) return BadRequest(products);
                 return Ok(products);
             }
