@@ -5,9 +5,11 @@ using Prokast.Server.Services;
 using Prokast.Server.Services.Interfaces;
 using Prokast.Server.Models.ResponseModels.WarehouseResponseModels;
 using Prokast.Server.Models.WarehouseModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Prokast.Server.Controllers
 {
+    [Authorize]
     [Route("Api/Warehouses")]
     public class WarehouseController: ControllerBase
     {

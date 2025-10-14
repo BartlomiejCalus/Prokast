@@ -12,6 +12,12 @@ using Prokast.Server.Models.ResponseModels.AccountResponseModels;
 using Prokast.Server.Services.Interfaces;
 using Prokast.Server.Models.AccountModels;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Prokast.Server.Models.JWT;
+
 
 
 
@@ -25,12 +31,14 @@ namespace Prokast.Server.Services
         private readonly IMapper _mapper;
         private readonly IMailingService _mailingService;
         Random random = new Random();
+        private readonly IConfiguration _configuration;
 
-        public LogInService(ProkastServerDbContext dbContext, IMapper mapper, IMailingService mailingService)
+        public LogInService(ProkastServerDbContext dbContext, IMapper mapper, IMailingService mailingService, IConfiguration configuration)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _mailingService = mailingService;
+            _configuration = configuration;
         }
 
         public static string getHashed(string text)
@@ -49,7 +57,7 @@ namespace Prokast.Server.Services
         #region GetAll
         public Response GetLogIns(int clientID)
         {
-            var logins = _dbContext.Accounts.ToList();
+            var logins = _dbContext.Accounts.Where(x => x.ClientID == clientID).ToList();
             if (logins.Count() == 0)
             {
                 var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Klient nie ma parametrów" };
@@ -86,15 +94,28 @@ namespace Prokast.Server.Services
                 return responseNull;
             }
 
-            if (client.Subscription is null || client.Subscription < DateTime.Now)
+            /*if (client.Subscription is null || client.Subscription < DateTime.Now)
             {
                 var responseFalse = new LogInLoginResponse() { ID = random.Next(1, 100000), ClientID = client.ID, IsSubscribed = false };
                 return responseFalse;
-            }
+            }*/
+            
+            var tokn = CreateToken(account).ToString();
+            var response = new LogInLoginResponse() {ID = random.Next(1,100000), ClientID = client.ID, IsSubscribed = true, Token = tokn };
 
-            var response = new LogInLoginResponse() {ID = random.Next(1,100000), ClientID = client.ID, IsSubscribed = true };
+
+
             return response;
         }
+        private TokenResponseDto CreateTokenResponse(Account? user)
+        {
+            return new TokenResponseDto
+            {
+                AccessToken = CreateToken(user),
+            };
+        }
+
+        
         #endregion
 
         #region create
@@ -139,7 +160,7 @@ namespace Prokast.Server.Services
                 Login = login,
                 Password = getHashed(password.ToString()),
                 WarehouseID = accountCreate.WarehouseID,
-                Role = accountCreate.Role,
+                Role = 1,
                 FirstName = accountCreate.FirstName,
                 LastName = accountCreate.LastName,
                 ClientID = clientID
@@ -172,6 +193,31 @@ namespace Prokast.Server.Services
             var response = new AccountCredentialsResponse() {ID =  random.Next(1,100000), ClientID = clientID, Model = creds};
             return response;
         }
+
+        private string CreateToken(Account user)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.Login),
+                new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
+            };
+
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(_configuration.GetValue<string>("AppSettings:Key")!));
+
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var tokenDescriptor = new JwtSecurityToken(
+                issuer: _configuration.GetValue<string>("AppSettings:Issuer"),
+                audience: _configuration.GetValue<string>("AppSettings:Audience"),
+                claims: claims,
+                expires: DateTime.UtcNow.AddDays(1),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
+        }
+
         #endregion
 
         #region Edit

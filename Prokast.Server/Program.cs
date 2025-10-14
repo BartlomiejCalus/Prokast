@@ -1,13 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Prokast.Server;
-using Prokast.Server.Filters;
 using Prokast.Server.Entities;
+using Prokast.Server.Filters;
 using Prokast.Server.Models;
+using Prokast.Server.Seeders;
 using Prokast.Server.Services;
 using Prokast.Server.Services.Interfaces;
 using Scalar.AspNetCore;
+using System;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 
 
@@ -36,6 +41,24 @@ builder.Services.AddDbContext<ProkastServerDbContext>(opt=>
 }
 );
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["AppSettings:Issuer"],
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["AppSettings:Audience"],
+            ValidateLifetime = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:Key"]!)),
+            ValidateIssuerSigningKey = true
+        };
+    });
+
+
+
 builder.Services.Configure<AzureBlobStorageSettings>(
     builder.Configuration.GetSection("AzureBlobStorage"));
 
@@ -56,6 +79,14 @@ builder.Services.AddScoped<IStoredProductService, StoredProductService>();
 builder.Services.AddScoped<IMailingService, MailingService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IBlobPhotoStorageService,BlobPhotoStorageService>();
+builder.Services.AddScoped<ISeeder, RegionSeeder>();
+builder.Services.AddScoped<ISeeder, DictionaryParamSeeder>();
+builder.Services.AddScoped<ISeeder, ClientSeeder>();
+builder.Services.AddScoped<ISeeder, ProductSeeder>();
+builder.Services.AddScoped<ISeeder, WarehouseSeeder>();
+builder.Services.AddScoped<ISeeder, StoredProductSeeder>();
+builder.Services.AddScoped<ISeeder, OrderSeeder>();
+builder.Services.AddScoped<MainSeeder>();
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
 builder.Services.AddProkastOpenAPI();
@@ -70,6 +101,12 @@ builder.Services.AddProkastOpenAPI();
 });*/
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var seeder = scope.ServiceProvider.GetRequiredService<MainSeeder>();
+    seeder.SeedDB();
+}
 
 // Configure the HTTP request pipeline.
 /*if (app.Environment.IsDevelopment())

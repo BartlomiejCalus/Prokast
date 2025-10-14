@@ -7,10 +7,13 @@ using Prokast.Server.Models.StoredProductModels;
 using Prokast.Server.Models.ResponseModels.StoredProductResponseModels;
 using Prokast.Server.Entities;
 using Prokast.Server.Models.ClientModels;
+using Microsoft.AspNetCore.Authorization;
+
 
 
 namespace Prokast.Server.Controllers
 {
+    [Authorize]
     [Route("api/storedproducts")]
     public class StoredProductController: ControllerBase
     {

@@ -13,7 +13,6 @@ namespace Prokast.Server.Controllers
     public class ClientController : ControllerBase
     {
         private readonly IClientService _clientService;
-
         public ClientController(IClientService clientService)
         {
             _clientService = clientService;
