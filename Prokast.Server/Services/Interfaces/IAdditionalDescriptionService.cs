@@ -10,6 +10,7 @@ namespace Prokast.Server.Services.Interfaces
         Response GetDescriptionsByID(int ID, int clientID);
         Response GetDescriptionsByNames(string Title, int clientID);
         Response GetDescriptionByRegion(int Region, int clientID);
+        Response GetAllDescriptionsInProduct(int clientID, int productID);
         Response EditAdditionalDescription(int clientID, int ID, AdditionalDescriptionCreateDto data);
         Response DeleteAdditionalDescription(int clientID, int ID);
     }

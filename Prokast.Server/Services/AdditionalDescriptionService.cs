@@ -59,7 +59,7 @@ namespace Prokast.Server.Services
             var response = new AdditionalDescriptionGetResponse() { ID = random.Next(1, 100000), Model = addDescList };
             if (addDescList.Count() == 0)
             {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Brak parametrów" };
+                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak parametrów" };
                 return responseNull;
             }
             return response;
@@ -68,12 +68,13 @@ namespace Prokast.Server.Services
         public Response GetDescriptionsByID(int ID, int clientID)
         {
             var addDesc = _dbContext.AdditionalDescriptions.Where(x => x.ID == ID && x.Product.ClientID == clientID).ToList();
-            var response = new AdditionalDescriptionGetResponse() { ID = random.Next(1, 100000), Model = addDesc };
             if (addDesc.Count() == 0)
             {
                 var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Nie ma takiego parametru" };
                 return responseNull;
             }
+
+            var response = new AdditionalDescriptionGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = addDesc };
             return response;
         }
 
@@ -86,12 +87,13 @@ namespace Prokast.Server.Services
         public Response GetDescriptionsByNames(string Title, int clientID)
         {
             var addDesc = _dbContext.AdditionalDescriptions.Where(x => x.Title.Contains(Title) && x.Product.ClientID == clientID).ToList();
-            var response = new AdditionalDescriptionGetResponse() { ID = random.Next(1, 100000), Model = addDesc };
             if (addDesc.Count() == 0)
             {
                 var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Nie ma takiego parametru" };
                 return responseNull;
             }
+
+            var response = new AdditionalDescriptionGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = addDesc };
             return response;
 
         }
@@ -99,23 +101,31 @@ namespace Prokast.Server.Services
         public Response GetDescriptionByRegion(int Region, int clientID)
         {
             var addDesc = _dbContext.AdditionalDescriptions.Where(x => x.RegionID == Region && x.Product.ClientID == clientID).ToList();
-            var response = new AdditionalDescriptionGetResponse() { ID = random.Next(1, 100000), Model = addDesc };
             if (addDesc.Count() == 0)
             {
                 var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Nie ma takiego parametru" };
                 return responseNull;
             }
+
+            var response = new AdditionalDescriptionGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = addDesc };   
             return response;
 
         }
 
-       /* public Response GetAllDescriptionsInProduct(int clientID, int productID)
+        public Response GetAllDescriptionsInProduct(int clientID, int productID)
         {
-            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Nie ma takiego parametru" };
 
-            var product = _dbContext.Products.FirstOrDefault(x => x.ClientID == clientID && x.ID == productID);
+            var descriptions = _dbContext.AdditionalDescriptions.Where(x => x.ProductID == productID).ToList();
+            if(descriptions.Count() == 0)
+            {
+                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Produkt nie ma tych parametrów!" };
+                return responseNull;
+            }
+
+            var response = new AdditionalDescriptionGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = descriptions };
+            return response;
         }
-*/
+
         #endregion
 
         #region Edit
