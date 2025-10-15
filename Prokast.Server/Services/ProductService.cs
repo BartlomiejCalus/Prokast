@@ -287,30 +287,35 @@ namespace Prokast.Server.Services
 
         #region Get
 
-        public Response GetProducts(int clientID, string name, string sku)
+        public Response GetProducts(int clientID, ProductFilter filter)
         {
+           
+            var products = _dbContext.Products.Where(x => x.ClientID == clientID);
 
-            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak produktów!" };
-            var products = _dbContext.Products.Where(x => x.ClientID == clientID &&
-                                                    (string.IsNullOrEmpty(name) || x.Name.Contains(name)) &&
-                                                    (string.IsNullOrEmpty(sku) || x.SKU.Contains(sku))
-                ).Select(x => new { x.ID, x.Name, x.SKU,x.EAN, x.Photos, x.AdditionDate }).ToList();
+            if (filter.Name != null)
+                products = products.Where(x => string.IsNullOrEmpty(filter.Name) || x.Name.Contains(filter.Name));
+
+            if (filter.SKU != null)
+                products = products.Where(x => string.IsNullOrEmpty(filter.SKU) || x.SKU.Contains(filter.SKU));
+            
+            var result = products.ToList();
 
             if (products.Count() == 0)
             {
+                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak produktów!" };
                 return responseNull;
             }
-
+            
             var productList = new List<ProductGetMin>();
-            foreach (var product in products)
+            foreach (var prod in products)
             {
                 var newProductToList = new ProductGetMin
                 {
-                    ID = product.ID,
-                    Name = product.Name,
-                    SKU = product.SKU,
-                    AdditionDate = product.AdditionDate,
-                    Photo = product.Photos.FirstOrDefault().Value
+                    ID = prod.ID,
+                    Name = prod.Name,
+                    SKU = prod.SKU,
+                    AdditionDate = prod.AdditionDate,
+                    Photo = prod.Photos?.FirstOrDefault().Value
                 };
                 productList.Add(newProductToList);
             }
