@@ -6,8 +6,6 @@ using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models.ResponseModels.ProductResponseModels;
 using Prokast.Server.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Prokast.Server.Models.ClientModels;
-using Prokast.Server.Services;
 
 namespace Prokast.Server.Controllers
 {
@@ -67,11 +65,11 @@ namespace Prokast.Server.Controllers
         [HttpPost("productsListFiltered")]
         [ProducesResponseType(typeof(ProductGetMinResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> Getproducts([FromQuery]int clientID, [FromBody]ProductFilter filter)
+        public ActionResult<Response> Getproducts([FromQuery] int clientID, [FromBody] ProductFilter filter, [FromQuery] int pageNumber)
         {
             try
             {
-                var products = _productService.GetProducts( clientID,  filter);
+                var products = _productService.GetProducts(clientID, filter, pageNumber);
                 if (products is ErrorResponse) return BadRequest(products);
                 return Ok(products);
             }
