@@ -137,7 +137,7 @@ namespace Prokast.Server.Services
                 return responseNull;
             }
 
-            var response = new PhotoGetResponse() { ID = random.Next(1, 100000), Model = null };
+            var response = new PhotoGetResponse() { ID = random.Next(1, 100000), Model = phohoList };
             return response;
 
         }

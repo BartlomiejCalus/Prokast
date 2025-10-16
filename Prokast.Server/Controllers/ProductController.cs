@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Prokast.Server.Entities;
 using Prokast.Server.Models;
 using Prokast.Server.Models.ProductModels;
 using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models.ResponseModels.ProductResponseModels;
+using Prokast.Server.Services;
 using Prokast.Server.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Prokast.Server.Controllers
 {
@@ -39,6 +40,22 @@ namespace Prokast.Server.Controllers
         }
         #endregion
 
+        [HttpGet("products/{productID}")]
+        [ProducesResponseType(typeof(ProductsGetResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public ActionResult<Response> GetOneProduct([FromQuery] int clientID, [FromRoute] int productID)
+        {
+            try
+            {
+                var result = _productService.GetOneProduct(clientID, productID);
+                if (result is ErrorResponse) return BadRequest(result);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [HttpPut("products/{productID}")]
         [ProducesResponseType(typeof(ProductEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]

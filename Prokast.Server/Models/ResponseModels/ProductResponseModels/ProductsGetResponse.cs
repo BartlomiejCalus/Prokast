@@ -5,6 +5,6 @@ namespace Prokast.Server.Models.ResponseModels.ProductResponseModels
 {
     public class ProductsGetResponse : Response
     {
-        public List<Product> Model { get; set; }
+        public ProductGetDto Model { get; set; }
     }
 }

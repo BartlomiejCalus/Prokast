@@ -10,6 +10,7 @@ using Prokast.Server.Models.ResponseModels.PriceResponseModels.PriceListResponse
 using Prokast.Server.Services.Interfaces;
 using System.Collections.Immutable;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Prokast.Server.Services
 {
@@ -439,6 +440,28 @@ namespace Prokast.Server.Services
             return response;
 
         }*/
+
+        public Response GetOneProduct(int clientID, int productID)
+        {
+            var product = _dbContext.Products
+                .Include(x => x.AdditionalDescriptions)
+                .Include(x => x.AdditionalNames)
+                .Include(x => x.DictionaryParams)
+                .Include(x => x.CustomParams)
+                .Include(x => x.Photos)
+                .Include(x => x.PriceList)
+                .ThenInclude(y => y.Prices)
+                .FirstOrDefault(x => x.ClientID == clientID && x.ID == productID);
+            if (product == null)
+            {
+                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego produktu!" };
+                return responseNull;
+            }
+            var dto = _mapper.Map<ProductGetDto>(product);
+            var response = new ProductsGetResponse() { ID = random.Next(1,100000), ClientID=clientID, Model = dto };
+            return response;
+        }
+
         #endregion
 
         #region Delete

@@ -1,17 +1,18 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Prokast.Server.Entities;
 using Prokast.Server.Models;
-using System.Text;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using System;
-using System.Security.Cryptography;
-using System.Linq;
 using Prokast.Server.Models.ResponseModels;
+using Prokast.Server.Models.ResponseModels.AdditionalDescriptionResponseModels;
 using Prokast.Server.Models.ResponseModels.AdditionalNameResponseModels;
 using Prokast.Server.Services.Interfaces;
+using System;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 namespace Prokast.Server.Services
 {
     public class AdditionalNameService : IAdditionalNameService
@@ -123,31 +124,20 @@ namespace Prokast.Server.Services
         /// <param name="clientID"></param>
         /// <param name="productID"></param>
         /// <returns></returns>
-        //TODO: do poprawy
-        //public Response GetAllNamesInProduct(int clientID, int productID)
-        //{
-        //    var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Nie ma takiego parametru" };
 
-        //    var product = _dbContext.Products.FirstOrDefault(x => x.ClientID == clientID && x.ID == productID);
-        //    if (product == null)
-        //    {
-        //        responseNull.errorMsg = "Nie ma takiego produktu!";
-        //        return responseNull;
-        //    }
-        //    var additionalNamesIDList = product.AdditionalNames.Split(",")
-        //                            .Select(x => int.Parse(x)).ToList();            
+        public Response GetAllNamesInProduct(int clientID, int productID)
+        {
 
-        //    var additionalNamesList = _dbContext.AdditionalNames.Where(x => additionalNamesIDList.Contains(x.ID)).ToList();
-        //    if(additionalNamesList.Count() == 0)
-        //    {
-        //        responseNull.errorMsg = "Nie ma takiej nazwy!";
-        //        return responseNull;
-        //    }
+            var names = _dbContext.AdditionalNames.Where(x => x.ProductID == productID).ToList();
+            if (names.Count() == 0)
+            {
+                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Produkt nie ma tych parametrów!" };
+                return responseNull;
+            }
 
-        //    var response = new AdditionalNameGetResponse() { ID = random.Next(1, 100000), Model = additionalNamesList };
-        //    return response;
-
-        //}
+            var response = new AdditionalNameGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = names };
+            return response;
+        }
 
         #endregion
 

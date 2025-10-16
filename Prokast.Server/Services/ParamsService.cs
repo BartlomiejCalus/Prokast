@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Prokast.Server.Entities;
 using Prokast.Server.Models;
 using Prokast.Server.Models.ResponseModels;
+using Prokast.Server.Models.ResponseModels.AdditionalNameResponseModels;
 using Prokast.Server.Models.ResponseModels.CustomParamsResponseModels;
 using Prokast.Server.Models.ResponseModels.DictionaryParamsResponseModels;
 using Prokast.Server.Services.Interfaces;
@@ -100,30 +101,19 @@ namespace Prokast.Server.Services
             return response;
         }
 
-        //TODO: poprawić
-        //public Response GetAllParamsInProduct(int clientID, int productID)
-        //{
-        //    var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Nie ma takiego parametru" };
+        public Response GetAllParamsInProduct(int clientID, int productID)
+        {
 
-        //    var product = _dbContext.Products.FirstOrDefault(x => x.ClientID == clientID && x.ID == productID);
-        //    if (product == null)
-        //    {
-        //        responseNull.errorMsg = "Nie ma takiego produktu!";
-        //        return responseNull;
-        //    }
-        //    var customParamsIDList = product.CustomParams.Split(",")
-        //                      .Select(x => int.Parse(x)).ToList();
+            var paramList = _dbContext.CustomParams.Where(x => x.ProductID == productID).ToList();
+            if (paramList.Count() == 0)
+            {
+                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Produkt nie ma tych parametrów!" };
+                return responseNull;
+            }
 
-        //    var customParamsList = _dbContext.CustomParams.Where(x => customParamsIDList.Contains(x.ID)).ToList();
-        //    if (customParamsList.Count() == 0)
-        //    {
-        //        return responseNull;
-        //    }
-
-        //    var response = new ParamsGetResponse() { ID = random.Next(1, 100000), Model = customParamsList };
-        //    return response;
-
-        //}
+            var response = new ParamsGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = paramList };
+            return response;
+        }
         #endregion
 
         #region Edit
