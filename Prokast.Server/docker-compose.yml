@@ -43,12 +43,12 @@ services:
       - AppSettings__Issuer=Apka
       - AppSettings__Audience=user
       - AppSettings__Key=MySuperSecureAndRandomKeyThatLooksJustAwesomeAndNeedsToBeVeryVeryLong!!!111oneeleven
-      - AzureBlobStorage__StorageConnection=DefaultEndpointsProtocol=https;AccountName=prokast;AccountKey=i4WbfLLqt4Bm4+xgrulk3C8C6tiTDSDrTozr7JhtKQLqKXBE6iIWx9eYXbZ5HFDhje9FDeR1KgED+AStr6gNTA==;EndpointSuffix=core.windows.net
+      - AzureBlobStorage__StorageConnection=DefaultEndpointsProtocol=https;AccountName=prokast;AccountKey=####;EndpointSuffix=core.windows.net
       - AzureBlobStorage__ContainerName=images
       - SmtpSettings__Server=smtp.wp.pl
       - SmtpSettings__Port=465
       - SmtpSettings__Email=prokast-no-reply1@wp.pl
-      - SmtpSettings__Password=#@ProkastMasterPassword123@#
+      - SmtpSettings__Password=####
       - SmtpSettings__UseSsl=true
     ports:
       - "8080:8080"
