@@ -46,7 +46,7 @@ namespace Prokast.Server.Services
                 Type = customParamsDto.Type.ToString(),
                 Value = customParamsDto.Value.ToString(),
                 RegionID = regionID,
-                ProductID = productID
+                Product = product
             };
             
             product.CustomParams.Add(customParam);

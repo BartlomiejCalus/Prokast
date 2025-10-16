@@ -47,7 +47,7 @@ namespace Prokast.Server.Services
             var priceList = new PriceList
             {
                 Name = priceLists.Name.ToString(),
-                ProductID = productID
+                Product = product
             };
 
 
@@ -81,7 +81,7 @@ namespace Prokast.Server.Services
                 VAT = prices.VAT,
                 Brutto = prices.Brutto,
                 RegionID = prices.RegionID,
-                PriceListID = priceList.ID,
+                PriceLists = priceList
             };
 
             priceList.Prices.Add(price);

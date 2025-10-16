@@ -41,7 +41,7 @@ namespace Prokast.Server.Services
                 Title = description.Title,
                 Value = description.Value,
                 RegionID = regionID,
-                ProductID = productID
+                Product = product
             };
             
             product.AdditionalDescriptions.Add(additionalDescription);

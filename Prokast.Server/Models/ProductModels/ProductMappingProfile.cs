@@ -13,7 +13,7 @@ namespace Prokast.Server.Models.ProductModels
             CreateMap<Product, ProductGetDto>();
             CreateMap<AdditionalDescription, AdditionalDescriptionCreateDto>();
             CreateMap<AdditionalName, AdditionalNameDto>();
-            CreateMap<DictionaryParams, DictionaryParams>(); // jeśli DTO = model
+            CreateMap<DictionaryParams, DictionaryParams>();
             CreateMap<CustomParams, CustomParamsDto>();
             CreateMap<Photo, PhotoGetDto>();
             CreateMap<Prices, PricesDto>();

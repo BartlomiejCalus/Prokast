@@ -79,6 +79,26 @@ namespace Prokast.Server.Controllers
             }
         }
 
+        [HttpDelete("{ID}")]
+        [EndpointSummary("Delete an additional description")]
+        [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A DELETE operation. Endpoint deletes a given product and all of its components.")]
+        public ActionResult<Response> DeleteProduct([FromQuery] int clientID, [FromRoute] int ID)
+        {
+            try
+            {
+                var result = _productService.DeleteProduct(clientID, ID);
+                if (result is ErrorResponse) return BadRequest(result);
+
+                if (result == null) return NotFound(result);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
     }
 }

@@ -49,7 +49,7 @@ namespace Prokast.Server.Services
                 Title = additionalNameDto.Title.ToString(),
                 Value = additionalNameDto.Value.ToString(),
                 RegionID = regionID,
-                ProductID = productID
+                Product = product
             };
 
             product.AdditionalNames.Add(additionalName);

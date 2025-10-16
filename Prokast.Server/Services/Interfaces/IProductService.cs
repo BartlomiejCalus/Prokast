@@ -11,6 +11,7 @@ namespace Prokast.Server.Services.Interfaces
         Response GetProducts(int clientID, string name, string sku);
         Response GetOneProduct(int clientID, int productID);
         Response EditProduct(ProductEdit productEdit, int clientID, int productID);
+        Response DeleteProduct(int clientID, int productID);
 
     }
 }

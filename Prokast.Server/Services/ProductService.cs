@@ -466,13 +466,13 @@ namespace Prokast.Server.Services
 
         #region Delete
 
-        public DeleteResponse DeleteProduct (int clientID, int productID)
+        public Response DeleteProduct (int clientID, int productID)
         {
-            var responseNull = new DeleteResponse() { ID = random.Next(1, 100000), ClientID = clientID, deleteMsg = "Nie ma takiego produktu!" };
-
+            
             var product = _dbContext.Products.FirstOrDefault(x => x.ID == productID && x.ClientID == clientID);
             if (product == null)
             {
+                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego modelu!" };
                 return responseNull;
             }
 
@@ -535,10 +535,22 @@ namespace Prokast.Server.Services
                 return responseNull;
             }
 
-            product.Name = productEdit.Name;
-            product.SKU = productEdit.SKU;
-            product.EAN = productEdit.EAN;
-            product.Description = productEdit.Description;
+            if(productEdit.Name != null)
+            {
+                product.Name = productEdit.Name;
+            }
+            if(productEdit.SKU != null)
+            {
+                product.SKU = productEdit.SKU;
+            }
+            if (productEdit.EAN != null)
+            {
+                product.EAN = productEdit.EAN;
+            }
+            if(productEdit.Description != null)
+            {
+                product.Description = productEdit.Description;
+            }
             product.ModificationDate = DateTime.Now;
             _dbContext.SaveChanges();
 

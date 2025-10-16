@@ -73,7 +73,7 @@ namespace Prokast.Server.Services
 
             var newPhoto = new Photo { 
                 Name = photo.Name,
-                ProductID = productID,
+                Product = product,
                 Value = link.ToString(),
             };
 
