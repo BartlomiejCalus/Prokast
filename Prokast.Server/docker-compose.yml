@@ -1,0 +1,29 @@
+﻿name: prokast
+
+networks:
+  prokast-network:
+    driver: bridge
+
+volumes:
+  prokast-sql-data:
+
+services:
+  db:
+    container_name: prokast-db
+    image: mcr.microsoft.com/mssql/server:2025-latest
+    restart: on-failure
+    healthcheck:
+  	test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P Hentai1234! -Q 'SELECT 1'"]
+  	interval: 10s
+  	timeout: 5s
+  	retries: 10
+  	start_period: 30s
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Hentai1234!"
+    volumes:
+      - prokast-sql-data:/var/opt/mssql
+    networks:
+      - prokast-network
