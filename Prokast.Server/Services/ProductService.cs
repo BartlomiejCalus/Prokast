@@ -10,7 +10,7 @@ using Prokast.Server.Models.ResponseModels.PriceResponseModels.PriceListResponse
 using Prokast.Server.Services.Interfaces;
 using System.Collections.Immutable;
 using System.Linq;
-using Prokast.Server.Models.ResponseModels.AccountResponseModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace Prokast.Server.Services
 {
@@ -286,28 +286,27 @@ namespace Prokast.Server.Services
         #endregion
 
         #region Get
-
-        public Response GetProducts(int clientID, ProductFilter filter)
+        public Response GetProducts(int clientID, ProductFilter filter, int pageNumber)
         {
-           
-            var products = _dbContext.Products.Where(x => x.ClientID == clientID);
+
+            var products = _dbContext.Products.Include(x=>x.Photos).Where(x => x.ClientID == clientID);
 
             if (filter.Name != null)
                 products = products.Where(x => string.IsNullOrEmpty(filter.Name) || x.Name.Contains(filter.Name));
 
             if (filter.SKU != null)
                 products = products.Where(x => string.IsNullOrEmpty(filter.SKU) || x.SKU.Contains(filter.SKU));
-            
-            var result = products.ToList();
+
+            var result = PaginationExtension.Paginate(products, pageNumber, 10);
 
             if (products.Count() == 0)
             {
                 var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak produktów!" };
                 return responseNull;
             }
-            
+
             var productList = new List<ProductGetMin>();
-            foreach (var prod in products)
+            foreach (var prod in result.Items)
             {
                 var newProductToList = new ProductGetMin
                 {
@@ -319,45 +318,50 @@ namespace Prokast.Server.Services
                 };
                 productList.Add(newProductToList);
             }
-            var response = new ProductGetMinResponse { ID = random.Next(1, 100000), ClientID = clientID, Model = productList };
+
+           
+            //var response = new ProductGetMinResponse { ID = random.Next(1, 100000), ClientID = clientID, Model = productList };
+            
+            var response = new ProductGetMinResponse() { ID = random.Next(1, 100000), Model = productList };
+
             return response;
         }
 
-        /*var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
-        var products = _dbContext.Products.Where(x => x.ClientID == clientID).ToList();
-        if (!products.Any())
-        {
-            responseNull.errorMsg = "Klient nie ma produktów";
-            return responseNull;
-        }
+            /*var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
+            var products = _dbContext.Products.Where(x => x.ClientID == clientID).ToList();
+            if (!products.Any())
+            {
+                responseNull.errorMsg = "Klient nie ma produktów";
+                return responseNull;
+            }
+            
+            if (filter == null)
+            {
+                return responseNull;
+            }
 
-        if (filter == null)
-        {
-            return responseNull;
-        }
+            if (filter.ProductIDList != null && filter.ProductIDList.Count != 0)
+            {
+                products = products.Where(x => filter.ProductIDList.Contains(x.ID)).ToList();
+            }
 
-        if (filter.ProductIDList != null && filter.ProductIDList.Count != 0)
-        {
-            products = products.Where(x => filter.ProductIDList.Contains(x.ID)).ToList();
-        }
+            if (filter.CreationDate != null)
+            {
+                products = products.Where(x => x.AdditionDate < filter.CreationDate).ToList();
+            }
 
-        if (filter.CreationDate != null)
-        {
-            products = products.Where(x => x.AdditionDate < filter.CreationDate).ToList();
-        }
+            if (filter.ModificationDate != null)
+            {
+                products = products.Where(x => x.ModificationDate < filter.ModificationDate).ToList();
+            }
 
-        if (filter.ModificationDate != null)
-        {
-            products = products.Where(x => x.ModificationDate < filter.ModificationDate).ToList();
-        }
+            if (filter.ProductName != null)
+            {
+                products = products.Where(x => x.Name.Contains(filter.ProductName)).ToList();
+            }
 
-        if (filter.ProductName != null)
-        {
-            products = products.Where(x => x.Name.Contains(filter.ProductName)).ToList();
-        }
-
-        var response = new ProductsGetResponse() { ID = random.Next(0, 100000), ClientID = clientID, Model = products };
-        return response;*/
+            var response = new ProductsGetResponse() { ID = random.Next(0, 100000), ClientID = clientID, Model = products };
+            return response;*/
 
         //}
         /*public Response GetProducts([FromBody] ProductGetFilter productGetFilter, int clientID)
