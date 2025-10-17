@@ -472,8 +472,14 @@ namespace Prokast.Server.Services
             var product = _dbContext.Products.FirstOrDefault(x => x.ID == productID && x.ClientID == clientID);
             if (product == null)
             {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego modelu!" };
+                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego produktu!" };
                 return responseNull;
+            }
+
+            var storedproduct = _dbContext.StoredProducts.FirstOrDefault(x => x.ProductID == product.ID);
+            if (storedproduct != null)
+            {
+                _dbContext.StoredProducts.Remove(storedproduct);
             }
 
             _dbContext.Products.Remove(product);
