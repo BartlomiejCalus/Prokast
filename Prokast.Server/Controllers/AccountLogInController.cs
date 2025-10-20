@@ -1,5 +1,4 @@
-﻿//using AutoMapper;
-using Prokast.Server.Entities;
+﻿using Prokast.Server.Entities;
 using Prokast.Server.Models;
 using Microsoft.AspNetCore.Mvc;
 using Prokast.Server.Models.ResponseModels;
@@ -7,8 +6,12 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using Prokast.Server.Services.Interfaces;
 using Prokast.Server.Models.AccountModels;
 using Prokast.Server.Models.ResponseModels.AccountResponseModels;
-//using Microsoft.EntityFrameworkCore;
-
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.IdentityModel.Tokens.Jwt;
+using Prokast.Server.Models.JWT;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Prokast.Server.Controllers
 {
@@ -16,8 +19,6 @@ namespace Prokast.Server.Controllers
     public class AccountController : ControllerBase
     {
         private readonly ILogInService _LogInService;
-
-
 
         public AccountController(ILogInService logInService)
         {
@@ -28,14 +29,15 @@ namespace Prokast.Server.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(LogInLoginResponse),StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> Log_In([FromBody] LoginRequest loginRequest) 
-        {
+        public ActionResult<TokenResponseDto> Log_In([FromBody] LoginRequest loginRequest) 
+        {            
             try 
             { 
-                var response = _LogInService.Log_In(loginRequest);
-                if (response is ErrorResponse) return BadRequest(response);
-                return Ok(response);
-            }catch (Exception ex) { 
+                var response =  _LogInService.Log_In(loginRequest);
+                if (response is null) return BadRequest();
+                    return Ok(response);
+            }
+            catch (Exception ex) { 
                 return BadRequest(ex.Message);
             }
         }
@@ -43,6 +45,7 @@ namespace Prokast.Server.Controllers
 
         #region GetAll
         [HttpGet]
+        [Authorize]
         [ProducesResponseType(typeof(LogInGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetAll([FromQuery] int clientID) 
@@ -59,8 +62,8 @@ namespace Prokast.Server.Controllers
             }   
         }
         #endregion
-
         [HttpPost("create")]
+        [Authorize]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> CreateAccount([FromBody] AccountCreateDto accountCreate,[FromQuery] int clientID)
@@ -76,8 +79,8 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
         [HttpPut]
+        [Authorize]
         [ProducesResponseType(typeof(AccountEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> EditAccount([FromBody] AccountEditDto accountEdit, [FromQuery] int clientID)
@@ -99,8 +102,8 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
         [HttpPut("Password")]
+        [Authorize]
         [ProducesResponseType(typeof(AccountEditPasswordResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> EditPassword([FromBody] AccountEditPasswordDto editPasswordDto, [FromQuery] int clientID)
@@ -122,8 +125,8 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
         [HttpDelete("{ID}")]
+        [Authorize]
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> DeleteAccount([FromQuery] int clientID, [FromRoute] int ID)
@@ -141,5 +144,19 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-    }
+
+        [HttpGet("authenticated")]
+        [Authorize]
+        public IActionResult AuthenticatedOnlyEndpoint()
+        {
+            return Ok("You are authenticated!");
+        }
+
+        [HttpGet("admin-only")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult AdminOnlyEndpoint()
+        {
+            return Ok("You are and admin!");
+        } 
+    }   
 }

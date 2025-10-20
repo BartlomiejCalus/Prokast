@@ -31,9 +31,15 @@ namespace Prokast.Server.Services
         public Response CreatePhoto([FromBody] PhotoDto photo, int clientID, int productID) {
             var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
 
-
             if (photo == null)
             {
+                return responseNull;
+            }
+
+            var product = _dbContext.Products.Include(p => p.Photos).FirstOrDefault(x => x.ID == productID && x.ClientID == clientID);
+            if (product == null)
+            {
+                responseNull.errorMsg = "Nie ma takiego produktu!";
                 return responseNull;
             }
 
@@ -71,7 +77,7 @@ namespace Prokast.Server.Services
                 Value = link.ToString(),
             };
 
-            _dbContext.Photos.Add(newPhoto);
+            product.Photos.Add(newPhoto);
             _dbContext.SaveChanges();
 
             var response = new Response() { ID = random.Next(1, 100000), ClientID = clientID };

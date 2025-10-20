@@ -8,9 +8,12 @@ using Prokast.Server.Models.ResponseModels.WarehouseResponseModels;
 using Prokast.Server.Models.ResponseModels.OrderResponseModels;
 using Prokast.Server.Entities;
 using Prokast.Server.Enums;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace Prokast.Server.Controllers
 {
+    [Authorize] 
     [Route("api/orders")]
     public class OrderController: ControllerBase
     {

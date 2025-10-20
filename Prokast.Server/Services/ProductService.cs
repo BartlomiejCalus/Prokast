@@ -209,17 +209,30 @@ namespace Prokast.Server.Services
 
             foreach(var additionalDescription in productCreateDto.AdditionalDescriptions)
             {
-                _additionalDescriptionService.CreateAdditionalDescription(additionalDescription, clientID, regionID, newProduct.ID);
+                var result = _additionalDescriptionService.CreateAdditionalDescription(additionalDescription, clientID, regionID, newProduct.ID);
+                if (result != null && result.GetType() == typeof(ErrorResponse))
+                {
+                    return result;
+                }
             }
 
             foreach(var additionalName in productCreateDto.AdditionalNames)
             {
-                _additionalNameService.CreateAdditionalName(additionalName, clientID, regionID, newProduct.ID);
+               var result = _additionalNameService.CreateAdditionalName(additionalName, clientID, regionID, newProduct.ID);
+                if (result != null && result.GetType() == typeof(ErrorResponse))
+                {
+                    return result;
+                }
+
             }
 
             foreach(var customParam in productCreateDto.CustomParams)
             {
-                _paramsService.CreateCustomParam(customParam, clientID, regionID, newProduct.ID);
+                var result = _paramsService.CreateCustomParam(customParam, clientID, regionID, newProduct.ID);
+                if (result != null && result.GetType() == typeof(ErrorResponse))
+                {
+                    return result;
+                }
             }
 
             foreach(var dictionaryParam in productCreateDto.DictionaryParams)
@@ -231,13 +244,25 @@ namespace Prokast.Server.Services
 
             foreach (var photo in productCreateDto.Photos)
             {
-                _photoService.CreatePhoto(photo, clientID, newProduct.ID);
+                var result = _photoService.CreatePhoto(photo, clientID, newProduct.ID);
+                if (result != null && result.GetType() == typeof(ErrorResponse))
+                {
+                    return result;
+                }
             }
 
-            _priceService.CreatePriceList(productCreateDto.PriceList, clientID, newProduct.ID);
-            foreach(var price in productCreateDto.PriceList.Prices)
+            var priceResult = _priceService.CreatePriceList(productCreateDto.PriceList, clientID, newProduct.ID);
+            if (priceResult != null && priceResult.GetType() == typeof(ErrorResponse))
             {
-                _priceService.CreatePrice(price, clientID, newProduct.ID);
+                return priceResult;
+            }
+            foreach (var price in productCreateDto.PriceList.Prices)
+            {
+                var result = _priceService.CreatePrice(price,  newProduct.ID, clientID);
+                if (result != null && result.GetType() == typeof(ErrorResponse))
+                {
+                    return result;
+                }
             }
 
             var createdProduct = _dbContext.Products.OrderByDescending(x => x.ID).FirstOrDefault();

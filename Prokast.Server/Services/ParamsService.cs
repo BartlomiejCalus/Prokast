@@ -32,7 +32,7 @@ namespace Prokast.Server.Services
                 return responseNull;
             }
 
-            var product = _dbContext.Products.FirstOrDefault(x => x.ID == productID && x.ClientID == clientID);
+            var product = _dbContext.Products.Include(p => p.CustomParams).FirstOrDefault(x => x.ID == productID && x.ClientID == clientID);
             if (product == null)
             {
                 responseNull.errorMsg = "Nie ma takiego produktu!";

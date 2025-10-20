@@ -15,17 +15,18 @@ using Prokast.Server.Models.ClientModels;
 
 namespace Prokast.Server.Services
 {
-
     public class ClientService: IClientService
     {
         private readonly ProkastServerDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly ILogInService _logInService;
         Random random = new Random();
 
-        public ClientService(ProkastServerDbContext dbContext, IMapper mapper)
+        public ClientService(ProkastServerDbContext dbContext, IMapper mapper, ILogInService logInService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _logInService = logInService;
         }
 
         public static string getHashed(string text)
@@ -44,6 +45,7 @@ namespace Prokast.Server.Services
         #region RegisterClient
         public Response RegisterClient([FromBody] Registration registration) 
         { 
+            
             var reg = _mapper.Map<Registration>(registration);
             if (reg == null)
             {
@@ -53,7 +55,8 @@ namespace Prokast.Server.Services
             var account = new Account
             {
                 Login = registration.Login,
-                Password = getHashed(registration.Password)
+                Password = getHashed(registration.Password),
+                Role = 1
             };
 
             _dbContext.Accounts.Add(account);
@@ -77,7 +80,6 @@ namespace Prokast.Server.Services
 
             var response = new ClientRegisterResponse() { ID = random.Next(1, 100000), ClientID = test.ID, Registration = reg };
             return response;
-
         }
         #endregion
 
