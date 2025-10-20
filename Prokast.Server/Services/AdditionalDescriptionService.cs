@@ -22,20 +22,15 @@ namespace Prokast.Server.Services
         }
 
         #region Create
-        public Response CreateAdditionalDescription([FromBody] AdditionalDescriptionCreateDto description, int clientID, int regionID, int productID)
+        public Response CreateAdditionalDescription(AdditionalDescriptionCreateDto description, int clientID, int regionID, int productID)
         {
-            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
             if (description == null)
-            {
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
+            
             var product = _dbContext.Products.Include(p => p.AdditionalDescriptions).FirstOrDefault(x => x.ID == productID && x.ClientID == clientID);
             if (product == null)
-            {
-                responseNull.errorMsg = "Nie ma takiego produktu!";
-                return responseNull;
-            }
-
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego produktu!" };
+            
             var additionalDescription = new AdditionalDescription()
             {
                 Title = description.Title,
@@ -47,8 +42,7 @@ namespace Prokast.Server.Services
             product.AdditionalDescriptions.Add(additionalDescription);
             _dbContext.SaveChanges();
 
-            var response = new Response() { ID = random.Next(1, 100000), ClientID = clientID };
-            return response;
+            return new Response() { ID = random.Next(1, 100000), ClientID = clientID };
         }
         #endregion
 
@@ -56,26 +50,19 @@ namespace Prokast.Server.Services
         public Response GetAllDescriptions(int clientID)
         {
             var addDescList = _dbContext.AdditionalDescriptions.Where(x => x.Product.ClientID == clientID).ToList();
-            var response = new AdditionalDescriptionGetResponse() { ID = random.Next(1, 100000), Model = addDescList };
             if (addDescList.Count() == 0)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak parametrów" };
-                return responseNull;
-            }
-            return response;
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak parametrów." };
+
+            return new AdditionalDescriptionGetResponse() { ID = random.Next(1, 100000), Model = addDescList };
         }
 
         public Response GetDescriptionsByID(int ID, int clientID)
         {
             var addDesc = _dbContext.AdditionalDescriptions.Where(x => x.ID == ID && x.Product.ClientID == clientID).ToList();
             if (addDesc.Count() == 0)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Nie ma takiego parametru" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego parametru." };
 
-            var response = new AdditionalDescriptionGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = addDesc };
-            return response;
+            return new AdditionalDescriptionGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = addDesc };
         }
 
         /// <summary>
@@ -88,13 +75,9 @@ namespace Prokast.Server.Services
         {
             var addDesc = _dbContext.AdditionalDescriptions.Where(x => x.Title.Contains(Title) && x.Product.ClientID == clientID).ToList();
             if (addDesc.Count() == 0)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Nie ma takiego parametru" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego parametru." };
 
-            var response = new AdditionalDescriptionGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = addDesc };
-            return response;
+            return new AdditionalDescriptionGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = addDesc };
 
         }
 
@@ -102,13 +85,9 @@ namespace Prokast.Server.Services
         {
             var addDesc = _dbContext.AdditionalDescriptions.Where(x => x.RegionID == Region && x.Product.ClientID == clientID).ToList();
             if (addDesc.Count() == 0)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Nie ma takiego parametru" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego parametru." };
 
-            var response = new AdditionalDescriptionGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = addDesc };   
-            return response;
+            return new AdditionalDescriptionGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = addDesc };
 
         }
 
@@ -116,14 +95,10 @@ namespace Prokast.Server.Services
         {
 
             var descriptions = _dbContext.AdditionalDescriptions.Where(x => x.ProductID == productID).ToList();
-            if(descriptions.Count() == 0)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Produkt nie ma tych parametrów!" };
-                return responseNull;
-            }
+            if (descriptions.Count() == 0)
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Produkt nie ma parametrów." };
 
-            var response = new AdditionalDescriptionGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = descriptions };
-            return response;
+            return new AdditionalDescriptionGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = descriptions };
         }
 
         #endregion
@@ -135,19 +110,14 @@ namespace Prokast.Server.Services
 
 
             if (findDescription == null)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego modelu!" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego modelu!" };
+            
 
             findDescription.Title = data.Title;
-            //findDescription.Region = data.Region;
             findDescription.Value = data.Value;
             _dbContext.SaveChanges();
 
-            var response = new AdditionalDescriptionEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, AdditionalDescriptionEdit = findDescription };
-
-            return response;
+            return new AdditionalDescriptionEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, AdditionalDescriptionEdit = findDescription };
         }
         #endregion
 
@@ -158,17 +128,12 @@ namespace Prokast.Server.Services
 
 
             if (findAdditionalDescription == null)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego modelu!" };
-                return responseNull;
-            }
-
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego modelu!" };
+            
             _dbContext.AdditionalDescriptions.Remove(findAdditionalDescription);
             _dbContext.SaveChanges();
 
-            var response = new DeleteResponse() { ID = random.Next(1, 100000), ClientID = clientID, deleteMsg = "Parametr został usumięty" };
-
-            return response;
+            return new DeleteResponse() { ID = random.Next(1, 100000), ClientID = clientID, deleteMsg = "Parametr został usumięty" };
         }
         #endregion
     }

@@ -541,22 +541,13 @@ namespace Prokast.Server.Services
                 return responseNull;
             }
 
-            if(productEdit.Name != null)
-            {
-                product.Name = productEdit.Name;
-            }
-            if(productEdit.SKU != null)
-            {
-                product.SKU = productEdit.SKU;
-            }
-            if (productEdit.EAN != null)
-            {
-                product.EAN = productEdit.EAN;
-            }
-            if(productEdit.Description != null)
-            {
-                product.Description = productEdit.Description;
-            }
+            product.Name = productEdit.Name ?? product.Name;
+
+            product.SKU = productEdit.SKU ?? product.SKU;
+
+            product.EAN = productEdit.EAN ?? product.EAN;
+
+            product.Description = productEdit.Description ?? product.Description;
             product.ModificationDate = DateTime.Now;
             _dbContext.SaveChanges();
 
