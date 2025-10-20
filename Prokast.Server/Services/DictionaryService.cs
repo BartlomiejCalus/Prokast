@@ -94,18 +94,23 @@ namespace Prokast.Server.Services
         public Response GetValuesByName (string name)
         {
             var param = _dbContext.DictionaryParams.Where(x => x.Name == name).ToList();
+            if (param.Count() == 0)
+            {
+                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Błędna nazwa" };
+                return responseNull;
+            }
+            //var paginatedResult = PaginationExtension.Paginate(param, 2, 5);
 
             List<string> paramList = new List<string>();
             foreach( var x in param)
             {
                 paramList.Add(x.Value);
             }
+
             var response = new DictionaryUniqueGetResponse() { ID = random.Next(1, 100000), Model = paramList };
-            if (param.Count() == 0)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Błędna nazwa" };
-                return responseNull;
-            }
+
+            //var response = new PaginationTestResponse<DictionaryParams>() { ID = random.Next(1, 100000), Model = paginatedResult };
+
             return response;
         }
 
