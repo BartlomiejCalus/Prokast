@@ -25,11 +25,17 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json(response.data, { status: 200 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Server Error:", error);
+    if (axios.isAxiosError(error) && error.response) {
+      return NextResponse.json(
+        { error: error.response.data },
+        { status: error.response.status }
+      );
+    }
     return NextResponse.json(
-      { error: error.response ? error.response.data : "Unknown error" },
-      { status: error.response ? error.response.status : 500 }
+      { error: "Unknown error" },
+      { status: 500 }
     );
   }
 }
