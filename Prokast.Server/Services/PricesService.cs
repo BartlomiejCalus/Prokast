@@ -31,48 +31,32 @@ namespace Prokast.Server.Services
         #region Create
         public Response CreatePriceList([FromBody] PriceListsCreateDto priceLists, int clientID, int productID)
         {
-            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
             if (priceLists == null)
-            {
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
 
             var product = _dbContext.Products.Include(p => p.PriceList).FirstOrDefault(x => x.ID == productID && x.ClientID == clientID);
             if (product == null)
-            {
-                responseNull.errorMsg = "Nie ma takiego produktu!";
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego produktu!" };
 
             var priceList = new PriceList
             {
                 Name = priceLists.Name.ToString(),
                 Product = product
             };
-
-
             product.PriceList = priceList;
             _dbContext.SaveChanges();
 
-            var response = new Response() { ID = random.Next(1, 100000), ClientID = clientID };
-            return response;
+            return new Response() { ID = random.Next(1, 100000), ClientID = clientID };
         }
 
         public Response CreatePrice([FromBody] PricesDto prices, int productID, int clientID)
         {
-            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
-
             if (prices == null)
-            {
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
 
             var priceList = _dbContext.PriceLists.Include(p => p.Prices).FirstOrDefault(x => x.ProductID == productID && x.Product.ClientID == clientID);
             if (priceList == null)
-            {
-                responseNull.errorMsg = "Nie ma takiej listy!";
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiej listy!" };
 
             var price = new Prices
             {
@@ -87,8 +71,7 @@ namespace Prokast.Server.Services
             priceList.Prices.Add(price);
             _dbContext.SaveChanges();
 
-            var response = new Response() { ID = random.Next(1, 100000), ClientID = clientID };
-            return response;
+            return new Response() { ID = random.Next(1, 100000), ClientID = clientID };
         }
         #endregion
 
@@ -97,10 +80,7 @@ namespace Prokast.Server.Services
         {
             var priceList = _dbContext.PriceLists.Where(x => x.Product.ClientID == clientID).ToList();
             if (priceList.Count() == 0)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Klient nie ma parametrów" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Klient nie ma parametrów" };
 
             List<PriceListGet> priceListList = new List<PriceListGet>();
             foreach (var price in priceList)
@@ -115,18 +95,14 @@ namespace Prokast.Server.Services
                 priceListList.Add(priceListGet);
 
             }
-            var response = new PriceListsGetResponse() { ID = random.Next(1,100000), ClientID = clientID, Model = priceListList };
-            return response;
+            return new PriceListsGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = priceListList };
         }
 
         public Response GetPriceListsByName (int clientID, string name)
         {
             var priceList = _dbContext.PriceLists.Where(x =>x.Product.ClientID == clientID && x.Name.Contains(name)).ToList();
             if (priceList.Count() == 0)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Klient nie ma parametrów o takiej nazwie" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Klient nie ma parametrów o takiej nazwie" };
 
             List<PriceListGet> priceListList = new List<PriceListGet>();
             foreach (var price in priceList)
@@ -141,57 +117,43 @@ namespace Prokast.Server.Services
                 priceListList.Add(priceListGet);
 
             }
-            var response = new PriceListsGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = priceListList };
-            return response;
+            return new PriceListsGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = priceListList };
         }
 
         public Response GetAllPrices(int clientID, int priceListID)
         {
             var priceList = _dbContext.Prices.Where(x => x.PriceLists.ID == priceListID && x.PriceLists.Product.ClientID == clientID).ToList();
             if (priceList.Count() == 0)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Cennik nie ma cen lub nie istnieje" };
-                return responseNull;
-            }
-            var response = new PricesGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = priceList };
-            return response;
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Cennik nie ma cen lub nie istnieje" };
+            
+            return new PricesGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = priceList };
         }
 
         public Response GetPricesByRegion (int clientID,int priceListID, int regionID)
         {
             var priceList = _dbContext.Prices.Where(x => x.PriceLists.ID==priceListID && x.RegionID == regionID).ToList();
             if (priceList.Count() == 0)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Cennik nie ma cen lub nie istnieje" };
-                return responseNull;
-            }
-            var response = new PricesGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = priceList };
-            return response;
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Cennik nie ma cen lub nie istnieje" };
+            
+            return new PricesGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = priceList };
         }
 
         public Response GetPricesByName (int clientID,int priceListID, string name)
         {
             var priceList = _dbContext.Prices.Where(x => x.PriceLists.ID == priceListID && x.Name.Contains(name)).ToList();
             if (priceList.Count() == 0)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Cennik nie ma cen lub nie istnieje" };
-                return responseNull;
-            }
-            var response = new PricesGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = priceList };
-            return response;
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Cennik nie ma cen lub nie istnieje" };
+
+            return new PricesGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = priceList };
         }
 
         public Response GetAllPricesInProduct(int clientID, int pricelistID)
         {
             var prices = _dbContext.Prices.Where(x => x.PriceListID == pricelistID).ToList();
             if (prices.Count() == 0)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Produkt nie ma tych parametrów!" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Produkt nie ma tych parametrów!" };
 
-            var response = new PricesGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = prices };
-            return response;
+            return new PricesGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = prices };
         }
         #endregion
 
@@ -200,10 +162,7 @@ namespace Prokast.Server.Services
         {
             var price = _dbContext.Prices.FirstOrDefault(x => x.PriceLists.ID == priceListID && x.ID == priceID);
             if (price == null)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiegj ceny!" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiegj ceny!" };
 
             price.Name = editPriceDto.Name;
             price.Netto = editPriceDto.Netto;
@@ -212,8 +171,7 @@ namespace Prokast.Server.Services
             
             _dbContext.SaveChanges();
 
-            var response = new PricesEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = editPriceDto };
-            return response;
+            return new PricesEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = editPriceDto };
 
         }
         #endregion
@@ -223,39 +181,30 @@ namespace Prokast.Server.Services
         {
             var price = _dbContext.Prices.FirstOrDefault(x => x.PriceLists.ID == priceListID && x.ID == priceID);
             if (price == null)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiej ceny!" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiej ceny!" };
 
             _dbContext.Remove(price);
             _dbContext.SaveChanges();
 
-            var response = new DeleteResponse() { ID = random.Next(1, 100000), ClientID = clientID, deleteMsg = "Cena została usunięta" };
-            return response;
+            return new DeleteResponse() { ID = random.Next(1, 100000), ClientID = clientID, deleteMsg = "Cena została usunięta" };
         }
 
         public Response DeletePriceList(int clientID, int priceListID)
         {
             var priceList = _dbContext.PriceLists.FirstOrDefault(x => x.ID == priceListID && x.Product.ClientID == clientID);
             if (priceList == null)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego cennika!" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego cennika!" };
 
-            var prices = _dbContext.Prices.Where(x => x.PriceListID == priceListID);
+            //var prices = _dbContext.Prices.Where(x => x.PriceListID == priceListID);
 
-            foreach ( var price in prices)
+            /*foreach ( var price in prices)
             {
                 _dbContext.Remove(price);
-            }
-            
+            }*/
             _dbContext.Remove(priceList);
             _dbContext.SaveChanges();
 
-            var response = new DeleteResponse() { ID = random.Next(1, 100000), ClientID = clientID, deleteMsg = "Cennik został usunięty" };
-            return response;
+            return new DeleteResponse() { ID = random.Next(1, 100000), ClientID = clientID, deleteMsg = "Cennik został usunięty" };
         }
         #endregion
 
