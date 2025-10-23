@@ -1,0 +1,56 @@
+﻿name: prokast
+
+networks:
+  prokast-network:
+    driver: bridge
+
+volumes:
+  prokast-sql-data:
+
+services:
+  db:
+    container_name: prokast-db
+    image: mcr.microsoft.com/mssql/server:2025-latest
+    restart: on-failure
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P Hentai1234! -Q 'SELECT 1'"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Hentai1234!"
+    volumes:
+      - prokast-sql-data:/var/opt/mssql
+    networks:
+      - prokast-network
+
+  api:
+    container_name: prokast-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: on-failure
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=prokast-db,1433;Initial Catalog=ProkastDb;User ID=sa;Password=Hentai1234!;TrustServerCertificate=True
+      - AppSettings__Issuer=Apka
+      - AppSettings__Audience=user
+      - AppSettings__Key=MySuperSecureAndRandomKeyThatLooksJustAwesomeAndNeedsToBeVeryVeryLong!!!111oneeleven
+      - AzureBlobStorage__StorageConnection=DefaultEndpointsProtocol=https;AccountName=prokast;AccountKey=####;EndpointSuffix=core.windows.net
+      - AzureBlobStorage__ContainerName=images
+      - SmtpSettings__Server=smtp.wp.pl
+      - SmtpSettings__Port=465
+      - SmtpSettings__Email=prokast-no-reply1@wp.pl
+      - SmtpSettings__Password=####
+      - SmtpSettings__UseSsl=true
+    ports:
+      - "8080:8080"
+    networks:
+      - prokast-network

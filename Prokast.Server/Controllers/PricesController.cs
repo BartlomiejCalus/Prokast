@@ -1,16 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Prokast.Server.Entities;
 using Prokast.Server.Models;
-using Prokast.Server.Models.ResponseModels;
-using System.Diagnostics;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using Prokast.Server.Services.Interfaces;
-using Prokast.Server.Models.PricesModels;
-using Prokast.Server.Models.PriceModels.PriceListModels;
 using Prokast.Server.Models.PriceModels;
+using Prokast.Server.Models.PriceModels.PriceListModels;
+using Prokast.Server.Models.PricesModels;
+using Prokast.Server.Models.ResponseModels;
+using Prokast.Server.Models.ResponseModels.AdditionalDescriptionResponseModels;
 using Prokast.Server.Models.ResponseModels.CustomParamsResponseModels;
 using Prokast.Server.Models.ResponseModels.PriceResponseModels.PriceListResponseModels;
-using Microsoft.AspNetCore.Authorization;
+using Prokast.Server.Services;
+using Prokast.Server.Services.Interfaces;
+using System.Diagnostics;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 
@@ -139,6 +141,26 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("Product")]
+        [EndpointSummary("Get all prices in Product")]
+        [ProducesResponseType(typeof(AdditionalDescriptionGetResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns a list of prices that are components in the same product.")]
+        public ActionResult<Response> GetAllParamsInProduct([FromQuery] int clientID, [FromQuery] int priceListID)
+        {
+            try
+            {
+                var result = _priceService.GetAllPricesInProduct(clientID, priceListID);
+                if (result is ErrorResponse) return BadRequest(result);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPut("prices/{priceID}")]
         [ProducesResponseType(typeof(ParamsEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]

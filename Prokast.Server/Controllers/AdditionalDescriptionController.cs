@@ -115,6 +115,25 @@ namespace Prokast.Server.Controllers
             }
         }
 
+        [HttpGet("Product")]
+        [EndpointSummary("Get all additional descriptions in Product")]
+        [ProducesResponseType(typeof(AdditionalDescriptionGetResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns a list of additional descriptions that are components in the same product.")]
+        public ActionResult<Response> GetAllDescriptionsInProduct([FromQuery] int clientID, [FromQuery] int productID)
+        {
+            try
+            {
+                var result = _additionalDescriptionService.GetAllDescriptionsInProduct(clientID, productID);
+                if (result is ErrorResponse) return BadRequest(result);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPut("{ID}")]
         [EndpointSummary("Edit an additional description")]
         [ProducesResponseType(typeof(AdditionalDescriptionEditResponse), StatusCodes.Status200OK)]

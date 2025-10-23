@@ -24,18 +24,12 @@ namespace Prokast.Server.Services
         #region Create
         public Response CreateWarehouse([FromBody] WarehouseCreateDto warehouseCreateDto, int clientID)
         {
-            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
             if (warehouseCreateDto == null)
-            {
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
 
             var client = _dbContext.Clients.FirstOrDefault(x => x.ID == clientID);
             if (client == null)
-            {
-                responseNull.errorMsg = "Nie ma takiego klienta!";
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego klienta!" };
 
             var warehouse = new Warehouse
             {
@@ -51,8 +45,7 @@ namespace Prokast.Server.Services
             client.Warehouses.Add(warehouse);
             _dbContext.SaveChanges();
 
-            var response = new Response() { ID = random.Next(1,100000), ClientID = clientID };
-            return response;
+            return new Response() { ID = random.Next(1, 100000), ClientID = clientID };
         }
         #endregion
 
@@ -61,72 +54,51 @@ namespace Prokast.Server.Services
         {
             var warehouseList = _dbContext.Warehouses.Where(x =>  x.ClientID == clientID).ToList();
             if (warehouseList.Count == 0)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak magazynów!" };
-                return responseNull;
-            }
-            var response = new WarehouseGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = warehouseList };
-            return response;
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak magazynów!" };
+
+            return new WarehouseGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = warehouseList };
         }
 
         public Response GetWarehouseById(int clientID, int ID)
         {
             var warehouse = _dbContext.Warehouses.FirstOrDefault(x => x.ID == ID && x.ClientID == clientID);
             if (warehouse == null)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak magazynów!" };
-                return responseNull;
-            }
-            var response = new WarehouseGetOneResponse() { ID = random.Next(1,100000), ClientID = clientID, Model = warehouse};
-            return response;
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak magazynów!" };
+
+            return new WarehouseGetOneResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = warehouse };
         }
         public Response GetWarehousesByName(int clientID, string name)
         {
             var warehouseList = _dbContext.Warehouses.Where(x => x.Name.Contains(name) && x.ClientID == clientID).ToList();
             if (warehouseList.Count == 0)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak magazynów!" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak magazynów!" };
 
-            var response = new WarehouseGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = warehouseList };
-            return response;
+            return new WarehouseGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = warehouseList };
         }
 
         public Response GetWarehousesByCity(int clientID, string city)
         {
             var warehouseList = _dbContext.Warehouses.Where(x => x.Name.Contains(city) && x.ClientID == clientID).ToList();
             if (warehouseList.Count == 0)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak magazynów!" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak magazynów!" };
 
-            var response = new WarehouseGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = warehouseList };
-            return response;
+            return new WarehouseGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = warehouseList };
         }
 
         public Response GetWarehouseByCountry(int clientID, string country)
         {
             var warehouseList = _dbContext.Warehouses.Where(x => x.Name.Contains(country) && x.ClientID == clientID).ToList();
             if (warehouseList.Count == 0)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak magazynów!" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak magazynów!" };
 
-            var response = new WarehouseGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = warehouseList };
-            return response;
+            return new WarehouseGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = warehouseList };
         }
 
         public Response GetWarehousesMinimalData(int clientID)
         {
             var warehouses = _dbContext.Warehouses.Where(x => x.ClientID == clientID).ToList();
             if (warehouses.Count == 0)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak magazynów!" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak magazynów!" };
 
             var warehousesList = new List<WarehouseGetMinimal>();
 
@@ -140,8 +112,7 @@ namespace Prokast.Server.Services
                 warehousesList.Add(warehouseToList);
             }
 
-            var response = new WarehouseGetMinimalResponse() { ID = random.Next(1,100000), ClientID = clientID, Model = warehousesList};
-            return response;
+            return new WarehouseGetMinimalResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = warehousesList };
         }
         #endregion
 
@@ -151,10 +122,7 @@ namespace Prokast.Server.Services
         {
             var warehouse = _dbContext.Warehouses.FirstOrDefault(x => x.ClientID == clientID && x.ID == ID);
             if (warehouse == null)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego magazynu!" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego magazynu!" };
 
             warehouse.Name = warehouseCreateDto.Name;
             warehouse.Address = warehouseCreateDto.Address;
@@ -164,49 +132,41 @@ namespace Prokast.Server.Services
             warehouse.PhoneNumber = warehouseCreateDto.PhoneNumber;
             _dbContext.SaveChanges();
 
-            var response = new WarehouseEditResponse() { ID = random.Next(1,100000), ClientID = clientID, Model = warehouse };
-            return response;
+            return new WarehouseEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = warehouse };
         }
         #endregion
 
         #region Delete
         public Response DeleteWarehouse(int clientID, int ID)
         {
-            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego magazynu!" };
             var warehouse = _dbContext.Warehouses.FirstOrDefault(x => x.ClientID == clientID && x.ID == ID);
             if (warehouse == null)
-            {
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego magazynu!" };
 
             var client = _dbContext.Clients.FirstOrDefault(x => x.ID == clientID);
             if (client == null)
-            {
-                responseNull.errorMsg = "Nie ma takiego klienta!";
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego klienta!" };
 
-            var storedProducts = _dbContext.StoredProducts.Where(x => x.WarehouseID == warehouse.ID).ToList();
-            var workers = _dbContext.Accounts.Where(x => x.WarehouseID == warehouse.ID).ToList();
-            foreach ( var storedProduct in storedProducts)
+            //var storedProducts = _dbContext.StoredProducts.Where(x => x.WarehouseID == warehouse.ID).ToList();
+            //var workers = _dbContext.Accounts.Where(x => x.WarehouseID == warehouse.ID).ToList();
+            /*foreach ( var storedProduct in storedProducts)
             {
                 _dbContext.StoredProducts.Remove(storedProduct);
                 _dbContext.SaveChanges();
-            }
+            }*/
 
-            foreach ( var worker in workers)
+            /*foreach ( var worker in workers)
             {
                 worker.WarehouseID = null;
                 _dbContext.SaveChanges();
-            }
+            }*/
 
-            client.Warehouses.Remove(warehouse);
+            //client.Warehouses.Remove(warehouse);
 
             _dbContext.Warehouses.Remove(warehouse);
             _dbContext.SaveChanges();
 
-            var response = new DeleteResponse() { ID = random.Next(1, 100000), ClientID = clientID, deleteMsg = "Magazyn został usumięty" };
-            return response;
+            return new DeleteResponse() { ID = random.Next(1, 100000), ClientID = clientID, deleteMsg = "Magazyn został usumięty" };
         }
         #endregion
     }
