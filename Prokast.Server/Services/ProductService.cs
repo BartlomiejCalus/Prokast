@@ -455,7 +455,7 @@ namespace Prokast.Server.Services
 
         #region Delete
 
-        public DeleteResponse DeleteProduct (int clientID, int productID)
+        public Response DeleteProduct (int clientID, int productID)
         {
 
             var product = _dbContext.Products.FirstOrDefault(x => x.ID == productID && x.ClientID == clientID);
