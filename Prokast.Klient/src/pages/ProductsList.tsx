@@ -95,12 +95,12 @@ const ProductList: React.FC = () => {
     handleCloseModal();
   };
 
-  // Usunięcie produktu
-  // const handleDelete = (title: string) => {
-  //   if (window.confirm(`Czy na pewno chcesz usunąć produkt: ${title}?`)) {
-  //       setProducts(products.filter(p => p.title !== title));
-  //   }
-  // };
+  const handleDelete = (title: string) => {
+  if (window.confirm(`Czy na pewno chcesz usunąć produkt: "${title}"?`)) {
+    setProducts(prevProducts => prevProducts.filter(p => p.title !== title));
+    alert(`Produkt "${title}" został usunięty.`);
+  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-200 p-4">
@@ -230,7 +230,7 @@ const ProductList: React.FC = () => {
                       Edytuj
                     </button>
                     <button
-                      //onClick={() => handleDelete(product.title)}
+                      onClick={() => handleDelete(product.title)}
                       className="px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition"
                     >
                       Usuń

@@ -99,6 +99,23 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpPost("productsListFiltered")]
+        [ProducesResponseType(typeof(ProductGetMinResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public ActionResult<Response> Getproducts([FromQuery] int clientID, [FromBody] ProductFilter filter, [FromQuery] int pageNumber, [FromQuery] int itemsNumber)
+        {
+            try
+            {
+                var products = _productService.GetProducts(clientID, filter, pageNumber, itemsNumber);
+                if (products is ErrorResponse) return BadRequest(products);
+                return Ok(products);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
 
     }
 }

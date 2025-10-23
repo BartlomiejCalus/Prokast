@@ -277,35 +277,35 @@ namespace Prokast.Server.Services
         #endregion
 
         #region Get
-        public Response GetProducts(/*ProductGetFilter filter*/ int clientID, string name, string sku)
+        public Response GetProducts(int clientID, ProductFilter filter, int pageNumber, int itemsNumber)
         {
 
-            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak produktów!" };
-            var products = _dbContext.Products.Where(x => x.ClientID == clientID &&
-                                                    (string.IsNullOrEmpty(name) || x.Name.Contains(name)) &&
-                                                    (string.IsNullOrEmpty(sku) || x.SKU.Contains(sku))
-                ).Select(x => new {x.ID, x.Name, x.SKU, x.Photos, x.AdditionDate }).ToList();
+            var products = _dbContext.Products.Include(x=>x.Photos).Where(x => x.ClientID == clientID);
+
+            if (filter.Name != null)
+                products = products.Where(x => string.IsNullOrEmpty(filter.Name) || x.Name.Contains(filter.Name));
+
+            if (filter.SKU != null)
+                products = products.Where(x => string.IsNullOrEmpty(filter.SKU) || x.SKU.Contains(filter.SKU));
+
+            var result = PaginationExtension.Paginate(products, pageNumber, itemsNumber);
 
             if (products.Count() == 0)
             {
-                return responseNull;
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak produktów!" };    
             }
 
-            var productList = new List<ProductGetMin>();
-            foreach (var product in products)
+            var productList = result.Items.Select(x => new ProductGetMin
             {
-                var newProductToList = new ProductGetMin
-                {
-                    ID = product.ID,
-                    Name = product.Name,
-                    SKU = product.SKU,
-                    AdditionDate = product.AdditionDate,
-                    Photo = product.Photos.FirstOrDefault().Value
-                };
-                productList.Add(newProductToList);
-            }
-            var response = new ProductGetMinResponse { ID = random.Next(1, 100000), ClientID = clientID, Model = productList };
-            return response;
+                ID = x.ID,
+                Name = x.Name,
+                SKU = x.SKU,
+                AdditionDate = x.AdditionDate,
+                Photo = x.Photos?.FirstOrDefault().Value
+            }).ToList();
+
+            return new ProductGetMinResponse() { ID = random.Next(1, 100000), Model = productList };
+        }
 
             /*var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
             var products = _dbContext.Products.Where(x => x.ClientID == clientID).ToList();
@@ -343,7 +343,7 @@ namespace Prokast.Server.Services
             var response = new ProductsGetResponse() { ID = random.Next(0, 100000), ClientID = clientID, Model = products };
             return response;*/
 
-        }
+        //}
         /*public Response GetProducts([FromBody] ProductGetFilter productGetFilter, int clientID)
         {
             var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
@@ -455,8 +455,9 @@ namespace Prokast.Server.Services
 
         #region Delete
 
-        public Response DeleteProduct (int clientID, int productID)
-        {  
+        public DeleteResponse DeleteProduct (int clientID, int productID)
+        {
+
             var product = _dbContext.Products.FirstOrDefault(x => x.ID == productID && x.ClientID == clientID);
             if (product == null)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego produktu!" };
@@ -470,7 +471,7 @@ namespace Prokast.Server.Services
             _dbContext.Products.Remove(product);
             _dbContext.SaveChanges();
 
-            return new DeleteResponse() { ID = random.Next(1, 100000), ClientID = clientID, deleteMsg = "Produkt został usunięty" };
+            return new DeleteResponse() { ID = random.Next(1, 100000), ClientID = clientID, deleteMsg = "Produkt został usunięty" };        
         }
 
         /*public DeleteResponse DeleteProduct(int clientID, int productID)
