@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Prokast.Server.Entities;
 using Prokast.Server.Models;
 using Prokast.Server.Models.ResponseModels;
+using Prokast.Server.Models.ResponseModels.AdditionalDescriptionResponseModels;
 using Prokast.Server.Models.ResponseModels.CustomParamsResponseModels;
+using Prokast.Server.Services;
 using Prokast.Server.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 
 
 namespace Prokast.Server.Controllers
@@ -20,7 +22,7 @@ namespace Prokast.Server.Controllers
             _paramsService = paramsService;
         }
 
-        #region CreateCustomParam
+        #region Create
         [HttpPost]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -38,7 +40,7 @@ namespace Prokast.Server.Controllers
         }
         #endregion
 
-        #region GetAllParams
+        #region Get
         [HttpGet]
         [ProducesResponseType(typeof(ParamsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -55,9 +57,7 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        #endregion
 
-        #region GetParamsByID
         [HttpGet("{ID}")]
         [ProducesResponseType(typeof(ParamsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -73,9 +73,8 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        #endregion
 
-        #region getParamsByName
+        
         [HttpGet("name/{name}")]
         [ProducesResponseType(typeof(ParamsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -93,9 +92,29 @@ namespace Prokast.Server.Controllers
             }
             
         }
+        
+
+        [HttpGet("Product")]
+        [EndpointSummary("Get all custom params in Product")]
+        [ProducesResponseType(typeof(AdditionalDescriptionGetResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A GET operation. Endpoint returns a list of custom parameters that are components in the same product.")]
+        public ActionResult<Response> GetAllParamsInProduct([FromQuery] int clientID, [FromQuery] int productID)
+        {
+            try
+            {
+                var result = _paramsService.GetAllParamsInProduct(clientID, productID);
+                if (result is ErrorResponse) return BadRequest(result);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         #endregion
 
-        #region EditParams
+        #region Edit
         [HttpPut("{ID}")]
         [ProducesResponseType(typeof(ParamsEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -120,7 +139,7 @@ namespace Prokast.Server.Controllers
         }
         #endregion
 
-        #region DeleteParams
+        #region Delete
         [HttpDelete("{ID}")]
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]

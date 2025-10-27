@@ -31,18 +31,12 @@ namespace Prokast.Server.Services
         /// <returns></returns>
         public Response CreateOrder(OrderCreateDto orderCreateDto, int clientID)
         {
-            var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
             if (orderCreateDto == null)
-            {
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
 
             var client = _dbContext.Clients.FirstOrDefault(x => x.ID == clientID);
             if (client == null)
-            {
-                responseNull.errorMsg = "Nie ma takiego klienta!";
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego klienta!" };
 
             var buyer = _dbContext.Buyers.FirstOrDefault(x => x.Email == orderCreateDto.Email && x.PhoneNumber == orderCreateDto.PhoneNumber);
             if (buyer == null)
@@ -126,8 +120,7 @@ namespace Prokast.Server.Services
             client.Orders.Add(order);
             _dbContext.SaveChanges();
 
-            var response = new Response() { ID = random.Next(1, 100000), ClientID = clientID };
-            return response;
+            return new Response() { ID = random.Next(1, 100000), ClientID = clientID };
         }
         #endregion
 
@@ -136,10 +129,7 @@ namespace Prokast.Server.Services
         {
             var orderList = _dbContext.Orders.Where(x => x.ClientID == clientID).ToList();
             if (orderList.Count == 0)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak zamówień!" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak zamówień!" };
 
             var returnList = new List<OrderGetAllDto>();
 
@@ -155,18 +145,14 @@ namespace Prokast.Server.Services
                 returnList.Add(orderMin);
             }
 
-            var response = new OrderGetAllResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = returnList };
-            return response;
+            return new OrderGetAllResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = returnList };
         }
 
         public Response GetOrder(int clientID, int orderID)
         {
             var order = _dbContext.Orders.FirstOrDefault(x => x.ID == orderID);
             if (order == null)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak zamówienia!" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak zamówienia!" };
 
             var buyer = _dbContext.Buyers.FirstOrDefault(x => x.ID == order.BuyerID);
 
@@ -211,18 +197,14 @@ namespace Prokast.Server.Services
                 newOrder.NIP = businessBuyer.NIP;
             }
 
-            var response = new OrderGetOneResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = newOrder };
-            return response;
+            return new OrderGetOneResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = newOrder };
         }
 
         public Response GetOrderByTrackingID(int clientID, string trackingID)
         {
             var order = _dbContext.Orders.FirstOrDefault(x => x.TrackingID == trackingID);
             if (order == null)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak zamówienia!" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak zamówienia!" };
 
             var buyer = _dbContext.Buyers.FirstOrDefault(x => x.ID == order.BuyerID);
 
@@ -267,8 +249,7 @@ namespace Prokast.Server.Services
                 newOrder.NIP = businessBuyer.NIP;
             }
 
-            var response = new OrderGetOneResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = newOrder };
-            return response;
+            return new OrderGetOneResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = newOrder };
         }
         #endregion
 
@@ -276,18 +257,14 @@ namespace Prokast.Server.Services
         {
             var order = _dbContext.Orders.FirstOrDefault(x => x.ID == orderID);
             if (order == null)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak zamówienia!" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak zamówienia!" };
             order.TrackingID = trackingID;
             _dbContext.SaveChanges();
             
             var orderStatus = OrderStatus.shipped;
             ChangeOrderStatus(clientID, orderID, orderStatus);
 
-            var response = new OrderEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = order };
-            return response;
+            return new OrderEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = order };
         }
         /// <summary>
         /// Funkcja zmienia status zamówienia
@@ -301,17 +278,13 @@ namespace Prokast.Server.Services
 
             var order = _dbContext.Orders.FirstOrDefault(x => x.ID == orderID);
             if (order == null)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak zamówienia!" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak zamówienia!" };
 
             order.OrderStatus = request;
             order.UpdateDate = DateTime.Now;
             _dbContext.SaveChanges();
 
-            var response = new OrderEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = order };
-            return response;
+            return new OrderEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = order };
         }
         /// <summary>
         /// Funkcja zmienia status plątności zamówienia
@@ -324,17 +297,13 @@ namespace Prokast.Server.Services
         {
             var order = _dbContext.Orders.FirstOrDefault(x => x.ID == orderID);
             if (order == null)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak zamówienia!" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak zamówienia!" };
 
             order.PaymentStatus = paymentStatus;
             order.UpdateDate = DateTime.Now;
             _dbContext.SaveChanges();
 
-            var response = new OrderEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = order };
-            return response;
+            return new OrderEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = order };
         }
 
         /// <summary>
@@ -348,10 +317,7 @@ namespace Prokast.Server.Services
         {
             var order = _dbContext.Orders.FirstOrDefault(x => x.ID == orderID);
             if (order == null)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak zamówienia!" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak zamówienia!" };
 
             order.OrderID = orderEditDto.OrderID;
             order.TotalPrice = orderEditDto.TotalPrice;
@@ -363,18 +329,14 @@ namespace Prokast.Server.Services
             order.UpdateDate = DateTime.Now;
             _dbContext.SaveChanges();
 
-            var response = new OrderEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = order };
-            return response;
+            return new OrderEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = order };
         }
 
         public Response EditBuyer(int clientID, int buyerID, Buyer buyerDto)
         {
             var buyer = _dbContext.Buyers.FirstOrDefault(x => x.ID == buyerID);
             if (buyer == null)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak zamówienia!" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak zamówienia!" };
 
             buyer.ID = buyerID;
             buyer.FirstName = buyerDto.FirstName;
@@ -398,10 +360,7 @@ namespace Prokast.Server.Services
             buyer.NIP = buyerDto.NIP;
             _dbContext.SaveChanges();
 
-
-
-            var response = new BuyerEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = buyer };
-            return response;
+            return new BuyerEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = buyer };
         }
     
     }

@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Prokast.Server.Entities;
 using Prokast.Server.Models;
 using Prokast.Server.Models.ProductModels;
 using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models.ResponseModels.ProductResponseModels;
+using Prokast.Server.Services;
 using Prokast.Server.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Prokast.Server.Controllers
 {
@@ -39,6 +40,22 @@ namespace Prokast.Server.Controllers
         }
         #endregion
 
+        [HttpGet("products/{productID}")]
+        [ProducesResponseType(typeof(ProductsGetResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public ActionResult<Response> GetOneProduct([FromQuery] int clientID, [FromRoute] int productID)
+        {
+            try
+            {
+                var result = _productService.GetOneProduct(clientID, productID);
+                if (result is ErrorResponse) return BadRequest(result);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [HttpPut("products/{productID}")]
         [ProducesResponseType(typeof(ProductEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -59,6 +76,43 @@ namespace Prokast.Server.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("{ID}")]
+        [EndpointSummary("Delete an additional description")]
+        [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [EndpointDescription("A DELETE operation. Endpoint deletes a given product and all of its components.")]
+        public ActionResult<Response> DeleteProduct([FromQuery] int clientID, [FromRoute] int ID)
+        {
+            try
+            {
+                var result = _productService.DeleteProduct(clientID, ID);
+                if (result is ErrorResponse) return BadRequest(result);
+
+                if (result == null) return NotFound(result);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpPost("productsListFiltered")]
+        [ProducesResponseType(typeof(ProductGetMinResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public ActionResult<Response> Getproducts([FromQuery] int clientID, [FromBody] ProductFilter filter, [FromQuery] int pageNumber, [FromQuery] int itemsNumber)
+        {
+            try
+            {
+                var products = _productService.GetProducts(clientID, filter, pageNumber, itemsNumber);
+                if (products is ErrorResponse) return BadRequest(products);
+                return Ok(products);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
             }
         }
 

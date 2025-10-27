@@ -28,46 +28,35 @@ namespace Prokast.Server.Services
         {
             var paramList = _dbContext.DictionaryParams.ToList();
             if (paramList.Count() == 0)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000),  errorMsg = "Brak parametrów" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Brak parametrów" };
 
-            var response = new DictionaryGetResponse() { ID = random.Next(1, 100000), Model = paramList };
-            return response;
+            return new DictionaryGetResponse() { ID = random.Next(1, 100000), Model = paramList };
         }
         
         public Response GetParamsByID(int ID)
         {
-            var param = _dbContext.DictionaryParams.Where(x => x.ID == ID).ToList();
-            var response = new DictionaryGetResponse() { ID = random.Next(1, 100000),  Model = param};
-            if (param.Count() == 0)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000),  errorMsg = "Nie ma takiego parametru" };
-                return responseNull;
-            }
-            return response;
+            var paramList = _dbContext.DictionaryParams.Where(x => x.ID == ID).ToList();
+            if (paramList.Count() == 0)
+                return new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Brak parametrów" };
+
+            return new DictionaryGetResponse() { ID = random.Next(1, 100000), Model = paramList };
 
         }
 
         public Response GetParamsByName(string name)
         {
-            var param = _dbContext.DictionaryParams.Where(x => x.Name == name).ToList();
+            var paramList = _dbContext.DictionaryParams.Where(x => x.Name == name).ToList();
+            if (paramList.Count() == 0)
+                return new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Brak parametrów" };
 
-
-            var response = new DictionaryGetResponse() { ID = random.Next(1, 100000), Model = param };
-            if (param.Count() == 0)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Nie ma modelu z taką nazwą" };
-                return responseNull;
-            }
-            return response;
+            return new DictionaryGetResponse() { ID = random.Next(1, 100000), Model = paramList };
         }
 
         public Response GetParamsByRegion (int regionID)
         {
             var param = _dbContext.DictionaryParams.Where(x => x.RegionID == regionID).ToList();
-
+            if (param.Count() == 0)
+                return new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Brak parametrów" };
             List<string> paramList = new List<string>();
             foreach ( var x in param)
             {
@@ -77,14 +66,7 @@ namespace Prokast.Server.Services
                 }
                 
             }
-
-            var response = new DictionaryUniqueGetResponse() { ID = random.Next(1, 100000), Model = paramList };
-            if (param.Count() == 0)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Nie ma takiego regionu" };
-                return responseNull;
-            }
-            return response;
+            return new DictionaryUniqueGetResponse() { ID = random.Next(1, 100000), Model = paramList };
         }
         /// <summary>
         /// Funkcja pokazuje wartości wybranego parametru słownikowego
@@ -95,10 +77,7 @@ namespace Prokast.Server.Services
         {
             var param = _dbContext.DictionaryParams.Where(x => x.Name == name).ToList();
             if (param.Count() == 0)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Błędna nazwa" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Brak parametrów" };
             //var paginatedResult = PaginationExtension.Paginate(param, 2, 5);
 
             List<string> paramList = new List<string>();
@@ -106,12 +85,8 @@ namespace Prokast.Server.Services
             {
                 paramList.Add(x.Value);
             }
-
-            var response = new DictionaryUniqueGetResponse() { ID = random.Next(1, 100000), Model = paramList };
-
             //var response = new PaginationTestResponse<DictionaryParams>() { ID = random.Next(1, 100000), Model = paginatedResult };
-
-            return response;
+            return new DictionaryUniqueGetResponse() { ID = random.Next(1, 100000), Model = paramList };
         }
 
         //TODO: do poprawy

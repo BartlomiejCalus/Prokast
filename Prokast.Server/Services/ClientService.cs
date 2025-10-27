@@ -48,10 +48,8 @@ namespace Prokast.Server.Services
             
             var reg = _mapper.Map<Registration>(registration);
             if (reg == null)
-            {
-                var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Błędne dane rejestracji" };
-                return responseNull;
-            }
+                return new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Błędne dane rejestracji" };
+            
             var account = new Account
             {
                 Login = registration.Login,
@@ -78,8 +76,7 @@ namespace Prokast.Server.Services
             _dbContext.Clients.Add(client);
             _dbContext.SaveChanges(); 
 
-            var response = new ClientRegisterResponse() { ID = random.Next(1, 100000), ClientID = test.ID, Registration = reg };
-            return response;
+            return new ClientRegisterResponse() { ID = random.Next(1, 100000), ClientID = test.ID, Registration = reg };
         }
         #endregion
 
