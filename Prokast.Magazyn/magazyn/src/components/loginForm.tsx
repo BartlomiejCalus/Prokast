@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 function LoginForm() {
     const [Login, setLogin] = useState<string>("");
     const [Password, setPassword] = useState<string>("");
-    const [isMounted, setIsMounted] = useState(false);
+    const [, setIsMounted] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
