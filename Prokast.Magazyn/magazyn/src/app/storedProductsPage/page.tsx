@@ -39,8 +39,12 @@ export default function StoredProductsPage() {
       });
       setData(response.data.model);
       setIsFetched(true);
-    } catch (err: any) {
-      setError(err.response?.data?.error || "Something went wrong");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error || "Something went wrong");
+      } else {
+        setError("Something went wrong");
+      }
     } finally {
       setLoading(false);
     }
@@ -59,8 +63,12 @@ export default function StoredProductsPage() {
 
       fetchStoredProducts();
       setShowModal(false);
-    } catch (err: any) {
-      setError(err.response?.data?.error || "Failed to update quantity");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error || "Failed to update quantity");
+      } else {
+        setError("Failed to update quantity");
+      }
     }
   };
 

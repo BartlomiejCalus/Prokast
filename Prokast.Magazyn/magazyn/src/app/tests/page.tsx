@@ -4,7 +4,7 @@ import { useState } from "react";
 interface Product {
   id: string;
   name: string;
-  [key: string]: any; // Opcjonalnie dla dodatkowych pól
+
 }
 
 export default function ProductsForm() {
