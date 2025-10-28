@@ -2,6 +2,7 @@
 using Prokast.Server.Models;
 using Prokast.Server.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Prokast.Server.Controllers
 {
@@ -15,6 +16,7 @@ namespace Prokast.Server.Controllers
         {
             _mailingService = mailingService;
         }
+
 
         [HttpPost]
         public ActionResult<Response> SendEmail([FromBody] EmailMessage emailMessage)

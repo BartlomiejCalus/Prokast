@@ -6,6 +6,7 @@ using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models.ResponseModels.PhotoResponseModels;
 using Prokast.Server.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Prokast.Server.Controllers
 {
@@ -21,6 +22,15 @@ namespace Prokast.Server.Controllers
             _photoService = photoService;
         }
 
+        private int GetClientIdFromToken()
+        {
+            var claim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            if (claim == null)
+                throw new UnauthorizedAccessException("Token nie zawiera ClientID!");
+
+            return int.Parse(claim.Value);
+        }
+
         [HttpPost]
         [EndpointSummary("Creates new photo")]
         [ProducesResponseType(typeof(PhotoGetResponse), StatusCodes.Status200OK)]
@@ -28,6 +38,11 @@ namespace Prokast.Server.Controllers
         [EndpointDescription("A POST operation. Endpoint creates a new photo based on provided data.")]
         public ActionResult<Response> CreatePhoto([FromBody] PhotoDto photo,[FromQuery] int clientID, [FromQuery] int productID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             try
             {
                 var result = _photoService.CreatePhoto(photo, clientID, productID);
@@ -44,6 +59,11 @@ namespace Prokast.Server.Controllers
         [EndpointDescription("A GET operation. Endpoint returns all photos of the client's products.")]
         public ActionResult<Response> GetAllPhotos([FromQuery] int clientID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             try
             {
                 var result = _photoService.GetAllPhotos(clientID);
@@ -67,6 +87,11 @@ namespace Prokast.Server.Controllers
         [EndpointDescription("A GET operation. Endpoint returns a specific photo.")]
         public ActionResult<Response> GetPhotosByID([FromQuery] int clientID, [FromRoute] int ID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             try
             {
                 var result = _photoService.GetPhotosByID(clientID, ID);
@@ -85,6 +110,11 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetAllPhotosInProduct([FromQuery] int clientID, [FromQuery] int productID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             try
             {
                 var result = _photoService.GetAllPhotosInProduct(clientID, productID);
@@ -107,6 +137,11 @@ namespace Prokast.Server.Controllers
         [EndpointDescription("A PUT operation. Endpoint edits data of a given ptoho.")]
         public ActionResult<Response> EditPhotos([FromQuery] int clientID, [FromRoute] int ID, [FromBody] PhotoEdit data)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid(); 
+
             if (!ModelState.IsValid)
             {
                 return BadRequest("Błędne dane");
@@ -132,6 +167,10 @@ namespace Prokast.Server.Controllers
         [EndpointDescription("A DELETE operation. Endpoint deletes a given photo.")]
         public ActionResult<Response> DeletePhotos([FromQuery] int clientID, [FromRoute] int ID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
 
             try
             {
