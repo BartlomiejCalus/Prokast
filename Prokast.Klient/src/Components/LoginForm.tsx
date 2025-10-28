@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Cookies from 'js-cookie'; // ✅ w pełni typowany
 
 const LoginForm: React.FC = () => {
-  const [login, setlogin] = useState('');
+  const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
 
@@ -20,26 +21,23 @@ const LoginForm: React.FC = () => {
     try {
       const response = await axios.post(
         'https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/login',
-        {
-          login: login,
-          password: password,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
+        { login, password },
+        { headers: { 'Content-Type': 'application/json' } }
       );
 
       const data = response.data;
       console.log('Odpowiedź z API:', data);
 
-    
+      Cookies.set('token', data.token, {
+        expires: 1 / 24, // 1 godzina
+        secure: window.location.protocol === 'https:',
+        sameSite: 'strict',
+      });
 
       navigate('/dashboard');
     } catch (err: any) {
       console.error(err);
-      if (err.response && err.response.status === 401) {
+      if (err.response?.status === 401) {
         setError('Nieprawidłowy login lub hasło.');
       } else {
         setError('Wystąpił błąd podczas logowania.');
@@ -48,18 +46,17 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className='min-h-screen min-w-full flex items-center justify-center bg-gradient-to-br from-blue-100 via-white to-blue-200'>
-      <form onSubmit={handleLogin} className="max-w-md mx-auto mt-20 p-6 bg-white shadow-md rounded-2xl space-y-5">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-white to-blue-200">
+      <form onSubmit={handleLogin} className="max-w-md w-full p-6 bg-white shadow-md rounded-2xl space-y-5">
         <h2 className="text-2xl font-bold text-center">Logowanie</h2>
-
         {error && <div className="text-red-500 text-sm text-center">{error}</div>}
 
         <input
-          type="login"
-          placeholder="login"
+          type="text"
+          placeholder="Login"
           className="w-full p-2 border rounded-xl"
           value={login}
-          onChange={(e) => setlogin(e.target.value)}
+          onChange={(e) => setLogin(e.target.value)}
         />
         <input
           type="password"

@@ -10,22 +10,91 @@ import PriceList from './pages/PriceList';
 import ProductsList from './pages/ProductsList';
 import AddProducts from './pages/AddProducts';
 import EditProducts from './pages/EditProducts';
+import ProtectedRoute from './Components/ProtectedRoute';
 
 function App() {
   return (
     <Router>
       <Routes>
+        {/* Publiczna ścieżka (logowanie / rejestracja) */}
         <Route path="/" element={<Home />} />
-        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/RegisterForm" element={<RegisterForm />} />
-        <Route path="/AddParams" element={<AddParams/>} />
-        <Route path="/DictionaryParams" element={<DictionaryParams />} />
-        <Route path="/EditParams" element={<EditParams />} />
-        <Route path="/CreateEmployee" element={<CreateEmployee />} />
-        <Route path="/PriceList" element={<PriceList />} />
-        <Route path="/ProductsList" element={<ProductsList />} />
-        <Route path="/AddProducts" element={<AddProducts />} />
-        <Route path="/EditProducts" element={<EditProducts />} />
+
+        {/* Chronione ścieżki */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/AddParams"
+          element={
+            <ProtectedRoute>
+              <AddParams />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/DictionaryParams"
+          element={
+            <ProtectedRoute>
+              <DictionaryParams />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/EditParams"
+          element={
+            <ProtectedRoute>
+              <EditParams />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/CreateEmployee"
+          element={
+            <ProtectedRoute>
+              <CreateEmployee />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/PriceList"
+          element={
+            <ProtectedRoute>
+              <PriceList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ProductsList"
+          element={
+            <ProtectedRoute>
+              <ProductsList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/AddProducts"
+          element={
+            <ProtectedRoute>
+              <AddProducts />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/EditProducts"
+          element={
+            <ProtectedRoute>
+              <EditProducts />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 404 */}
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
     </Router>
