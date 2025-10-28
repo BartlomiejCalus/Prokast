@@ -8,6 +8,7 @@ using Prokast.Server.Models.ResponseModels.StoredProductResponseModels;
 using Prokast.Server.Entities;
 using Prokast.Server.Models.ClientModels;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 
 
@@ -30,6 +31,11 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> CreateWarehouse([FromBody] StoredProductCreateMultipleDto storedProducts, [FromQuery] int warehouseID, [FromQuery] int clientID, [FromQuery] int productID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             try
             {
                 var result = _storedProductService.CreateStoredProduct(storedProducts, warehouseID, clientID, productID);
@@ -49,6 +55,11 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetAllStoredProducts([FromQuery] int clientID,[FromQuery] int warehouseID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             try
             {
                 var result = _storedProductService.GetAllStoredProducts(clientID, warehouseID);
@@ -66,6 +77,11 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetStoredProductByID([FromQuery] int clientID, [FromQuery] int warehouseID,[FromRoute] int ID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             try
             {
                 var result = _storedProductService.GetStoredProductByID(clientID,warehouseID, ID);
@@ -83,6 +99,11 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetStoredProductsBelowMinimum([FromQuery] int clientID,[FromQuery] int warehouseID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             try
             {
                 var result = _storedProductService.GetStoredProductsBelowMinimum(clientID, warehouseID);
@@ -99,6 +120,11 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetStoredProductBySKU([FromQuery] int clientID, [FromQuery] int warehouseID, [FromRoute] string SKU)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             try
             {
                 var result = _storedProductService.GetStoredProductsBySKU(clientID, warehouseID, SKU);
@@ -116,6 +142,11 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetStoredProductsMinimalData([FromQuery] int clientID, [FromQuery] int warehouseID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             try
             {
                 var result = _storedProductService.GetStoredProductsMinimalData(clientID, warehouseID);
@@ -135,6 +166,11 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> EditStoredProductQuality([FromQuery] int clientID, [FromRoute] int ID, [FromQuery] int quantity)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             if (!ModelState.IsValid)
             {
                 return BadRequest("Błędne dane");
@@ -158,6 +194,11 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> EditStoredProductMinQuality([FromQuery] int clientID, [FromRoute] int ID, [FromQuery] int minQuantity)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             if (!ModelState.IsValid)
             {
                 return BadRequest("Błędne dane");
@@ -181,6 +222,11 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> EditMultipleStoredProductMinQuantity([FromQuery]int clientID,[FromBody] List<EditMultipleStoredProductMinQuantityDto> listToEdit)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             if (!ModelState.IsValid)
             {
                 return BadRequest("Błędne dane");
@@ -206,6 +252,10 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> DeleteStoredProduct([FromQuery] int clientID, [FromRoute] int ID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
 
             try
             {
@@ -221,5 +271,14 @@ namespace Prokast.Server.Controllers
             }
         }
         #endregion
+
+        private int GetClientIdFromToken()
+        {
+            var claim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            if (claim == null)
+                throw new UnauthorizedAccessException("Token nie zawiera ClientID!");
+
+            return int.Parse(claim.Value);
+        }
     }
 }

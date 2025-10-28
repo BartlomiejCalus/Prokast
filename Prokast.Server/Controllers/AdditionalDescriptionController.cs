@@ -5,6 +5,7 @@ using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models.ResponseModels.AdditionalDescriptionResponseModels;
 using Prokast.Server.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Prokast.Server.Controllers
 {
@@ -19,6 +20,14 @@ namespace Prokast.Server.Controllers
         {
             _additionalDescriptionService = descriptionService;
         }
+        private int GetClientIdFromToken()
+        {
+            var claim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            if (claim == null)
+                throw new UnauthorizedAccessException("Token nie zawiera ClientID!");
+
+            return int.Parse(claim.Value);
+        }
 
         [HttpPost]
         [EndpointSummary("Create an additional description")]
@@ -27,6 +36,11 @@ namespace Prokast.Server.Controllers
         [EndpointDescription("A POST operation. Endpoint creates an additional description for a product.")]
         public ActionResult<Response> CreateAdditionalDescription([FromBody] AdditionalDescriptionCreateDto additionalDescription, [FromQuery] int clientID, [FromQuery] int regionID, [FromQuery] int productID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             try
             {
                 var result = _additionalDescriptionService.CreateAdditionalDescription(additionalDescription, clientID, regionID, productID);
@@ -46,6 +60,11 @@ namespace Prokast.Server.Controllers
         [EndpointDescription("A GET operation. Endpoint returns all additional descriptions of all products assigned to the client.")]
         public ActionResult<Response> GetAllDescriptions([FromQuery] int clientID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             try
             {
                 var result = _additionalDescriptionService.GetAllDescriptions(clientID);
@@ -65,6 +84,11 @@ namespace Prokast.Server.Controllers
         [EndpointDescription("A GET operation. Endpoint returns a specific additional description.")]
         public ActionResult<Response> GetDescriptionByID([FromRoute] int ID, [FromQuery] int clientID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             try
             {
                 var result = _additionalDescriptionService.GetDescriptionsByID(ID, clientID);
@@ -84,6 +108,11 @@ namespace Prokast.Server.Controllers
         [EndpointDescription("A GET operation. Endpoint returns a list of additional descriptions with a title containing the given word.")]
         public ActionResult<Response> GetDescriptionsByNames([FromQuery] string Title, [FromQuery] int clientID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             try
             {
                 var result = _additionalDescriptionService.GetDescriptionsByNames(Title, clientID);
@@ -103,6 +132,11 @@ namespace Prokast.Server.Controllers
         [EndpointDescription("A GET operation. Endpoint returns a list of additional descriptions in the same region.")]
         public ActionResult<Response> GetDescriptionByRegion([FromQuery] int region, [FromQuery] int clientID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             try
             {
                 var result = _additionalDescriptionService.GetDescriptionByRegion(region, clientID);
@@ -122,6 +156,11 @@ namespace Prokast.Server.Controllers
         [EndpointDescription("A GET operation. Endpoint returns a list of additional descriptions that are components in the same product.")]
         public ActionResult<Response> GetAllDescriptionsInProduct([FromQuery] int clientID, [FromQuery] int productID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             try
             {
                 var result = _additionalDescriptionService.GetAllDescriptionsInProduct(clientID, productID);
@@ -141,6 +180,11 @@ namespace Prokast.Server.Controllers
         [EndpointDescription("A PUT operation. Endpoint edits data of a given additional description.")]
         public ActionResult<Response> EditAdditionalDescription([FromQuery] int clientID, [FromRoute] int ID, [FromBody] AdditionalDescriptionCreateDto data)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             if (!ModelState.IsValid)
             {
                 return BadRequest("Błędne dane");
@@ -166,6 +210,11 @@ namespace Prokast.Server.Controllers
         [EndpointDescription("A DELETE operation. Endpoint deletes a given additional description")]
         public ActionResult<Response> DeleteDescription([FromQuery] int clientID, [FromRoute] int ID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             try
             {
                 var result = _additionalDescriptionService.DeleteAdditionalDescription(clientID, ID);

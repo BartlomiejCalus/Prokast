@@ -25,6 +25,15 @@ namespace Prokast.Server.Controllers
             _LogInService = logInService;
         }
 
+        private int GetClientIdFromToken()
+        {
+            var claim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            if (claim == null)
+                throw new UnauthorizedAccessException("Token nie zawiera ClientID!");
+
+            return int.Parse(claim.Value);
+        }
+
         #region LogIn
         [HttpPost]
         [ProducesResponseType(typeof(LogInLoginResponse),StatusCodes.Status200OK)]
@@ -68,6 +77,11 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> CreateAccount([FromBody] AccountCreateDto accountCreate,[FromQuery] int clientID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             try
             {
                 var result = _LogInService.CreateAccount(accountCreate, clientID);
@@ -85,6 +99,11 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> EditAccount([FromBody] AccountEditDto accountEdit, [FromQuery] int clientID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             if (!ModelState.IsValid)
             {
                 return BadRequest("Błędne dane");
@@ -108,6 +127,11 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> EditPassword([FromBody] AccountEditPasswordDto editPasswordDto, [FromQuery] int clientID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             if (!ModelState.IsValid)
             {
                 return BadRequest("Błędne dane");
@@ -131,6 +155,11 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> DeleteAccount([FromQuery] int clientID, [FromRoute] int ID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (clientIdFromToken != clientID)
+                return Forbid();
+
             try
             {
                 var result = _LogInService.DeleteAccount(clientID, ID);
