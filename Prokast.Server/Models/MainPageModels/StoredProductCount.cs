@@ -2,7 +2,7 @@
 {
     public class StoredProductCount
     {
-        public string StoredProductName { get; set; }
+        public string StoredProductSKU { get; set; }
         public int StoredProductQuantity { get; set; }
     }
 }

@@ -7,5 +7,6 @@
         public StoredProductCount TopProduct { get; set; }
         public StoredProductCount LastDelivery { get; set; }
         public List<WarehouseVolume> WarehouseVolumeList { get; set; }
+        public List<StoredProductCount> AllStoredProducts { get; set; }
     }
 }

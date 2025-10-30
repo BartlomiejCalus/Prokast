@@ -55,7 +55,7 @@ namespace Prokast.Server.Services
                 {
                     WarehouseName = warehouse.Name,
                     StoredProductsCount = storedProducts.Where(x => x.WarehouseID == warehouse.ID).Count(),
-                    StoredProducts = storedProducts.Where(x => x.WarehouseID == warehouse.ID).Select(x => new StoredProductCount { StoredProductName = x.Product.Name, StoredProductQuantity = x.Quantity } ).ToList()
+                    StoredProducts = storedProducts.Where(x => x.WarehouseID == warehouse.ID).Select(x => new StoredProductCount { StoredProductSKU = x.Product.SKU, StoredProductQuantity = x.Quantity } ).ToList()
                 };
                 warehouseConponentList.Add(warehouseUnit);
             }
@@ -65,15 +65,17 @@ namespace Prokast.Server.Services
 
             var topProduct = new StoredProductCount()
             {
-                StoredProductName = mostAbundantProduct != null ? mostAbundantProduct.Product.Name : "Brak produktów",
+                StoredProductSKU = mostAbundantProduct != null ? mostAbundantProduct.Product.SKU : "Brak produktów",
                 StoredProductQuantity = mostAbundantProduct != null ? mostAbundantProduct.Quantity : 0
             };
 
             var lastDelivery = new StoredProductCount()
             {
-                StoredProductName = newestProduct != null ? newestProduct.Product.Name : "Brak produktów",
+                StoredProductSKU = newestProduct != null ? newestProduct.Product.SKU : "Brak produktów",
                 StoredProductQuantity = newestProduct != null ? newestProduct.Quantity : 0
             };
+
+            var allStoredProducts = storedProducts.Select(x => new StoredProductCount { StoredProductSKU = x.Product.SKU, StoredProductQuantity = x.Quantity }).ToList();
 
             var mainPageGet = new MainPageGet()
             {
@@ -81,7 +83,8 @@ namespace Prokast.Server.Services
                 StoredProductsCount = storedProductsCount,
                 TopProduct = topProduct,
                 LastDelivery = lastDelivery,
-                WarehouseVolumeList = warehouseConponentList
+                WarehouseVolumeList = warehouseConponentList,
+                AllStoredProducts = allStoredProducts
             };
 
             return new MainPageGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = mainPageGet };
