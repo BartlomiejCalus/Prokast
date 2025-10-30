@@ -55,7 +55,7 @@ namespace Prokast.Server.Services
                 {
                     WarehouseName = warehouse.Name,
                     StoredProductsCount = storedProducts.Where(x => x.WarehouseID == warehouse.ID).Count(),
-                    StoredProducts = storedProducts.Where(x => x.WarehouseID == warehouse.ID).Select(x => new StoredProductCount { StoredProductSKU = x.Product.SKU, StoredProductQuantity = x.Quantity } ).ToList()
+                    StoredProducts = storedProducts.Where(x => x.WarehouseID == warehouse.ID).Select(x => new StoredProductCount { StoredProductSKU = x.Product.SKU, StoredProductQuantity = x.Quantity, IsBelowMinimum = x.Quantity < x.MinQuantity } ).ToList()
                 };
                 warehouseConponentList.Add(warehouseUnit);
             }
@@ -67,15 +67,17 @@ namespace Prokast.Server.Services
             {
                 StoredProductSKU = mostAbundantProduct != null ? mostAbundantProduct.Product.SKU : "Brak produktów",
                 StoredProductQuantity = mostAbundantProduct != null ? mostAbundantProduct.Quantity : 0
+                IsBelowMinimum = mostAbundantProduct != null ? mostAbundantProduct.Quantity < mostAbundantProduct.MinQuantity : false
             };
 
             var lastDelivery = new StoredProductCount()
             {
                 StoredProductSKU = newestProduct != null ? newestProduct.Product.SKU : "Brak produktów",
                 StoredProductQuantity = newestProduct != null ? newestProduct.Quantity : 0
+                IsBelowMinimum = newestProduct != null ? newestProduct.Quantity < newestProduct.MinQuantity : false
             };
 
-            var allStoredProducts = storedProducts.Select(x => new StoredProductCount { StoredProductSKU = x.Product.SKU, StoredProductQuantity = x.Quantity }).ToList();
+            var allStoredProducts = storedProducts.Select(x => new StoredProductCount { StoredProductSKU = x.Product.SKU, StoredProductQuantity = x.Quantity, IsBelowMinimum = x.Quantity < x.MinQuantity }).ToList();
 
             var mainPageGet = new MainPageGet()
             {

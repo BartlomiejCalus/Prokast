@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Prokast.Server.Entities;
 using Prokast.Server.Models;
 using Prokast.Server.Models.ResponseModels;
@@ -50,7 +51,7 @@ namespace Prokast.Server.Services
             if(warehouse == null)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego magazynu!" };
             
-            var storedProductsDb = _dbContext.StoredProducts.Where(x => x.WarehouseID == warehouseID).ToList();
+            var storedProductsDb = _dbContext.StoredProducts.Include(x => x.Product).Where(x => x.WarehouseID == warehouseID).ToList();
             if (storedProductsDb.Count == 0)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak produktów!" };
 
