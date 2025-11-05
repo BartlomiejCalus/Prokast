@@ -36,16 +36,13 @@ namespace Prokast.Server.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> CreateCustonParam([FromBody] CustomParamsDto customParamsDto, [FromQuery] int clientID, [FromQuery] int regionID, [FromQuery] int productID)
+        public ActionResult<Response> CreateCustonParam([FromBody] CustomParamsDto customParamsDto, [FromQuery] int regionID, [FromQuery] int productID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try 
             {
-                var result = _paramsService.CreateCustomParam(customParamsDto, clientID, regionID, productID);
+                var result = _paramsService.CreateCustomParam(customParamsDto, clientIdFromToken, regionID, productID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Created();
             } catch (Exception ex) 
@@ -59,16 +56,13 @@ namespace Prokast.Server.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(ParamsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetAllParams([FromQuery] int clientID) 
+        public ActionResult<Response> GetAllParams() 
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _paramsService.GetAllParams(clientID);
+                var result = _paramsService.GetAllParams(clientIdFromToken);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -81,16 +75,13 @@ namespace Prokast.Server.Controllers
         [HttpGet("{ID}")]
         [ProducesResponseType(typeof(ParamsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetParamsByID([FromQuery] int clientID, [FromRoute] int ID)
+        public ActionResult<Response> GetParamsByID([FromRoute] int ID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _paramsService.GetParamsByID(clientID, ID);
+                var result = _paramsService.GetParamsByID(clientIdFromToken, ID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }catch (Exception ex)
@@ -103,16 +94,13 @@ namespace Prokast.Server.Controllers
         [HttpGet("name/{name}")]
         [ProducesResponseType(typeof(ParamsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetParamsByName([FromQuery] int clientID, [FromRoute] string name)
+        public ActionResult<Response> GetParamsByName([FromRoute] string name)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _paramsService.GetParamsByName(clientID, name);
+                var result = _paramsService.GetParamsByName(clientIdFromToken, name);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -129,16 +117,13 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(AdditionalDescriptionGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [EndpointDescription("A GET operation. Endpoint returns a list of custom parameters that are components in the same product.")]
-        public ActionResult<Response> GetAllParamsInProduct([FromQuery] int clientID, [FromQuery] int productID)
+        public ActionResult<Response> GetAllParamsInProduct([FromQuery] int productID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _paramsService.GetAllParamsInProduct(clientID, productID);
+                var result = _paramsService.GetAllParamsInProduct(clientIdFromToken, productID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -153,12 +138,9 @@ namespace Prokast.Server.Controllers
         [HttpPut("{ID}")]
         [ProducesResponseType(typeof(ParamsEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> EditParams([FromQuery] int clientID, [FromRoute] int ID, [FromBody] CustomParamsDto data)
+        public ActionResult<Response> EditParams([FromRoute] int ID, [FromBody] CustomParamsDto data)
         {
             var clientIdFromToken = GetClientIdFromToken();
-
-            if (clientIdFromToken != clientID)
-                return Forbid();
 
             if (!ModelState.IsValid) 
             {
@@ -166,7 +148,7 @@ namespace Prokast.Server.Controllers
             }
             try
             {
-                var result = _paramsService.EditParams(clientID, ID, data);
+                var result = _paramsService.EditParams(clientIdFromToken, ID, data);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result==null) return NotFound(result);
@@ -183,16 +165,13 @@ namespace Prokast.Server.Controllers
         [HttpDelete("{ID}")]
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> DeleteParams([FromQuery] int clientID, [FromRoute] int ID)
+        public ActionResult<Response> DeleteParams([FromRoute] int ID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _paramsService.DeleteParams(clientID, ID);
+                var result = _paramsService.DeleteParams(clientIdFromToken, ID);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);

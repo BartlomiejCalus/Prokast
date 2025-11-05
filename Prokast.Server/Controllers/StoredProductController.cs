@@ -29,16 +29,13 @@ namespace Prokast.Server.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> CreateWarehouse([FromBody] StoredProductCreateMultipleDto storedProducts, [FromQuery] int warehouseID, [FromQuery] int clientID, [FromQuery] int productID)
+        public ActionResult<Response> CreateWarehouse([FromBody] StoredProductCreateMultipleDto storedProducts, [FromQuery] int warehouseID, [FromQuery] int productID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _storedProductService.CreateStoredProduct(storedProducts, warehouseID, clientID, productID);
+                var result = _storedProductService.CreateStoredProduct(storedProducts, warehouseID, clientIdFromToken, productID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Created();
             }
@@ -53,16 +50,13 @@ namespace Prokast.Server.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(StoredProductGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetAllStoredProducts([FromQuery] int clientID,[FromQuery] int warehouseID)
+        public ActionResult<Response> GetAllStoredProducts([FromQuery] int warehouseID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _storedProductService.GetAllStoredProducts(clientID, warehouseID);
+                var result = _storedProductService.GetAllStoredProducts(clientIdFromToken, warehouseID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -75,16 +69,13 @@ namespace Prokast.Server.Controllers
         [HttpGet("{ID}")]
         [ProducesResponseType(typeof(StoredProductGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetStoredProductByID([FromQuery] int clientID, [FromQuery] int warehouseID,[FromRoute] int ID)
+        public ActionResult<Response> GetStoredProductByID([FromQuery] int warehouseID,[FromRoute] int ID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _storedProductService.GetStoredProductByID(clientID,warehouseID, ID);
+                var result = _storedProductService.GetStoredProductByID(clientIdFromToken, warehouseID, ID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -97,16 +88,13 @@ namespace Prokast.Server.Controllers
         [HttpGet("below")]
         [ProducesResponseType(typeof(StoredProductGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetStoredProductsBelowMinimum([FromQuery] int clientID,[FromQuery] int warehouseID)
+        public ActionResult<Response> GetStoredProductsBelowMinimum([FromQuery] int warehouseID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _storedProductService.GetStoredProductsBelowMinimum(clientID, warehouseID);
+                var result = _storedProductService.GetStoredProductsBelowMinimum(clientIdFromToken, warehouseID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -118,16 +106,13 @@ namespace Prokast.Server.Controllers
         [HttpGet("SKU/{SKU}")]
         [ProducesResponseType(typeof(StoredProductGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetStoredProductBySKU([FromQuery] int clientID, [FromQuery] int warehouseID, [FromRoute] string SKU)
+        public ActionResult<Response> GetStoredProductBySKU([FromQuery] int warehouseID, [FromRoute] string SKU)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _storedProductService.GetStoredProductsBySKU(clientID, warehouseID, SKU);
+                var result = _storedProductService.GetStoredProductsBySKU(clientIdFromToken, warehouseID, SKU);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -140,16 +125,13 @@ namespace Prokast.Server.Controllers
         [HttpGet("Minimal")]
         [ProducesResponseType(typeof(StoredProductGetMinimalResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetStoredProductsMinimalData([FromQuery] int clientID, [FromQuery] int warehouseID)
+        public ActionResult<Response> GetStoredProductsMinimalData([FromQuery] int warehouseID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _storedProductService.GetStoredProductsMinimalData(clientID, warehouseID);
+                var result = _storedProductService.GetStoredProductsMinimalData(clientIdFromToken, warehouseID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -164,12 +146,9 @@ namespace Prokast.Server.Controllers
         [HttpPut("{ID}")]
         [ProducesResponseType(typeof(StoredProductEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> EditStoredProductQuality([FromQuery] int clientID, [FromRoute] int ID, [FromQuery] int quantity)
+        public ActionResult<Response> EditStoredProductQuality([FromRoute] int ID, [FromQuery] int quantity)
         {
             var clientIdFromToken = GetClientIdFromToken();
-
-            if (clientIdFromToken != clientID)
-                return Forbid();
 
             if (!ModelState.IsValid)
             {
@@ -177,7 +156,7 @@ namespace Prokast.Server.Controllers
             }
             try
             {
-                var result = _storedProductService.EditStoredProductQuantity(clientID, ID, quantity);
+                var result = _storedProductService.EditStoredProductQuantity(clientIdFromToken, ID, quantity);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);
@@ -192,12 +171,9 @@ namespace Prokast.Server.Controllers
         [HttpPut("minquantity/{ID}")]
         [ProducesResponseType(typeof(StoredProductEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> EditStoredProductMinQuality([FromQuery] int clientID, [FromRoute] int ID, [FromQuery] int minQuantity)
+        public ActionResult<Response> EditStoredProductMinQuality([FromRoute] int ID, [FromQuery] int minQuantity)
         {
             var clientIdFromToken = GetClientIdFromToken();
-
-            if (clientIdFromToken != clientID)
-                return Forbid();
 
             if (!ModelState.IsValid)
             {
@@ -205,7 +181,7 @@ namespace Prokast.Server.Controllers
             }
             try
             {
-                var result = _storedProductService.EditStoredProductMinQuantity(clientID, ID, minQuantity);
+                var result = _storedProductService.EditStoredProductMinQuantity(clientIdFromToken, ID, minQuantity);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);
@@ -220,12 +196,9 @@ namespace Prokast.Server.Controllers
         [HttpPut("minquantity/multiple")]
         [ProducesResponseType(typeof(StoredProductEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> EditMultipleStoredProductMinQuantity([FromQuery]int clientID,[FromBody] List<EditMultipleStoredProductMinQuantityDto> listToEdit)
+        public ActionResult<Response> EditMultipleStoredProductMinQuantity([FromBody] List<EditMultipleStoredProductMinQuantityDto> listToEdit)
         {
             var clientIdFromToken = GetClientIdFromToken();
-
-            if (clientIdFromToken != clientID)
-                return Forbid();
 
             if (!ModelState.IsValid)
             {
@@ -233,7 +206,7 @@ namespace Prokast.Server.Controllers
             }
             try
             {
-                var result = _storedProductService.EditMultipleStoredProductMinQuantity(clientID, listToEdit);
+                var result = _storedProductService.EditMultipleStoredProductMinQuantity(clientIdFromToken, listToEdit);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);
@@ -250,16 +223,13 @@ namespace Prokast.Server.Controllers
         [HttpDelete("{ID}")]
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> DeleteStoredProduct([FromQuery] int clientID, [FromRoute] int ID)
+        public ActionResult<Response> DeleteStoredProduct([FromRoute] int ID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _storedProductService.DeleteStoredProduct(clientID, ID);
+                var result = _storedProductService.DeleteStoredProduct(clientIdFromToken, ID);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);

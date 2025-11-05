@@ -34,16 +34,13 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [EndpointDescription("A POST operation. Endpoint creates an additional description for a product.")]
-        public ActionResult<Response> CreateAdditionalDescription([FromBody] AdditionalDescriptionCreateDto additionalDescription, [FromQuery] int clientID, [FromQuery] int regionID, [FromQuery] int productID)
+        public ActionResult<Response> CreateAdditionalDescription([FromBody] AdditionalDescriptionCreateDto additionalDescription, [FromQuery] int regionID, [FromQuery] int productID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _additionalDescriptionService.CreateAdditionalDescription(additionalDescription, clientID, regionID, productID);
+                var result = _additionalDescriptionService.CreateAdditionalDescription(additionalDescription, clientIdFromToken, regionID, productID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Created();
             }
@@ -58,16 +55,13 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(AdditionalDescriptionGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [EndpointDescription("A GET operation. Endpoint returns all additional descriptions of all products assigned to the client.")]
-        public ActionResult<Response> GetAllDescriptions([FromQuery] int clientID)
+        public ActionResult<Response> GetAllDescriptions()
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _additionalDescriptionService.GetAllDescriptions(clientID);
+                var result = _additionalDescriptionService.GetAllDescriptions(clientIdFromToken);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -82,16 +76,13 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(AdditionalDescriptionGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [EndpointDescription("A GET operation. Endpoint returns a specific additional description.")]
-        public ActionResult<Response> GetDescriptionByID([FromRoute] int ID, [FromQuery] int clientID)
+        public ActionResult<Response> GetDescriptionByID([FromRoute] int ID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _additionalDescriptionService.GetDescriptionsByID(ID, clientID);
+                var result = _additionalDescriptionService.GetDescriptionsByID(ID, clientIdFromToken);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -106,16 +97,13 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(AdditionalDescriptionGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [EndpointDescription("A GET operation. Endpoint returns a list of additional descriptions with a title containing the given word.")]
-        public ActionResult<Response> GetDescriptionsByNames([FromQuery] string Title, [FromQuery] int clientID)
+        public ActionResult<Response> GetDescriptionsByNames([FromQuery] string Title)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _additionalDescriptionService.GetDescriptionsByNames(Title, clientID);
+                var result = _additionalDescriptionService.GetDescriptionsByNames(Title, clientIdFromToken);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -130,16 +118,13 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(AdditionalDescriptionGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [EndpointDescription("A GET operation. Endpoint returns a list of additional descriptions in the same region.")]
-        public ActionResult<Response> GetDescriptionByRegion([FromQuery] int region, [FromQuery] int clientID)
+        public ActionResult<Response> GetDescriptionByRegion([FromQuery] int region)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _additionalDescriptionService.GetDescriptionByRegion(region, clientID);
+                var result = _additionalDescriptionService.GetDescriptionByRegion(region, clientIdFromToken);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -154,16 +139,13 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(AdditionalDescriptionGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [EndpointDescription("A GET operation. Endpoint returns a list of additional descriptions that are components in the same product.")]
-        public ActionResult<Response> GetAllDescriptionsInProduct([FromQuery] int clientID, [FromQuery] int productID)
+        public ActionResult<Response> GetAllDescriptionsInProduct([FromQuery] int productID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _additionalDescriptionService.GetAllDescriptionsInProduct(clientID, productID);
+                var result = _additionalDescriptionService.GetAllDescriptionsInProduct(clientIdFromToken, productID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -178,12 +160,9 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(AdditionalDescriptionEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [EndpointDescription("A PUT operation. Endpoint edits data of a given additional description.")]
-        public ActionResult<Response> EditAdditionalDescription([FromQuery] int clientID, [FromRoute] int ID, [FromBody] AdditionalDescriptionCreateDto data)
+        public ActionResult<Response> EditAdditionalDescription([FromRoute] int ID, [FromBody] AdditionalDescriptionCreateDto data)
         {
             var clientIdFromToken = GetClientIdFromToken();
-
-            if (clientIdFromToken != clientID)
-                return Forbid();
 
             if (!ModelState.IsValid)
             {
@@ -191,7 +170,7 @@ namespace Prokast.Server.Controllers
             }
             try
             {
-                var result = _additionalDescriptionService.EditAdditionalDescription(clientID, ID, data);
+                var result = _additionalDescriptionService.EditAdditionalDescription(clientIdFromToken, ID, data);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);
@@ -208,16 +187,13 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [EndpointDescription("A DELETE operation. Endpoint deletes a given additional description")]
-        public ActionResult<Response> DeleteDescription([FromQuery] int clientID, [FromRoute] int ID)
+        public ActionResult<Response> DeleteDescription([FromRoute] int ID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _additionalDescriptionService.DeleteAdditionalDescription(clientID, ID);
+                var result = _additionalDescriptionService.DeleteAdditionalDescription(clientIdFromToken, ID);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);

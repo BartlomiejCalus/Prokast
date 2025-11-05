@@ -57,11 +57,12 @@ namespace Prokast.Server.Controllers
         [Authorize]
         [ProducesResponseType(typeof(LogInGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetAll([FromQuery] int clientID) 
+        public ActionResult<Response> GetAll() 
         {
+            var clientIdFromToken = GetClientIdFromToken();
             try
             {
-                var logins = _LogInService.GetLogIns(clientID);
+                var logins = _LogInService.GetLogIns(clientIdFromToken);
                 if (logins is ErrorResponse) return BadRequest(logins);
                 return Ok(logins);
             }
@@ -75,16 +76,13 @@ namespace Prokast.Server.Controllers
         [Authorize]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> CreateAccount([FromBody] AccountCreateDto accountCreate,[FromQuery] int clientID)
+        public ActionResult<Response> CreateAccount([FromBody] AccountCreateDto accountCreate)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _LogInService.CreateAccount(accountCreate, clientID);
+                var result = _LogInService.CreateAccount(accountCreate, clientIdFromToken);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -97,12 +95,9 @@ namespace Prokast.Server.Controllers
         [Authorize]
         [ProducesResponseType(typeof(AccountEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> EditAccount([FromBody] AccountEditDto accountEdit, [FromQuery] int clientID)
+        public ActionResult<Response> EditAccount([FromBody] AccountEditDto accountEdit)
         {
             var clientIdFromToken = GetClientIdFromToken();
-
-            if (clientIdFromToken != clientID)
-                return Forbid();
 
             if (!ModelState.IsValid)
             {
@@ -110,7 +105,7 @@ namespace Prokast.Server.Controllers
             }
             try
             {
-                var result = _LogInService.EditAccount(accountEdit, clientID);
+                var result = _LogInService.EditAccount(accountEdit, clientIdFromToken);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);
@@ -125,12 +120,9 @@ namespace Prokast.Server.Controllers
         [Authorize]
         [ProducesResponseType(typeof(AccountEditPasswordResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> EditPassword([FromBody] AccountEditPasswordDto editPasswordDto, [FromQuery] int clientID)
+        public ActionResult<Response> EditPassword([FromBody] AccountEditPasswordDto editPasswordDto)
         {
             var clientIdFromToken = GetClientIdFromToken();
-
-            if (clientIdFromToken != clientID)
-                return Forbid();
 
             if (!ModelState.IsValid)
             {
@@ -138,7 +130,7 @@ namespace Prokast.Server.Controllers
             }
             try
             {
-                var result = _LogInService.EditPassword(editPasswordDto, clientID);
+                var result = _LogInService.EditPassword(editPasswordDto, clientIdFromToken);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);
@@ -153,16 +145,13 @@ namespace Prokast.Server.Controllers
         [Authorize]
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> DeleteAccount([FromQuery] int clientID, [FromRoute] int ID)
+        public ActionResult<Response> DeleteAccount( [FromRoute] int ID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _LogInService.DeleteAccount(clientID, ID);
+                var result = _LogInService.DeleteAccount(clientIdFromToken, ID);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);

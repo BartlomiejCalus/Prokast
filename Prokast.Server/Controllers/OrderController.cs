@@ -38,16 +38,13 @@ namespace Prokast.Server.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> CreateOrder([FromBody] OrderCreateDto orderCreateDto, [FromQuery] int clientID)
+        public ActionResult<Response> CreateOrder([FromBody] OrderCreateDto orderCreateDto)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _orderService.CreateOrder(orderCreateDto,clientID);
+                var result = _orderService.CreateOrder(orderCreateDto, clientIdFromToken);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Created();
             }
@@ -62,16 +59,13 @@ namespace Prokast.Server.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(OrderGetAllResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetAllOrders([FromQuery] int clientID)
+        public ActionResult<Response> GetAllOrders()
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _orderService.GetAllOrders(clientID);
+                var result = _orderService.GetAllOrders(clientIdFromToken);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -84,16 +78,13 @@ namespace Prokast.Server.Controllers
         [HttpGet("{orderID}")]
         [ProducesResponseType(typeof(OrderGetOneResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetOrder([FromQuery] int clientID, [FromRoute] int orderID)
+        public ActionResult<Response> GetOrder([FromRoute] int orderID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _orderService.GetOrder(clientID, orderID);
+                var result = _orderService.GetOrder(clientIdFromToken, orderID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -106,16 +97,13 @@ namespace Prokast.Server.Controllers
         [HttpGet("trackingID/{trackingID}")]
         [ProducesResponseType(typeof(OrderGetAllResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetOrderByTrackingID([FromQuery] int clientID, [FromRoute] string trackingID)
+        public ActionResult<Response> GetOrderByTrackingID([FromRoute] string trackingID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _orderService.GetOrderByTrackingID(clientID, trackingID);
+                var result = _orderService.GetOrderByTrackingID(clientIdFromToken, trackingID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -130,12 +118,9 @@ namespace Prokast.Server.Controllers
         [HttpPut("trackingID{orderID}")]
         [ProducesResponseType(typeof(OrderEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> AddTrackingID([FromQuery] int clientID, [FromRoute] int orderID, [FromQuery] string trackingID)
+        public ActionResult<Response> AddTrackingID([FromRoute] int orderID, [FromQuery] string trackingID)
         {
             var clientIdFromToken = GetClientIdFromToken();
-
-            if (clientIdFromToken != clientID)
-                return Forbid();
 
             if (!ModelState.IsValid)
             {
@@ -143,7 +128,7 @@ namespace Prokast.Server.Controllers
             }
             try
             {
-                var result = _orderService.AddTrackingID(clientID, orderID, trackingID);
+                var result = _orderService.AddTrackingID(clientIdFromToken, orderID, trackingID);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);
@@ -159,12 +144,9 @@ namespace Prokast.Server.Controllers
         [HttpPut("{orderID}/status")]
         [ProducesResponseType(typeof(OrderEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> ChangeOrderStatus([FromQuery] int clientID, [FromRoute] int orderID,[FromQuery] OrderStatus status)
+        public ActionResult<Response> ChangeOrderStatus([FromRoute] int orderID,[FromQuery] OrderStatus status)
         {
             var clientIdFromToken = GetClientIdFromToken();
-
-            if (clientIdFromToken != clientID)
-                return Forbid();
 
             if (!ModelState.IsValid)
             {
@@ -172,7 +154,7 @@ namespace Prokast.Server.Controllers
             }
             try
             {
-                var result =_orderService.ChangeOrderStatus(clientID, orderID, status);
+                var result =_orderService.ChangeOrderStatus(clientIdFromToken, orderID, status);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);
@@ -187,12 +169,9 @@ namespace Prokast.Server.Controllers
         [HttpPut("{orderID}/payment")]
         [ProducesResponseType(typeof(OrderEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> ChangePaymentStatus([FromQuery] int clientID, [FromRoute] int orderID, [FromQuery] PaymentStatus paymentStatus)
+        public ActionResult<Response> ChangePaymentStatus([FromRoute] int orderID, [FromQuery] PaymentStatus paymentStatus)
         {
             var clientIdFromToken = GetClientIdFromToken();
-
-            if (clientIdFromToken != clientID)
-                return Forbid();
 
             if (!ModelState.IsValid)
             {
@@ -200,7 +179,7 @@ namespace Prokast.Server.Controllers
             }
             try
             {
-                var result = _orderService.ChangePaymentStatus(clientID, orderID, paymentStatus);
+                var result = _orderService.ChangePaymentStatus(clientIdFromToken, orderID, paymentStatus);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);
@@ -215,12 +194,9 @@ namespace Prokast.Server.Controllers
         [HttpPut("edit/order/{orderID}")]
         [ProducesResponseType(typeof(OrderEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> EditOrder([FromQuery] int clientID, [FromRoute] int orderID, [FromBody] OrderEditDto orderEditDto)
+        public ActionResult<Response> EditOrder([FromRoute] int orderID, [FromBody] OrderEditDto orderEditDto)
         {
             var clientIdFromToken = GetClientIdFromToken();
-
-            if (clientIdFromToken != clientID)
-                return Forbid();
 
             if (!ModelState.IsValid)
             {
@@ -228,7 +204,7 @@ namespace Prokast.Server.Controllers
             }
             try
             {
-                var result = _orderService.EditOrder(clientID, orderID, orderEditDto);
+                var result = _orderService.EditOrder(clientIdFromToken, orderID, orderEditDto);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);
@@ -243,12 +219,9 @@ namespace Prokast.Server.Controllers
         [HttpPut("edit/buyer/{buyerID}")]
         [ProducesResponseType(typeof(OrderEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> EditBuyer([FromQuery] int clientID, [FromRoute] int buyerID, [FromBody] Buyer buyer)
+        public ActionResult<Response> EditBuyer([FromRoute] int buyerID, [FromBody] Buyer buyer)
         {
             var clientIdFromToken = GetClientIdFromToken();
-
-            if (clientIdFromToken != clientID)
-                return Forbid();
 
             if (!ModelState.IsValid)
             {
@@ -256,7 +229,7 @@ namespace Prokast.Server.Controllers
             }
             try
             {
-                var result = _orderService.EditBuyer(clientID, buyerID, buyer);
+                var result = _orderService.EditBuyer(clientIdFromToken, buyerID, buyer);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);

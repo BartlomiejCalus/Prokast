@@ -36,16 +36,13 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(PhotoGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [EndpointDescription("A POST operation. Endpoint creates a new photo based on provided data.")]
-        public ActionResult<Response> CreatePhoto([FromBody] PhotoDto photo,[FromQuery] int clientID, [FromQuery] int productID)
+        public ActionResult<Response> CreatePhoto([FromBody] PhotoDto photo, [FromQuery] int productID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _photoService.CreatePhoto(photo, clientID, productID);
+                var result = _photoService.CreatePhoto(photo, clientIdFromToken, productID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -57,16 +54,13 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(PhotoGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [EndpointDescription("A GET operation. Endpoint returns all photos of the client's products.")]
-        public ActionResult<Response> GetAllPhotos([FromQuery] int clientID)
+        public ActionResult<Response> GetAllPhotos()
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _photoService.GetAllPhotos(clientID);
+                var result = _photoService.GetAllPhotos(clientIdFromToken);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -85,16 +79,13 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(PhotoGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [EndpointDescription("A GET operation. Endpoint returns a specific photo.")]
-        public ActionResult<Response> GetPhotosByID([FromQuery] int clientID, [FromRoute] int ID)
+        public ActionResult<Response> GetPhotosByID([FromRoute] int ID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _photoService.GetPhotosByID(clientID, ID);
+                var result = _photoService.GetPhotosByID(clientIdFromToken, ID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -108,16 +99,13 @@ namespace Prokast.Server.Controllers
         [EndpointSummary("Get all photos in product")]
         [ProducesResponseType(typeof(PhotoGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetAllPhotosInProduct([FromQuery] int clientID, [FromQuery] int productID)
+        public ActionResult<Response> GetAllPhotosInProduct([FromQuery] int productID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _photoService.GetAllPhotosInProduct(clientID, productID);
+                var result = _photoService.GetAllPhotosInProduct(clientIdFromToken, productID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -135,12 +123,9 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(PhotoEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [EndpointDescription("A PUT operation. Endpoint edits data of a given ptoho.")]
-        public ActionResult<Response> EditPhotos([FromQuery] int clientID, [FromRoute] int ID, [FromBody] PhotoEdit data)
+        public ActionResult<Response> EditPhotos([FromRoute] int ID, [FromBody] PhotoEdit data)
         {
             var clientIdFromToken = GetClientIdFromToken();
-
-            if (clientIdFromToken != clientID)
-                return Forbid(); 
 
             if (!ModelState.IsValid)
             {
@@ -148,7 +133,7 @@ namespace Prokast.Server.Controllers
             }
             try
             {
-                var result = _photoService.EditPhotos(clientID, ID, data);
+                var result = _photoService.EditPhotos(clientIdFromToken, ID, data);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);
@@ -165,16 +150,13 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [EndpointDescription("A DELETE operation. Endpoint deletes a given photo.")]
-        public ActionResult<Response> DeletePhotos([FromQuery] int clientID, [FromRoute] int ID)
+        public ActionResult<Response> DeletePhotos([FromRoute] int ID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _photoService.DeletePhotos(clientID, ID);
+                var result = _photoService.DeletePhotos(clientIdFromToken, ID);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);

@@ -27,16 +27,13 @@ namespace Prokast.Server.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> CreateProduct([FromBody] ProductCreateDto productCreateDto, [FromQuery] int clientID, [FromQuery] int regionID)
+        public ActionResult<Response> CreateProduct([FromBody] ProductCreateDto productCreateDto, [FromQuery] int regionID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _productService.CreateProduct(productCreateDto, clientID, regionID);
+                var result = _productService.CreateProduct(productCreateDto, clientIdFromToken, regionID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Created();
             }
@@ -50,16 +47,13 @@ namespace Prokast.Server.Controllers
         [HttpGet("products/{productID}")]
         [ProducesResponseType(typeof(ProductsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetOneProduct([FromQuery] int clientID, [FromRoute] int productID)
+        public ActionResult<Response> GetOneProduct([FromRoute] int productID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _productService.GetOneProduct(clientID, productID);
+                var result = _productService.GetOneProduct(clientIdFromToken, productID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -71,12 +65,9 @@ namespace Prokast.Server.Controllers
         [HttpPut("products/{productID}")]
         [ProducesResponseType(typeof(ProductEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> EditProduct([FromBody] ProductEdit productEdit, [FromQuery] int clientID, [FromRoute] int productID)
+        public ActionResult<Response> EditProduct([FromBody] ProductEdit productEdit, [FromRoute] int productID)
         {
             var clientIdFromToken = GetClientIdFromToken();
-
-            if (clientIdFromToken != clientID)
-                return Forbid();
 
             if (!ModelState.IsValid)
             {
@@ -84,7 +75,7 @@ namespace Prokast.Server.Controllers
             }
             try
             {
-                var result = _productService.EditProduct(productEdit, clientID, productID);
+                var result = _productService.EditProduct(productEdit, clientIdFromToken, productID);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);
@@ -101,16 +92,13 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [EndpointDescription("A DELETE operation. Endpoint deletes a given product and all of its components.")]
-        public ActionResult<Response> DeleteProduct([FromQuery] int clientID, [FromRoute] int ID)
+        public ActionResult<Response> DeleteProduct([FromRoute] int ID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
-
             try
             {
-                var result = _productService.DeleteProduct(clientID, ID);
+                var result = _productService.DeleteProduct(clientIdFromToken, ID);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);
@@ -124,15 +112,13 @@ namespace Prokast.Server.Controllers
         [HttpPost("productsListFiltered")]
         [ProducesResponseType(typeof(ProductGetMinResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> Getproducts([FromQuery] int clientID, [FromBody] ProductFilter filter, [FromQuery] int pageNumber, [FromQuery] int itemsNumber)
+        public ActionResult<Response> Getproducts( [FromBody] ProductFilter filter, [FromQuery] int pageNumber, [FromQuery] int itemsNumber)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
-            if (clientIdFromToken != clientID)
-                return Forbid();
             try
             {
-                var products = _productService.GetProducts(clientID, filter, pageNumber, itemsNumber);
+                var products = _productService.GetProducts(clientIdFromToken, filter, pageNumber, itemsNumber);
                 if (products is ErrorResponse) return BadRequest(products);
                 return Ok(products);
             }
