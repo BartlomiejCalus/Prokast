@@ -143,7 +143,7 @@ namespace Prokast.Server.Controllers
         #endregion
 
         #region Edit
-        [HttpPut("{ID}")]
+        [HttpPut("quantity/{ID}")]
         [ProducesResponseType(typeof(StoredProductEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> EditStoredProductQuality([FromRoute] int ID, [FromQuery] int quantity)
