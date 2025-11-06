@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Prokast.Server.Entities;
 using Prokast.Server.Models;
 using Prokast.Server.Models.ResponseModels;
@@ -27,7 +28,7 @@ namespace Prokast.Server.Services
             if (warehouseCreateDto == null)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
 
-            var client = _dbContext.Clients.FirstOrDefault(x => x.ID == clientID);
+            var client = _dbContext.Clients.Include(x => x.Warehouses).FirstOrDefault(x => x.ID == clientID);
             if (client == null)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego klienta!" };
 
@@ -78,7 +79,7 @@ namespace Prokast.Server.Services
 
         public Response GetWarehousesByCity(int clientID, string city)
         {
-            var warehouseList = _dbContext.Warehouses.Where(x => x.Name.Contains(city) && x.ClientID == clientID).ToList();
+            var warehouseList = _dbContext.Warehouses.Where(x => x.City.Contains(city) && x.ClientID == clientID).ToList();
             if (warehouseList.Count == 0)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak magazynów!" };
 
@@ -87,7 +88,7 @@ namespace Prokast.Server.Services
 
         public Response GetWarehouseByCountry(int clientID, string country)
         {
-            var warehouseList = _dbContext.Warehouses.Where(x => x.Name.Contains(country) && x.ClientID == clientID).ToList();
+            var warehouseList = _dbContext.Warehouses.Where(x => x.Country.Contains(country) && x.ClientID == clientID).ToList();
             if (warehouseList.Count == 0)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak magazynów!" };
 

@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Prokast.Server.Entities;
 using Prokast.Server.Models;
 using Prokast.Server.Models.ResponseModels;
+using Prokast.Server.Services;
 using Prokast.Server.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Prokast.Server.Controllers
 {
@@ -28,6 +29,23 @@ namespace Prokast.Server.Controllers
                 var lista = _services.GetRegions();
                 if (lista is ErrorResponse) return BadRequest(lista);
                 return Ok(lista);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("MainPage")]
+        [ProducesResponseType(typeof(MainPageGetResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public ActionResult<Response> GetMainPage([FromQuery] int clientID)
+        {
+            try
+            {
+                var result = _services.GetMainPage(clientID);
+                if (result is ErrorResponse) return BadRequest(result);
+                return Ok(result);
             }
             catch (Exception ex)
             {

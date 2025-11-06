@@ -130,10 +130,10 @@ namespace Prokast.Server.Controllers
         #endregion
 
         #region Edit
-        [HttpPut("{ID}")]
+        [HttpPut("quantity/{ID}")]
         [ProducesResponseType(typeof(StoredProductEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> EditStoredProductQuality([FromQuery] int clientID, [FromRoute] int ID, [FromQuery] int quantity)
+        public ActionResult<Response> EditStoredProductQuantity([FromQuery] int clientID, [FromRoute] int ID, [FromQuery] int quantity)
         {
             if (!ModelState.IsValid)
             {
@@ -156,7 +156,7 @@ namespace Prokast.Server.Controllers
         [HttpPut("minquantity/{ID}")]
         [ProducesResponseType(typeof(StoredProductEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> EditStoredProductMinQuality([FromQuery] int clientID, [FromRoute] int ID, [FromQuery] int minQuantity)
+        public ActionResult<Response> EditStoredProductMinQuantity([FromQuery] int clientID, [FromRoute] int ID, [FromQuery] int minQuantity)
         {
             if (!ModelState.IsValid)
             {
