@@ -12,6 +12,7 @@ using Prokast.Server.Models.ResponseModels.PriceResponseModels.PriceListResponse
 using Prokast.Server.Services;
 using Prokast.Server.Services.Interfaces;
 using System.Diagnostics;
+using System.Security.Claims;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
@@ -29,14 +30,25 @@ namespace Prokast.Server.Controllers
             _priceService = pricesService;
         }
 
+        private int GetClientIdFromToken()
+        {
+            var claim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            if (claim == null)
+                throw new UnauthorizedAccessException("Token nie zawiera ClientID!");
+
+            return int.Parse(claim.Value);
+        }
+
         [HttpPost]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> CreatePriceList([FromBody] PriceListsCreateDto priceLists, [FromQuery] int clientID, [FromQuery] int productID)
+        public ActionResult<Response> CreatePriceList([FromBody] PriceListsCreateDto priceLists, [FromQuery] int productID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             try
             {
-                var result = _priceService.CreatePriceList(priceLists, clientID, productID);
+                var result = _priceService.CreatePriceList(priceLists, clientIdFromToken, productID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Created();
             }
@@ -48,11 +60,13 @@ namespace Prokast.Server.Controllers
         [HttpPost("{productID}")]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> CreatePrice([FromBody] PricesDto prices, [FromRoute] int productID, [FromQuery] int clientID)
+        public ActionResult<Response> CreatePrice([FromBody] PricesDto prices, [FromRoute] int productID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             try
             {
-                var result = _priceService.CreatePrice(prices, productID, clientID);
+                var result = _priceService.CreatePrice(prices, productID, clientIdFromToken);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Created();
             }
@@ -64,11 +78,13 @@ namespace Prokast.Server.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(PriceListsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetAllPriceLists([FromQuery]int clientID)
+        public ActionResult<Response> GetAllPriceLists()
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             try
             {
-                var lista = _priceService.GetAllPriceLists(clientID);
+                var lista = _priceService.GetAllPriceLists(clientIdFromToken);
                 if (lista is ErrorResponse) return BadRequest(lista);
                 return Ok(lista);
             }
@@ -80,11 +96,13 @@ namespace Prokast.Server.Controllers
         [HttpGet("{name}")]
         [ProducesResponseType(typeof(PriceListsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetPriceListsByName([FromQuery] int clientID, [FromRoute] string name)
+        public ActionResult<Response> GetPriceListsByName([FromRoute] string name)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             try
             {
-                var lista = _priceService.GetPriceListsByName(clientID, name);
+                var lista = _priceService.GetPriceListsByName(clientIdFromToken, name);
                 if (lista is ErrorResponse) return BadRequest(lista);
                 return Ok(lista);
             }
@@ -96,11 +114,13 @@ namespace Prokast.Server.Controllers
         [HttpGet("prices/{priceListID}")]
         [ProducesResponseType(typeof(PriceListsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetAllPrices([FromQuery] int clientID, [FromRoute] int priceListID)
+        public ActionResult<Response> GetAllPrices([FromRoute] int priceListID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             try
             {
-                var lista = _priceService.GetAllPrices(clientID, priceListID);
+                var lista = _priceService.GetAllPrices(clientIdFromToken, priceListID);
                 if (lista is ErrorResponse) return BadRequest(lista);
                 return Ok(lista);
             }
@@ -112,11 +132,13 @@ namespace Prokast.Server.Controllers
         [HttpGet("prices/region/{priceListID}")]
         [ProducesResponseType(typeof(PriceListsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetPricesByRegion ([FromQuery] int clientID, [FromRoute]int priceListID, [FromQuery]int regionID)
+        public ActionResult<Response> GetPricesByRegion ([FromRoute]int priceListID, [FromQuery]int regionID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             try
             {
-                var lista = _priceService.GetPricesByRegion(clientID, priceListID, regionID);
+                var lista = _priceService.GetPricesByRegion(clientIdFromToken, priceListID, regionID);
                 if (lista is ErrorResponse) return BadRequest(lista);
                 return Ok(lista);
             }
@@ -128,11 +150,13 @@ namespace Prokast.Server.Controllers
         [HttpGet("prices/name/{priceListID}")]
         [ProducesResponseType(typeof(PriceListsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetPricesByName([FromQuery] int clientID, [FromRoute] int priceListID, [FromQuery] string name)
+        public ActionResult<Response> GetPricesByName([FromRoute] int priceListID, [FromQuery] string name)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             try
             {
-                var lista = _priceService.GetPricesByName(clientID, priceListID, name);
+                var lista = _priceService.GetPricesByName(clientIdFromToken, priceListID, name);
                 if (lista is ErrorResponse) return BadRequest(lista);
                 return Ok(lista);
             }
@@ -147,11 +171,13 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(AdditionalDescriptionGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [EndpointDescription("A GET operation. Endpoint returns a list of prices that are components in the same product.")]
-        public ActionResult<Response> GetAllParamsInProduct([FromQuery] int clientID, [FromQuery] int priceListID)
+        public ActionResult<Response> GetAllParamsInProduct([FromQuery] int priceListID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             try
             {
-                var result = _priceService.GetAllPricesInProduct(clientID, priceListID);
+                var result = _priceService.GetAllPricesInProduct(clientIdFromToken, priceListID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -164,15 +190,17 @@ namespace Prokast.Server.Controllers
         [HttpPut("prices/{priceID}")]
         [ProducesResponseType(typeof(ParamsEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> EditPrice(EditPriceDto editPriceDto, [FromQuery] int clientID, [FromQuery] int priceListID,[FromRoute] int priceID)
+        public ActionResult<Response> EditPrice(EditPriceDto editPriceDto, [FromQuery] int priceListID,[FromRoute] int priceID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             if (!ModelState.IsValid)
             {
                 return BadRequest("Błędne dane");
             }
             try
             {
-                var result = _priceService.EditPrice(editPriceDto, clientID, priceListID, priceID);
+                var result = _priceService.EditPrice(editPriceDto, clientIdFromToken, priceListID, priceID);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);
@@ -186,11 +214,13 @@ namespace Prokast.Server.Controllers
         [HttpDelete("prices/{priceID}")]
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> DeletePrice([FromQuery] int clientID, [FromQuery] int priceListID, [FromRoute] int priceID)
+        public ActionResult<Response> DeletePrice([FromQuery] int priceListID, [FromRoute] int priceID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             try
             {
-                var result = _priceService.DeletePrice(clientID, priceListID, priceID);
+                var result = _priceService.DeletePrice(clientIdFromToken, priceListID, priceID);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);
@@ -206,11 +236,13 @@ namespace Prokast.Server.Controllers
         [HttpDelete("{priceListID}")]
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> DeletePriceList([FromQuery] int clientID, [FromRoute] int priceListID)
+        public ActionResult<Response> DeletePriceList([FromRoute] int priceListID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             try
             {
-                var result = _priceService.DeletePriceList(clientID, priceListID);
+                var result = _priceService.DeletePriceList(clientIdFromToken, priceListID);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);

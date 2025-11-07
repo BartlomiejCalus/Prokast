@@ -8,6 +8,7 @@ using Prokast.Server.Models.ResponseModels.AdditionalDescriptionResponseModels;
 using Prokast.Server.Models.ResponseModels.AdditionalNameResponseModels;
 using Prokast.Server.Services;
 using Prokast.Server.Services.Interfaces;
+using System.Security.Claims;
 
 
 namespace Prokast.Server.Controllers
@@ -23,15 +24,26 @@ namespace Prokast.Server.Controllers
             _additionalNameService = additionalNameService;
         }
 
-        
+        private int GetClientIdFromToken()
+        {
+            var claim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            if (claim == null)
+                throw new UnauthorizedAccessException("Token nie zawiera ClientID!");
+
+            return int.Parse(claim.Value);
+        }
+
+
         [HttpPost]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> CreateAdditionalName([FromBody] AdditionalNameDto additionalNameDto, [FromQuery] int clientID, [FromQuery] int regionID, [FromQuery] int productID)
+        public ActionResult<Response> CreateAdditionalName([FromBody] AdditionalNameDto additionalNameDto, [FromQuery] int regionID, [FromQuery] int productID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             try
             {
-                var result = _additionalNameService.CreateAdditionalName(additionalNameDto, clientID, regionID, productID);
+                var result = _additionalNameService.CreateAdditionalName(additionalNameDto, clientIdFromToken, regionID, productID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Created();
             }
@@ -46,11 +58,13 @@ namespace Prokast.Server.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(AdditionalNameGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetAllNames([FromQuery] int clientID)
+        public ActionResult<Response> GetAllNames()
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             try
             {
-                var result = _additionalNameService.GetAllNames(clientID);
+                var result = _additionalNameService.GetAllNames(clientIdFromToken);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -65,11 +79,13 @@ namespace Prokast.Server.Controllers
         [HttpGet("{ID}")]
         [ProducesResponseType(typeof(AdditionalNameGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetNamesByID([FromRoute] int ID, [FromQuery] int clientID )
+        public ActionResult<Response> GetNamesByID([FromRoute] int ID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             try
             {
-                var result = _additionalNameService.GetNamesByID( ID, clientID);
+                var result = _additionalNameService.GetNamesByID( ID, clientIdFromToken);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -81,11 +97,13 @@ namespace Prokast.Server.Controllers
         [HttpGet("Title/{ID}")]
         [ProducesResponseType(typeof(AdditionalNameGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetNamesByIDNames([FromRoute] int ID, [FromQuery] string Title, [FromQuery] int clientID) 
+        public ActionResult<Response> GetNamesByIDNames([FromRoute] int ID, [FromQuery] string Title) 
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             try
             {
-                var result = _additionalNameService.GetNamesByIDNames(ID, Title ,clientID);
+                var result = _additionalNameService.GetNamesByIDNames(ID, Title , clientIdFromToken);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -99,11 +117,13 @@ namespace Prokast.Server.Controllers
         [HttpGet("Region/{ID}")]
         [ProducesResponseType(typeof(AdditionalNameGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetNamesByIDRegion([FromRoute] int ID, [FromQuery] int Region, [FromQuery] int clientID)
+        public ActionResult<Response> GetNamesByIDRegion([FromRoute] int ID, [FromQuery] int Region)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             try
             {
-                var result = _additionalNameService.GetNamesByIDRegion(ID, Region, clientID);
+                var result = _additionalNameService.GetNamesByIDRegion(ID, Region, clientIdFromToken);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -118,11 +138,13 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(AdditionalDescriptionGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [EndpointDescription("A GET operation. Endpoint returns a list of additional names that are components in the same product.")]
-        public ActionResult<Response> GetAllNamesInProduct([FromQuery] int clientID, [FromQuery] int productID)
+        public ActionResult<Response> GetAllNamesInProduct([FromQuery] int productID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             try
             {
-                var result = _additionalNameService.GetAllNamesInProduct(clientID, productID);
+                var result = _additionalNameService.GetAllNamesInProduct(clientIdFromToken, productID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -136,15 +158,17 @@ namespace Prokast.Server.Controllers
         [HttpPut("{ID}")]
         [ProducesResponseType(typeof(AdditionalNameEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> EditAdditionalName([FromQuery] int clientID, [FromRoute] int ID, [FromBody]  AdditionalNameDto data) 
+        public ActionResult<Response> EditAdditionalName([FromRoute] int ID, [FromBody]  AdditionalNameDto data) 
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             if (!ModelState.IsValid)
             {
                 return BadRequest("Błędne dane");
             }
             try
             {
-                var result = _additionalNameService.EditAdditionalName(clientID, ID, data);
+                var result = _additionalNameService.EditAdditionalName(clientIdFromToken, ID, data);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);
@@ -161,12 +185,13 @@ namespace Prokast.Server.Controllers
         [HttpDelete("{ID}")]
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> DeleteParams([FromQuery] int clientID, [FromRoute] int ID)
+        public ActionResult<Response> DeleteParams([FromRoute] int ID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
 
             try
             {
-                var result = _additionalNameService.DeleteAdditionalName(clientID, ID);
+                var result = _additionalNameService.DeleteAdditionalName(clientIdFromToken, ID);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);
