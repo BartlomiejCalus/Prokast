@@ -89,7 +89,7 @@ namespace Prokast.Server.Services
             }*/
             
             var tokn = CreateToken(account).ToString();
-
+            
             return new LogInLoginResponse() { ID = random.Next(1, 100000), ClientID = client.ID, IsSubscribed = true, Token = tokn };
         }
         private TokenResponseDto CreateTokenResponse(Account? user)
@@ -176,7 +176,7 @@ namespace Prokast.Server.Services
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Login),
-                new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.ClientID.ToString()),
                 new Claim(ClaimTypes.Role, user.Role.ToString())
             };
 

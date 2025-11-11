@@ -6,6 +6,7 @@ using Prokast.Server.Services.Interfaces;
 using Prokast.Server.Models.ResponseModels.WarehouseResponseModels;
 using Prokast.Server.Models.WarehouseModels;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Prokast.Server.Controllers
 {
@@ -24,11 +25,13 @@ namespace Prokast.Server.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> CreateWarehouse([FromBody] WarehouseCreateDto warehouseCreateDto, [FromQuery] int clientID)
+        public ActionResult<Response> CreateWarehouse([FromBody] WarehouseCreateDto warehouseCreateDto)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             try
             {
-                var result = _warehouseService.CreateWarehouse(warehouseCreateDto, clientID);
+                var result = _warehouseService.CreateWarehouse(warehouseCreateDto, clientIdFromToken);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Created();
             }
@@ -43,11 +46,13 @@ namespace Prokast.Server.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(WarehouseGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetAllWarehouses([FromQuery] int clientID)
+        public ActionResult<Response> GetAllWarehouses()
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             try
             {
-                var result = _warehouseService.GetAllWarehouses(clientID);
+                var result = _warehouseService.GetAllWarehouses(clientIdFromToken);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -60,11 +65,13 @@ namespace Prokast.Server.Controllers
         [HttpGet("{ID}")]
         [ProducesResponseType(typeof(WarehouseGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetWarehouseByID([FromQuery] int clientID, [FromRoute] int ID)
+        public ActionResult<Response> GetWarehouseByID([FromRoute] int ID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             try
             {
-                var result = _warehouseService.GetWarehouseById(clientID, ID);
+                var result = _warehouseService.GetWarehouseById(clientIdFromToken, ID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -77,11 +84,13 @@ namespace Prokast.Server.Controllers
         [HttpGet("Name/{name}")]
         [ProducesResponseType(typeof(WarehouseGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetWarehousesByName([FromQuery] int clientID, [FromRoute] string name)
+        public ActionResult<Response> GetWarehousesByName([FromRoute] string name)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             try
             {
-                var result = _warehouseService.GetWarehousesByName(clientID, name);
+                var result = _warehouseService.GetWarehousesByName(clientIdFromToken, name);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -94,11 +103,13 @@ namespace Prokast.Server.Controllers
         [HttpGet("City/{city}")]
         [ProducesResponseType(typeof(WarehouseGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetWarehousesByCity([FromQuery] int clientID, [FromRoute] string city)
+        public ActionResult<Response> GetWarehousesByCity([FromRoute] string city)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             try
             {
-                var result = _warehouseService.GetWarehousesByCity(clientID, city);
+                var result = _warehouseService.GetWarehousesByCity(clientIdFromToken, city);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -111,11 +122,13 @@ namespace Prokast.Server.Controllers
         [HttpGet("Country/{country}")]
         [ProducesResponseType(typeof(WarehouseGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetWarehousesByCountry([FromQuery] int clientID, [FromRoute] string country)
+        public ActionResult<Response> GetWarehousesByCountry([FromRoute] string country)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             try
             {
-                var result = _warehouseService.GetWarehouseByCountry(clientID, country);
+                var result = _warehouseService.GetWarehouseByCountry(clientIdFromToken, country);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -128,11 +141,13 @@ namespace Prokast.Server.Controllers
         [HttpGet("Minimal")]
         [ProducesResponseType(typeof(WarehouseGetMinimalResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetWarehousesMinimalData([FromQuery] int clientID)
+        public ActionResult<Response> GetWarehousesMinimalData()
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             try
             {
-                var result = _warehouseService.GetWarehousesMinimalData(clientID);
+                var result = _warehouseService.GetWarehousesMinimalData(clientIdFromToken);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -147,15 +162,17 @@ namespace Prokast.Server.Controllers
         [HttpPut("{ID}")]
         [ProducesResponseType(typeof(WarehouseEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> EditWarehouse([FromQuery] int clientID, [FromRoute] int ID, [FromBody] WarehouseCreateDto warehouseCreateDto)
+        public ActionResult<Response> EditWarehouse([FromRoute] int ID, [FromBody] WarehouseCreateDto warehouseCreateDto)
         {
+            var clientIdFromToken = GetClientIdFromToken();
+
             if (!ModelState.IsValid)
             {
                 return BadRequest("Błędne dane");
             }
             try
             {
-                var result = _warehouseService.EditWarehouse(clientID, ID, warehouseCreateDto);
+                var result = _warehouseService.EditWarehouse(clientIdFromToken, ID, warehouseCreateDto);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);
@@ -172,12 +189,13 @@ namespace Prokast.Server.Controllers
         [HttpDelete("{ID}")]
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> DeleteWarehouse([FromQuery] int clientID, [FromRoute] int ID)
+        public ActionResult<Response> DeleteWarehouse([FromRoute] int ID)
         {
+            var clientIdFromToken = GetClientIdFromToken();
 
             try
             {
-                var result = _warehouseService.DeleteWarehouse(clientID, ID);
+                var result = _warehouseService.DeleteWarehouse(clientIdFromToken, ID);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);
@@ -189,5 +207,14 @@ namespace Prokast.Server.Controllers
             }
         }
         #endregion
+
+        private int GetClientIdFromToken()
+        {
+            var claim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            if (claim == null)
+                throw new UnauthorizedAccessException("Token nie zawiera ClientID!");
+
+            return int.Parse(claim.Value);
+        }
     }
 }
