@@ -21,45 +21,62 @@ const ProductList: React.FC = () => {
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>('Wszystko');
 
   const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      const token = Cookies.get('token');
+  try {
+    setLoading(true);
+    const token = Cookies.get("token");
 
-      if (!token) {
-        setError('Brak tokenu autoryzacyjnego.');
-        setLoading(false);
-        return;
-      }
-
-      const productID = 1;
-      const clientID = 1;
-
-      const response = await axios.get(
-        `https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/products/products/${productID}?clientID=${clientID}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: 'application/json',
-          },
-        }
-      );
-
-      const model = response.data?.model ?? response.data;
-      if (!model) {
-        setError('Brak danych produktu w odpowiedzi API.');
-        return;
-      }
-
-      setProducts([model]);
-      setError('');
-    } catch (err: any) {
-      console.error('Błąd podczas pobierania produktu:', err);
-      console.error('Odpowiedź serwera:', err.response?.data);
-      setError('Nie udało się pobrać produktu.');
-    } finally {
+    if (!token) {
+      setError("Brak tokenu autoryzacyjnego.");
       setLoading(false);
+      return;
     }
-  };
+
+    const warehouseID = prompt("Podaj ID magazynu (warehouseID):");
+
+    if (!warehouseID) {
+      setError("Nie podano ID magazynu.");
+      setLoading(false);
+      return;
+    }
+
+    const response = await axios.get(
+      "https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/storedproducts",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+        params: {
+          warehouseID: warehouseID,
+        },
+      }
+    );
+
+    const model = response.data?.model ?? response.data;
+
+    if (!model || model.length === 0) {
+      setError("Brak produktów dla podanego magazynu.");
+      return;
+    }
+
+    setProducts(
+      model.map((item: any) => ({
+        name: item.productName,
+        sku: item.productID,
+        description: `Ilość: ${item.quantity}, minimalna ilość: ${item.minQuantity}`,
+        ean: item.id.toString(),
+      }))
+    );
+
+    setError("");
+  } catch (err: any) {
+    console.error("Błąd API:", err.response?.data ?? err);
+    setError("Nie udało się pobrać listy produktów.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     fetchProducts();
@@ -203,8 +220,22 @@ const ProductList: React.FC = () => {
                     <p><strong>SKU:</strong> {product.sku}</p>
                     <p><strong>EAN:</strong> {product.ean}</p>
                   </div>
+                  
+                  <div className="flex gap-4 mt-6">
+                    <button
+                      //onClick={() => handleEditProduct(product)}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
+                    >
+                      Edytuj
+                    </button>
 
-                 
+                    <button
+                      //onClick={() => handleDeleteProduct(product)}
+                      className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition"
+                    >
+                      Usuń
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
