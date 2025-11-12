@@ -35,7 +35,7 @@ const Navbar: React.FC = () => {
         </li>
         <li>
           <Link
-            to="/logout"
+            to="/"
             className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-xl transition"
           >
             Wyloguj
