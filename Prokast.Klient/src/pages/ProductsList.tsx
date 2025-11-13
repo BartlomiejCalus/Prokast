@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 import Navbar from '../Components/Navbar';
 
 interface Product {
+  id: number;
   name: string;
   sku: string;
   ean: string;
@@ -40,7 +41,7 @@ const ProductList: React.FC = () => {
     }
 
     const response = await axios.get(
-      "https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/storedproducts",
+      "http://localhost:8080/api/storedproducts",
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -61,6 +62,7 @@ const ProductList: React.FC = () => {
 
     setProducts(
       model.map((item: any) => ({
+        id: item.id,
         name: item.productName,
         sku: item.productID,
         description: `Ilość: ${item.quantity}, minimalna ilość: ${item.minQuantity}`,
@@ -81,6 +83,34 @@ const ProductList: React.FC = () => {
   useEffect(() => {
     fetchProducts();
   }, []);
+
+const handleDeleteProduct = async (product: Product) => {
+  const confirmed = window.confirm(`Czy na pewno chcesz usunąć produkt "${product.name}" z tego magazynu?`);
+  if (!confirmed) return;
+
+  try {
+    const token = Cookies.get("token");
+    if (!token) {
+      setError("Brak tokenu autoryzacyjnego.");
+      return;
+    }
+
+    // DELETE http://localhost:8080/api/products/{productID}
+    await axios.delete(`http://localhost:8080/api/storedproducts/${product.id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+      },
+    });
+
+    setProducts((prev) => prev.filter((p) => p.id !== product.id));
+
+    alert(`Produkt "${product.name}" został usunięty.`);
+  } catch (err: any) {
+    console.error("Błąd podczas usuwania produktu:", err.response?.data ?? err);
+    setError("Nie udało się usunąć produktu.");
+  }
+};
 
   const handleAddToCart = (product: Product) => {
     alert(`Dodano produkt "${product.name}" do koszyka.`);
@@ -230,7 +260,7 @@ const ProductList: React.FC = () => {
                     </button>
 
                     <button
-                      //onClick={() => handleDeleteProduct(product)}
+                      onClick={() => handleDeleteProduct(product)}
                       className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition"
                     >
                       Usuń
