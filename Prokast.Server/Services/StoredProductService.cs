@@ -28,20 +28,27 @@ namespace Prokast.Server.Services
             if (storedProducts == null)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
             
-            var warehouse = _dbContext.Warehouses.FirstOrDefault(x => x.ID == warehouseID);
+            var warehouse = _dbContext.Warehouses.Include(x => x.StoredProducts).FirstOrDefault(x => x.ID == warehouseID);
             if (warehouse == null)
             {
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego magazynu" };
             }
 
+            var product = _dbContext.Products.FirstOrDefault(x => x.ID == productID && x.ClientID == clientID);
+            if (product == null)
+            {
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego produktu" };
+            }
+
             var productList = new List<StoredProduct>();
-            foreach (var product in storedProducts.StoredProducts)
+            foreach (var stproduct in storedProducts.StoredProducts)
             {
                 var storedProduct = new StoredProduct
                 {
-                    Quantity = product.Quantity,
-                    MinQuantity = product.MinQuantity,
-                    Warehouse = warehouse
+                    Quantity = stproduct.Quantity,
+                    MinQuantity = stproduct.MinQuantity,
+                    WarehouseID = warehouseID,
+                    ProductID = productID
                 };
                 productList.Add(storedProduct);
                 /*_dbContext.StoredProducts.Add(storedProduct);
