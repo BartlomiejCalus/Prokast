@@ -4,12 +4,11 @@ import Cookies from 'js-cookie';
 import Navbar from '../Components/Navbar';
 
 interface Product {
+  id: number;
   name: string;
   sku: string;
-  ean: string;
-  description: string;
-  additionalDescriptions?: { title: string; value: string; regionID: number }[];
-  additionalNames?: { title: string; value: string; regionID: number }[];
+  photo: string;
+  additionDate: string;
 }
 
 const ProductList: React.FC = () => {
@@ -19,76 +18,75 @@ const ProductList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('Wszystko');
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>('Wszystko');
+  
 
   const fetchProducts = async () => {
-  try {
-    setLoading(true);
-    const token = Cookies.get("token");
+    try {
+      setLoading(true);
+      const token = Cookies.get("token");
 
-    if (!token) {
-      setError("Brak tokenu autoryzacyjnego.");
-      setLoading(false);
-      return;
-    }
-
-    const warehouseID = prompt("Podaj ID magazynu (warehouseID):");
-
-    if (!warehouseID) {
-      setError("Nie podano ID magazynu.");
-      setLoading(false);
-      return;
-    }
-
-    const response = await axios.get(
-      "https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/storedproducts",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-        },
-        params: {
-          warehouseID: warehouseID,
-        },
+      if (!token) {
+        setError("Brak tokenu autoryzacyjnego.");
+        setLoading(false);
+        return;
       }
-    );
 
-    const model = response.data?.model ?? response.data;
+      const nubmerOfIitemsOnListString = prompt("Podaj ilość produktów do wyświetlenia na liście:", "10");
+      const nubmerOfIitemsOnList = nubmerOfIitemsOnListString ? parseInt(nubmerOfIitemsOnListString) : null;
 
-    if (!model || model.length === 0) {
-      setError("Brak produktów dla podanego magazynu.");
-      return;
+      
+
+      const response = await axios.post(
+        "https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/products/productsListFiltered",
+        {
+          name: "",
+          sku: ""
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json"
+          }
+        ,
+          params:{
+            pageNumber: 1,
+            itemsNumber: nubmerOfIitemsOnList ?? 10
+
+          }
+        
+        }
+        
+      );
+
+      const model = response.data?.model ?? response.data;
+
+      if (!model || model.length === 0) {
+        setError("Brak produktów dla podanego magazynu.");
+        return;
+      }
+
+      setProducts(
+        model.map((item: any) => ({
+          id: item.id,
+          name: item.name,
+          sku: item.sku,
+          photo: item.photo,
+          additionDate: item.additionDate
+        }))
+      );
+
+      setError("");
+    } catch (err: any) {
+      console.error("Błąd API:", err.response?.data ?? err);
+      setError("Nie udało się pobrać listy produktów.");
+    } finally {
+      setLoading(false);
     }
-
-    setProducts(
-      model.map((item: any) => ({
-        name: item.productName,
-        sku: item.productID,
-        description: `Ilość: ${item.quantity}, minimalna ilość: ${item.minQuantity}`,
-        ean: item.id.toString(),
-      }))
-    );
-
-    setError("");
-  } catch (err: any) {
-    console.error("Błąd API:", err.response?.data ?? err);
-    setError("Nie udało się pobrać listy produktów.");
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   useEffect(() => {
     fetchProducts();
   }, []);
-
-  const handleAddToCart = (product: Product) => {
-    alert(`Dodano produkt "${product.name}" do koszyka.`);
-  };
-
-  const handleViewDetails = (product: Product) => {
-    alert(`Otwieranie szczegółów produktu: ${product.name}`);
-  };
 
   const filteredProducts = products.filter((p) =>
     p.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -97,7 +95,7 @@ const ProductList: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-700 text-lg">
-        Wczytywanie produktu...
+        Wczytywanie produktów...
       </div>
     );
   }
@@ -121,7 +119,7 @@ const ProductList: React.FC = () => {
       <Navbar />
 
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row mt-8 p-4 gap-6">
-        {/* Pasek filtrów po lewej stronie */}
+        
         <aside className="w-full lg:w-1/4 bg-white/80 backdrop-blur-md shadow-lg rounded-2xl p-6 h-fit">
           <h2 className="text-xl font-bold text-gray-800 mb-4">Filtry</h2>
 
@@ -136,36 +134,6 @@ const ProductList: React.FC = () => {
             />
           </div>
 
-          <div className="mb-6">
-            <label className="block text-gray-600 mb-2 font-semibold">Kategoria</label>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full p-3 border rounded-xl shadow-sm"
-            >
-              <option>Wszystko</option>
-              <option>AGD</option>
-              <option>Elektronika</option>
-              <option>Dom i ogród</option>
-              <option>Inne</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-gray-600 mb-2 font-semibold">Zakres cen</label>
-            <select
-              value={selectedPriceRange}
-              onChange={(e) => setSelectedPriceRange(e.target.value)}
-              className="w-full p-3 border rounded-xl shadow-sm"
-            >
-              <option>Wszystko</option>
-              <option>0 - 50 zł</option>
-              <option>50 - 200 zł</option>
-              <option>200 - 500 zł</option>
-              <option>500+ zł</option>
-            </select>
-          </div>
-
           <div className="mt-6">
             <button
               onClick={fetchProducts}
@@ -176,61 +144,37 @@ const ProductList: React.FC = () => {
           </div>
         </aside>
 
-        {/* Lista produktów po prawej stronie */}
         <main className="flex-1">
-          <h1 className="text-2xl font-bold text-gray-800 mb-6">Szczegóły produktu</h1>
+          <h1 className="text-2xl font-bold text-gray-800 mb-6">Lista produktów</h1>
 
           {filteredProducts.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {filteredProducts.map((product, index) => (
+              {filteredProducts.map((product) => (
                 <div
-                  key={index}
+                  key={product.id}
                   className="bg-white/80 backdrop-blur-md shadow-lg rounded-2xl p-6 hover:shadow-xl transition"
                 >
-                  <h2 className="text-2xl font-bold text-gray-800 mb-4">{product.name}</h2>
-                  <p className="text-gray-600 mb-4">{product.description}</p>
+                  <img
+                    src={product.photo}
+                    alt={product.name}
+                    className="w-full h-48 object-contain rounded-xl mb-4"
+                  />
 
-                  {product.additionalDescriptions && product.additionalDescriptions.length > 0 && (
-                    <div className="mb-4">
-                      <h3 className="font-semibold">Dodatkowe opisy:</h3>
-                      <ul className="list-disc pl-6 text-gray-700">
-                        {product.additionalDescriptions.map((desc, i) => (
-                          <li key={i}>
-                            <strong>{desc.title}</strong>: {desc.value}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+                  <h2 className="text-2xl font-bold text-gray-800 mb-2">{product.name}</h2>
 
-                  {product.additionalNames && product.additionalNames.length > 0 && (
-                    <div className="mb-4">
-                      <h3 className="font-semibold">Dodatkowe nazwy:</h3>
-                      <ul className="list-disc pl-6 text-gray-700">
-                        {product.additionalNames.map((n, i) => (
-                          <li key={i}>
-                            <strong>{n.title}</strong>: {n.value}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  <div className="text-sm text-gray-500 mt-4">
-                    <p><strong>SKU:</strong> {product.sku}</p>
-                    <p><strong>EAN:</strong> {product.ean}</p>
+                  <div className="text-gray-600 mb-4">
+                    <p>SKU: {product.sku}</p>
+                    <p>Dodano: {new Date(product.additionDate).toLocaleString()}</p>
                   </div>
-                  
+
                   <div className="flex gap-4 mt-6">
                     <button
-                      //onClick={() => handleEditProduct(product)}
                       className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
                     >
                       Edytuj
                     </button>
 
                     <button
-                      //onClick={() => handleDeleteProduct(product)}
                       className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition"
                     >
                       Usuń
