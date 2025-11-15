@@ -47,7 +47,7 @@ const ProductList: React.FC = () => {
       }
 
       const response = await axios.get(
-        "http://localhost:8080/api/storedproducts",
+        "https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/storedproducts",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -135,7 +135,7 @@ const ProductList: React.FC = () => {
 
     try {
       await axios.put(
-        `http://localhost:8080/api/storedproducts/quantity/${editingQuantityProduct.id}?quantity=${amount}`,
+        `https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/storedproducts/quantity/${editingQuantityProduct.id}?quantity=${amount}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` }
@@ -201,7 +201,7 @@ const ProductList: React.FC = () => {
     try {
       // Wysyłamy PUT z minQuantity w query string
       await axios.put(
-        `http://localhost:8080/api/storedproducts/minquantity/${editingProduct.id}?minQuantity=${minQ}`,
+        `https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/storedproducts/minquantity/${editingProduct.id}?minQuantity=${minQ}`,
         {}, // body można zostawić puste
         {
           headers: {
@@ -246,7 +246,7 @@ const ProductList: React.FC = () => {
       }
 
       // DELETE http://localhost:8080/api/products/{productID}
-      await axios.delete(`http://localhost:8080/api/storedproducts/${product.id}`, {
+      await axios.delete(`https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/storedproducts/${product.id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",

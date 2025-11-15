@@ -31,7 +31,7 @@ const Dashboard: React.FC = () => {
     const clientID = decoded.ClientID;
     console.log("🔹 decoded token:", decoded);
     axios
-      .get(`https://localhost:7207/api/others/MainPage?clientID=1`,
+      .get(`https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/others/MainPage?clientID=1`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
