@@ -1,17 +1,19 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import Cookies from 'js-cookie';
 //import Navbar from '../Components/Navbar';
 
 interface Product {
   id: number;
-  name: string;
+  productName: string;
   sku: string;
   ean: string;
   description: string;
   additionalDescriptions?: { title: string; value: string; regionID: number }[];
   additionalNames?: { title: string; value: string; regionID: number }[];
+  quantity?: number;
+  minQuantity?: number;
 }
 
 const ProductList: React.FC = () => {
@@ -68,18 +70,19 @@ const ProductList: React.FC = () => {
       }
 
       setProducts(
-        model.map((item: any) => ({
+        model.map((item: Product) => ({
           id: item.id,
-          name: item.productName,
-          sku: item.productID,
+          productName: item.productName ?? "",
+          sku: item.id,
           description: `Ilość: ${item.quantity}, minimalna ilość: ${item.minQuantity}`,
           ean: item.id.toString(),
         }))
       );
 
       setError("");
-    } catch (err: any) {
-      console.error("Błąd API:", err.response?.data ?? err);
+    } catch (err) {
+      const error = err as AxiosError;
+      console.error("Błąd API:", error.response?.data ?? err);
       setError("Nie udało się pobrać listy produktów.");
     } finally {
       setLoading(false);
@@ -158,12 +161,13 @@ const ProductList: React.FC = () => {
         )
       );
 
-      alert(`Zaktualizowano ilość produktu "${editingQuantityProduct.name}".`);
+      alert(`Zaktualizowano ilość produktu "${editingQuantityProduct.productName}".`);
       setEditingQuantityProduct(null);
       setQuantityChange('');
       setQuantityAction('add');
-    } catch (err: any) {
-      console.error("Błąd podczas zmiany ilości:", err.response?.data ?? err);
+    } catch (err) {
+      const error = err as AxiosError;
+      console.error("Błąd podczas zmiany ilości:", error.response?.data ?? err);
       alert("Nie udało się zaktualizować ilości produktu.");
     }
   };
@@ -226,17 +230,18 @@ const ProductList: React.FC = () => {
         )
       );
 
-      alert(`Zaktualizowano minimalną ilość produktu "${editingProduct.name}".`);
+      alert(`Zaktualizowano minimalną ilość produktu "${editingProduct.productName}".`);
       setEditingProduct(null);
       setNewMinQuantity('');
-    } catch (err: any) {
-      console.error("Błąd podczas edycji produktu:", err.response?.data ?? err);
+    } catch (err) {
+      const error = err as AxiosError;
+      console.error("Błąd podczas edycji produktu:", error.response?.data ?? err);
       alert("Nie udało się zaktualizować minimalnej ilości produktu.");
     }
   };
 
   const handleDeleteProduct = async (product: Product) => {
-    const confirmed = window.confirm(`Czy na pewno chcesz usunąć produkt "${product.name}" z tego magazynu?`);
+    const confirmed = window.confirm(`Czy na pewno chcesz usunąć produkt "${product.productName}" z tego magazynu?`);
     if (!confirmed) return;
 
     try {
@@ -256,23 +261,17 @@ const ProductList: React.FC = () => {
 
       setProducts((prev) => prev.filter((p) => p.id !== product.id));
 
-      alert(`Produkt "${product.name}" został usunięty.`);
-    } catch (err: any) {
-      console.error("Błąd podczas usuwania produktu:", err.response?.data ?? err);
+      alert(`Produkt "${product.productName}" został usunięty.`);
+    } catch (err) {
+      const error = err as AxiosError;
+      console.error("Błąd podczas usuwania produktu:", error.response?.data ?? error);
       setError("Nie udało się usunąć produktu.");
     }
   };
 
-  const handleAddToCart = (product: Product) => {
-    alert(`Dodano produkt "${product.name}" do koszyka.`);
-  };
-
-  const handleViewDetails = (product: Product) => {
-    alert(`Otwieranie szczegółów produktu: ${product.name}`);
-  };
 
   const filteredProducts = products.filter((p) =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase())
+    p.productName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
@@ -368,7 +367,7 @@ const ProductList: React.FC = () => {
                   key={index}
                   className="bg-white/80 backdrop-blur-md shadow-lg rounded-2xl p-6 hover:shadow-xl transition"
                 >
-                  <h2 className="text-2xl font-bold text-gray-800 mb-4">{product.name}</h2>
+                  <h2 className="text-2xl font-bold text-gray-800 mb-4">{product.productName}</h2>
                   <p className={`${getQuantityColor(product.description)} mb-4`}>{product.description}</p>
 
                   {product.additionalDescriptions && product.additionalDescriptions.length > 0 && (
@@ -437,7 +436,7 @@ const ProductList: React.FC = () => {
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl shadow-2xl p-8 w-96">
             <h2 className="text-xl font-bold mb-4 text-gray-800">
-              Edytuj produkt: {editingProduct.name}
+              Edytuj produkt: {editingProduct.productName}
             </h2>
 
             <label className="block text-gray-700 font-semibold mb-2">
@@ -473,7 +472,7 @@ const ProductList: React.FC = () => {
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl shadow-2xl p-8 w-96">
             <h2 className="text-xl font-bold mb-4 text-gray-800">
-              Zmień ilość produktu: {editingQuantityProduct.name}
+              Zmień ilość produktu: {editingQuantityProduct.productName}
             </h2>
 
             <label className="block text-gray-700 font-semibold mb-2">
