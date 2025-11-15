@@ -1,197 +1,521 @@
-'use client';
+"use client";
+import React, { useState, useEffect } from 'react';
+import axios, { AxiosError } from 'axios';
+import Cookies from 'js-cookie';
+//import Navbar from '../Components/Navbar';
 
-import { useState } from "react";
-import axios from "axios";
-import ChoiceMenu from "@/components/choiceMenu";
-
-interface StoredProduct {
+interface Product {
   id: number;
-  warehouseID: number;
-  productID: number;
-  quantity: number;
-  minQuantity: number;
-  lastUpdated: string;
+  productName: string;
+  sku: string;
+  ean: string;
+  description: string;
+  additionalDescriptions?: { title: string; value: string; regionID: number }[];
+  additionalNames?: { title: string; value: string; regionID: number }[];
+  quantity?: number;
+  minQuantity?: number;
 }
 
-export default function StoredProductsPage() {
-  const [clientID, setClientID] = useState<string>("");
-  const [warehouseID, setWarehouseID] = useState<string>("");
-  const [data, setData] = useState<StoredProduct[] | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [showModal, setShowModal] = useState<boolean>(false);
-  const [selectedProduct, setSelectedProduct] = useState<number | null>(null);
-  const [newQuantity, setNewQuantity] = useState<number>(0);
-  const [isFetched, setIsFetched] = useState<boolean>(false);
+const ProductList: React.FC = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('Wszystko');
+  const [selectedPriceRange, setSelectedPriceRange] = useState<string>('Wszystko');
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [newMinQuantity, setNewMinQuantity] = useState('');
+  const [editingQuantityProduct, setEditingQuantityProduct] = useState<Product | null>(null);
+  const [quantityChange, setQuantityChange] = useState(''); // liczba do dodania/odjęcia
+  const [quantityAction, setQuantityAction] = useState<'add' | 'subtract'>('add'); // wybór akcji
 
-  const fetchStoredProducts = async () => {
-    if (!clientID || !warehouseID) {
-      setError("Both clientID and warehouseID are required");
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    setData(null);
 
+  const fetchProducts = async () => {
     try {
-      const response = await axios.get("/api/storedProducts", {
-        params: { clientID, warehouseID },
-      });
-      setData(response.data.model);
-      setIsFetched(true);
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.error || "Something went wrong");
-      } else {
-        setError("Something went wrong");
+      setLoading(true);
+      const token = Cookies.get("token");
+
+      if (!token) {
+        setError("Brak tokenu autoryzacyjnego.");
+        setLoading(false);
+        return;
       }
+
+      const warehouseID = prompt("Podaj ID magazynu (warehouseID):");
+
+      if (!warehouseID) {
+        setError("Nie podano ID magazynu.");
+        setLoading(false);
+        return;
+      }
+
+      const response = await axios.get(
+        "https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/storedproducts",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+          params: {
+            warehouseID: warehouseID,
+          },
+        }
+      );
+
+      const model = response.data?.model ?? response.data;
+
+      if (!model || model.length === 0) {
+        setError("Brak produktów dla podanego magazynu.");
+        return;
+      }
+
+      setProducts(
+        model.map((item: Product) => ({
+          id: item.id,
+          productName: item.productName ?? "",
+          sku: item.id,
+          description: `Ilość: ${item.quantity}, minimalna ilość: ${item.minQuantity}`,
+          ean: item.id.toString(),
+        }))
+      );
+
+      setError("");
+    } catch (err) {
+      const error = err as AxiosError;
+      console.error("Błąd API:", error.response?.data ?? err);
+      setError("Nie udało się pobrać listy produktów.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelivery = async () => {
-    if (selectedProduct === null || newQuantity <= 0) return;
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const getQuantityColor = (description: string) => {
+    const quantityMatch = description.match(/Ilość: (\d+)/);
+    const minQuantityMatch = description.match(/minimalna ilość: (\d+)/);
+
+    if (!quantityMatch || !minQuantityMatch) return 'text-gray-600';
+
+    const quantity = parseInt(quantityMatch[1], 10);
+    const minQuantity = parseInt(minQuantityMatch[1], 10);
+
+    return quantity < minQuantity ? 'text-red-600 font-bold' : 'text-gray-600';
+  };
+
+  const handleEditQuantityProduct = (product: Product) => {
+    setEditingQuantityProduct(product);
+    setQuantityChange('');       // czyścimy poprzednią wartość
+    setQuantityAction('add');    // domyślnie Dodaj
+  };
+
+  const handleConfirmQuantityChange = async () => {
+    if (!editingQuantityProduct) return;
+
+    const token = Cookies.get("token");
+    if (!token) {
+      alert("Brak tokenu autoryzacyjnego.");
+      return;
+    }
+
+    let amount = parseInt(quantityChange, 10);
+    if (isNaN(amount)) {
+      alert("Podaj poprawną liczbę całkowitą.");
+      return;
+    }
+    if (isNaN(amount) || amount < 0) {
+      alert("Podaj liczbę całkowitą większą lub równą zero.");
+      return;
+    }
+
+    // Jeśli wybrano odejmowanie, zmieniamy znak na ujemny
+    if (quantityAction === 'subtract') {
+      amount = -amount;
+    }
+
 
     try {
-      await axios.put(`/api/storedProductsChangingQuantity/${selectedProduct}`, {
-        clientID,
-        quantity: newQuantity,
-      }, {
-        headers: { "Content-Type": "application/json" },
-      });
+      await axios.put(
+        `https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/storedproducts/quantity/${editingQuantityProduct.id}?quantity=${amount}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
 
-      fetchStoredProducts();
-      setShowModal(false);
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.error || "Failed to update quantity");
-      } else {
-        setError("Failed to update quantity");
-      }
+      // Aktualizacja lokalna (tylko dla UI, jeśli chcesz)
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.id === editingQuantityProduct.id
+            ? {
+              ...p,
+              description: p.description.replace(
+                /Ilość: \d+/,
+                `Ilość: ${parseInt(p.description.match(/Ilość: (\d+)/)?.[1] || '0') + amount}`
+              ),
+            }
+            : p
+        )
+      );
+
+      alert(`Zaktualizowano ilość produktu "${editingQuantityProduct.productName}".`);
+      setEditingQuantityProduct(null);
+      setQuantityChange('');
+      setQuantityAction('add');
+    } catch (err) {
+      const error = err as AxiosError;
+      console.error("Błąd podczas zmiany ilości:", error.response?.data ?? err);
+      alert("Nie udało się zaktualizować ilości produktu.");
     }
   };
 
-  return (
-    
-    <div className=" min-h-screen" style={{ backgroundColor: '#F0F6FD', color: 'var(--foreground)' }}>
-      <ChoiceMenu />
-      <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Stored Products</h1>
+  const handleEditMinQuantityProduct = (product: Product) => {
+    setEditingProduct(product);
 
-      <div className="my-4 flex flex-wrap gap-2">
-        <input
-          type="text"
-          placeholder="Client ID"
-          value={clientID}
-          onChange={(e) => setClientID(e.target.value)}
-          className="border p-2 rounded w-48"
-        />
-        <input
-          type="text"
-          placeholder="Warehouse ID"
-          value={warehouseID}
-          onChange={(e) => setWarehouseID(e.target.value)}
-          className="border p-2 rounded w-48"
-        />
-        <button
-          onClick={fetchStoredProducts}
-          className="bg-[#015183] hover:bg-[#013d63] text-white p-2 rounded"
-        >
-          Fetch Data
-        </button>
+    // Wyciągnięcie aktualnej minimalnej ilości z opisu tekstowego
+    const match = product.description.match(/minimalna ilość: (\d+)/);
+    const currentMin = match ? match[1] : "";
 
-        {isFetched && (
-        <div className="text-center ">
-          <button
-            onClick={() => setShowModal(true)}
-            className="bg-green-600 hover:bg-green-700 text-white p-2 rounded"
-          >
-            Dostawa
-          </button>
-        </div>
-      )}
-      
+    setNewMinQuantity(currentMin);
+  };
+
+  const handleConfirmEdit = async () => {
+    if (!editingProduct) return;
+
+    const token = Cookies.get("token");
+    if (!token) {
+      alert("Brak tokenu autoryzacyjnego. Zaloguj się ponownie.");
+      return;
+    }
+
+    const minQ = parseInt(newMinQuantity, 10);
+
+    if (isNaN(minQ)) {
+      alert("Podaj poprawną wartość minimalnej ilości (liczbę całkowitą).");
+      return;
+    }
+
+    if (minQ < 0) {
+      alert("Minimalna ilość nie może być mniejsza niż 0.");
+      return;
+    }
+
+    try {
+      // Wysyłamy PUT z minQuantity w query string
+      await axios.put(
+        `https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/storedproducts/minquantity/${editingProduct.id}?minQuantity=${minQ}`,
+        {}, // body można zostawić puste
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Aktualizacja lokalnego stanu produktu
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.id === editingProduct.id
+            ? {
+              ...p,
+              description: p.description.replace(
+                /minimalna ilość: \d+/,
+                `minimalna ilość: ${minQ}`
+              ),
+            }
+            : p
+        )
+      );
+
+      alert(`Zaktualizowano minimalną ilość produktu "${editingProduct.productName}".`);
+      setEditingProduct(null);
+      setNewMinQuantity('');
+    } catch (err) {
+      const error = err as AxiosError;
+      console.error("Błąd podczas edycji produktu:", error.response?.data ?? err);
+      alert("Nie udało się zaktualizować minimalnej ilości produktu.");
+    }
+  };
+
+  const handleDeleteProduct = async (product: Product) => {
+    const confirmed = window.confirm(`Czy na pewno chcesz usunąć produkt "${product.productName}" z tego magazynu?`);
+    if (!confirmed) return;
+
+    try {
+      const token = Cookies.get("token");
+      if (!token) {
+        setError("Brak tokenu autoryzacyjnego.");
+        return;
+      }
+
+      // DELETE http://localhost:8080/api/products/{productID}
+      await axios.delete(`https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/storedproducts/${product.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
+
+      setProducts((prev) => prev.filter((p) => p.id !== product.id));
+
+      alert(`Produkt "${product.productName}" został usunięty.`);
+    } catch (err) {
+      const error = err as AxiosError;
+      console.error("Błąd podczas usuwania produktu:", error.response?.data ?? error);
+      setError("Nie udało się usunąć produktu.");
+    }
+  };
+
+
+  const filteredProducts = products.filter((p) =>
+    p.productName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-700 text-lg">
+        Wczytywanie produktu...
       </div>
+    );
+  }
 
-      {loading && <p>Loading...</p>}
-      {error && <p className="text-red-600">Error: {error}</p>}
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center text-center text-red-600">
+        <p>{error}</p>
+        <button
+          onClick={fetchProducts}
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
+        >
+          Spróbuj ponownie
+        </button>
+      </div>
+    );
+  }
 
-      
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-200">
+      {/* <Navbar /> */}
 
-      {data && (
-        <div className="overflow-x-auto">
-          <table className="border-collapse border w-full shadow-md rounded bg-white">
-            <thead className="bg-[#a0c7d5] text-[#015183]">
-              <tr>
-                <th className="border p-2">Product ID</th>
-                <th className="border p-2">Quantity</th>
-                <th className="border p-2">Min Quantity</th>
-                <th className="border p-2">Last Updated</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((item) => (
-                <tr key={item.id} className="text-center">
-                  <td className="border p-2">{item.productID}</td>
-                  <td className="border p-2">{item.quantity}</td>
-                  <td className="border p-2">{item.minQuantity}</td>
-                  <td className="border p-2">
-                    {new Date(item.lastUpdated).toLocaleDateString()}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row mt-8 p-4 gap-6">
+        {/* Pasek filtrów po lewej stronie */}
+        <aside className="w-full lg:w-1/4 bg-white/80 backdrop-blur-md shadow-lg rounded-2xl p-6 h-fit">
+          <h2 className="text-xl font-bold text-gray-800 mb-4">Filtry</h2>
 
-      
+          <div className="mb-6">
+            <label className="block text-gray-600 mb-2 font-semibold">Szukaj produktu</label>
+            <input
+              type="text"
+              placeholder="np. Imbryczek"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full p-3 border rounded-xl shadow-sm focus:ring focus:ring-blue-300"
+            />
+          </div>
 
-      {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-60">
-          <div className="bg-[#a0c7d5] text-[#015183] p-6 rounded-lg shadow-xl w-96">
-            <h2 className="text-xl font-semibold mb-3">Dodaj dostawę</h2>
-
+          <div className="mb-6">
+            <label className="block text-gray-600 mb-2 font-semibold">Kategoria</label>
             <select
-              className="border p-2 w-full mb-3 rounded"
-              onChange={(e) => setSelectedProduct(Number(e.target.value))}
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="w-full p-3 border rounded-xl shadow-sm"
             >
-              <option value="">Wybierz produkt</option>
-              {data?.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {`Produkt ${item.productID}`}
-                </option>
-              ))}
+              <option>Wszystko</option>
+              <option>AGD</option>
+              <option>Elektronika</option>
+              <option>Dom i ogród</option>
+              <option>Inne</option>
             </select>
+          </div>
 
-            <label className="block mb-1">Podaj ilość</label>
+          <div>
+            <label className="block text-gray-600 mb-2 font-semibold">Zakres cen</label>
+            <select
+              value={selectedPriceRange}
+              onChange={(e) => setSelectedPriceRange(e.target.value)}
+              className="w-full p-3 border rounded-xl shadow-sm"
+            >
+              <option>Wszystko</option>
+              <option>0 - 50 zł</option>
+              <option>50 - 200 zł</option>
+              <option>200 - 500 zł</option>
+              <option>500+ zł</option>
+            </select>
+          </div>
+
+          <div className="mt-6">
+            <button
+              onClick={fetchProducts}
+              className="w-full bg-blue-600 text-white font-semibold py-3 rounded-xl hover:bg-blue-700 transition"
+            >
+              Zastosuj filtry
+            </button>
+          </div>
+        </aside>
+
+        {/* Lista produktów po prawej stronie */}
+        <main className="flex-1">
+          <h1 className="text-2xl font-bold text-gray-800 mb-6">Szczegóły produktu</h1>
+
+          {filteredProducts.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {filteredProducts.map((product, index) => (
+                <div
+                  key={index}
+                  className="bg-white/80 backdrop-blur-md shadow-lg rounded-2xl p-6 hover:shadow-xl transition"
+                >
+                  <h2 className="text-2xl font-bold text-gray-800 mb-4">{product.productName}</h2>
+                  <p className={`${getQuantityColor(product.description)} mb-4`}>{product.description}</p>
+
+                  {product.additionalDescriptions && product.additionalDescriptions.length > 0 && (
+                    <div className="mb-4">
+                      <h3 className="font-semibold">Dodatkowe opisy:</h3>
+                      <ul className="list-disc pl-6 text-gray-700">
+                        {product.additionalDescriptions.map((desc, i) => (
+                          <li key={i}>
+                            <strong>{desc.title}</strong>: {desc.value}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {product.additionalNames && product.additionalNames.length > 0 && (
+                    <div className="mb-4">
+                      <h3 className="font-semibold">Dodatkowe nazwy:</h3>
+                      <ul className="list-disc pl-6 text-gray-700">
+                        {product.additionalNames.map((n, i) => (
+                          <li key={i}>
+                            <strong>{n.title}</strong>: {n.value}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  <div className="text-sm text-gray-500 mt-4">
+                    <p><strong>SKU:</strong> {product.sku}</p>
+                    <p><strong>EAN:</strong> {product.ean}</p>
+                  </div>
+
+                  <div className="flex gap-4 mt-6">
+
+                    <button
+                      onClick={() => handleEditQuantityProduct(product)}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
+                    >
+                      Edytuj Ilość
+                    </button>
+
+                    <button
+                      onClick={() => handleEditMinQuantityProduct(product)}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
+                    >
+                      Edytuj Min. Ilość
+                    </button>
+
+                    <button
+                      onClick={() => handleDeleteProduct(product)}
+                      className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition"
+                    >
+                      Usuń
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-600 text-center mt-10">Brak produktów do wyświetlenia.</p>
+          )}
+        </main>
+      </div>
+      {editingProduct && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 w-96">
+            <h2 className="text-xl font-bold mb-4 text-gray-800">
+              Edytuj produkt: {editingProduct.productName}
+            </h2>
+
+            <label className="block text-gray-700 font-semibold mb-2">
+              Minimalna ilość
+            </label>
             <input
               type="number"
-              placeholder="Nowa ilość"
-              value={newQuantity}
-              onChange={(e) => setNewQuantity(Number(e.target.value))}
-              className="border p-2 w-full mb-4 rounded"
+              min="0"
+              value={newMinQuantity}
+              onChange={(e) => setNewMinQuantity(e.target.value)}
+              className="w-full border p-3 rounded-xl shadow-sm focus:ring focus:ring-blue-300 mb-6"
             />
 
-            <div className="flex justify-between">
+            <div className="flex justify-end gap-4">
               <button
-                onClick={() => setShowModal(false)}
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                onClick={() => setEditingProduct(null)}
+                className="px-4 py-2 bg-gray-300 rounded-xl hover:bg-gray-400"
               >
                 Anuluj
               </button>
+
               <button
-                onClick={handleDelivery}
-                className="bg-[#015183] hover:bg-[#013d63] text-white px-4 py-2 rounded"
+                onClick={handleConfirmEdit}
+                className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
               >
-                Zapisz
+                Potwierdź edycję
               </button>
             </div>
           </div>
         </div>
       )}
-      </div>
+      {editingQuantityProduct && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 w-96">
+            <h2 className="text-xl font-bold mb-4 text-gray-800">
+              Zmień ilość produktu: {editingQuantityProduct.productName}
+            </h2>
+
+            <label className="block text-gray-700 font-semibold mb-2">
+              Ilość
+            </label>
+            <input
+              type="number"
+              min="0"
+              value={quantityChange}
+              onChange={(e) => setQuantityChange(e.target.value)}
+              className="w-full border p-3 rounded-xl shadow-sm focus:ring focus:ring-blue-300 mb-4"
+            />
+
+            <label className="block text-gray-700 font-semibold mb-2">Akcja</label>
+            <select
+              value={quantityAction}
+              onChange={(e) => setQuantityAction(e.target.value as 'add' | 'subtract')}
+              className="w-full p-3 border rounded-xl shadow-sm mb-6"
+            >
+              <option value="add">Dodaj</option>
+              <option value="subtract">Odejmij</option>
+            </select>
+
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => setEditingQuantityProduct(null)}
+                className="px-4 py-2 bg-gray-300 rounded-xl hover:bg-gray-400"
+              >
+                Anuluj
+              </button>
+
+              <button
+                onClick={handleConfirmQuantityChange}
+                className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
+              >
+                Potwierdź
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-}
+};
+
+export default ProductList;

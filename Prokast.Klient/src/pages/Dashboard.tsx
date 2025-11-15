@@ -1,4 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Cookies from "js-cookie";
+import jwtDecode from "jwt-decode";
 import Navbar from "../Components/Navbar";
 import {
   PieChart,
@@ -14,22 +17,55 @@ import {
 } from "recharts";
 
 const Dashboard: React.FC = () => {
-  const warehouses = 5;
-  const productsCount = 120;
+  const [data, setData] = useState<any>(null);
 
-  const warehouseUsage = [
-    { name: "Magazyn A", value: 40 },
-    { name: "Magazyn B", value: 25 },
-    { name: "Magazyn C", value: 20 },
-    { name: "Magazyn D", value: 15 },
-  ];
+  useEffect(() => {
+    const token = Cookies.get("token");
 
-  const productStats = [
-    { name: "Produkt A", qty: 30 },
-    { name: "Produkt B", qty: 50 },
-    { name: "Produkt C", qty: 20 },
-    { name: "Produkt D", qty: 20 },
-  ];
+    if (!token) {
+      console.error("Brak tokenu autoryzacyjnego.");
+      return;
+    }
+
+    const decoded: any = jwtDecode(token);
+    const clientID = decoded.ClientID;
+    console.log("🔹 decoded token:", decoded);
+    axios
+      .get(`https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/others/MainPage?clientID=1`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        }
+      )
+
+      .then((res) => {
+        console.log("🔵 Odpowiedź z API:", res.data);
+        setData(res.data.model);
+      })
+      .catch((err) => {
+        console.error("Błąd przy pobieraniu danych:", err);
+      });
+  }, []);
+
+  if (data === null) {
+    return <div className="text-center mt-20">Ładowanie danych...</div>;
+  }
+
+  // Przypisania uproszczające
+  const warehouses = data.warehouseCount;
+  const productsCount = data.storedProductsCount;
+
+  const warehouseUsage = data.warehouseVolumeList.map((w: any) => ({
+    name: w.warehouseName,
+    value: w.storedProductsCount,
+  }));
+
+  const productStats = data.allStoredProducts.map((p: any) => ({
+    name: p.storedProductSKU,
+    qty: p.storedProductQuantity,
+  }));
 
   const COLORS = ["#3b82f6", "#22c55e", "#f59e0b", "#ef4444"];
 
@@ -52,12 +88,16 @@ const Dashboard: React.FC = () => {
 
         <div className="bg-white rounded-2xl shadow-lg p-6">
           <h2 className="text-xl font-semibold">Top produkt</h2>
-          <p className="text-lg mt-2">Produkt B (50 szt.)</p>
+          <p className="text-lg mt-2">
+            {data.topProduct?.storedProductSKU} ({data.topProduct?.storedProductQuantity} szt.)
+          </p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-lg p-6">
           <h2 className="text-xl font-semibold">Ostatnia dostawa</h2>
-          <p className="text-lg mt-2">Produkt C - 20 szt.</p>
+          <p className="text-lg mt-2">
+            {data.lastDelivery?.storedProductSKU} ({data.lastDelivery?.storedProductQuantity} szt.)
+          </p>
         </div>
       </div>
 
@@ -76,11 +116,8 @@ const Dashboard: React.FC = () => {
                 outerRadius={90}
                 label
               >
-                {warehouseUsage.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
+                {warehouseUsage.map((entry: any, index: number) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
               <Tooltip />
