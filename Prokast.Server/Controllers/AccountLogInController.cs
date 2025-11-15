@@ -43,7 +43,7 @@ namespace Prokast.Server.Controllers
             try 
             { 
                 var response =  _LogInService.Log_In(loginRequest);
-                if (response is null) return BadRequest();
+                if (response is ErrorResponse) return BadRequest(response);
                     return Ok(response);
             }
             catch (Exception ex) { 
