@@ -91,17 +91,17 @@ const ProductList: React.FC = () => {
   }, []);
 
   const getQuantityColor = (description: string) => {
-  const quantityMatch = description.match(/Ilość: (\d+)/);
-  const minQuantityMatch = description.match(/minimalna ilość: (\d+)/);
+    const quantityMatch = description.match(/Ilość: (\d+)/);
+    const minQuantityMatch = description.match(/minimalna ilość: (\d+)/);
 
-  if (!quantityMatch || !minQuantityMatch) return 'text-gray-600';
+    if (!quantityMatch || !minQuantityMatch) return 'text-gray-600';
 
-  const quantity = parseInt(quantityMatch[1], 10);
-  const minQuantity = parseInt(minQuantityMatch[1], 10);
+    const quantity = parseInt(quantityMatch[1], 10);
+    const minQuantity = parseInt(minQuantityMatch[1], 10);
 
-  return quantity < minQuantity ? 'text-red-600 font-bold' : 'text-gray-600';
-};
-  
+    return quantity < minQuantity ? 'text-red-600 font-bold' : 'text-gray-600';
+  };
+
   const handleEditQuantityProduct = (product: Product) => {
     setEditingQuantityProduct(product);
     setQuantityChange('');       // czyścimy poprzednią wartość
@@ -122,11 +122,16 @@ const ProductList: React.FC = () => {
       alert("Podaj poprawną liczbę całkowitą.");
       return;
     }
+    if (isNaN(amount) || amount < 0) {
+      alert("Podaj liczbę całkowitą większą lub równą zero.");
+      return;
+    }
 
     // Jeśli wybrano odejmowanie, zmieniamy znak na ujemny
     if (quantityAction === 'subtract') {
       amount = -amount;
     }
+
 
     try {
       await axios.put(
@@ -185,6 +190,11 @@ const ProductList: React.FC = () => {
 
     if (isNaN(minQ)) {
       alert("Podaj poprawną wartość minimalnej ilości (liczbę całkowitą).");
+      return;
+    }
+
+    if (minQ < 0) {
+      alert("Minimalna ilość nie może być mniejsza niż 0.");
       return;
     }
 
@@ -434,6 +444,7 @@ const ProductList: React.FC = () => {
             </label>
             <input
               type="number"
+              min="0"
               value={newMinQuantity}
               onChange={(e) => setNewMinQuantity(e.target.value)}
               className="w-full border p-3 rounded-xl shadow-sm focus:ring focus:ring-blue-300 mb-6"
@@ -469,6 +480,7 @@ const ProductList: React.FC = () => {
             </label>
             <input
               type="number"
+              min="0"
               value={quantityChange}
               onChange={(e) => setQuantityChange(e.target.value)}
               className="w-full border p-3 rounded-xl shadow-sm focus:ring focus:ring-blue-300 mb-4"
