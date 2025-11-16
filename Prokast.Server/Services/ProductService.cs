@@ -301,7 +301,9 @@ namespace Prokast.Server.Services
                 Name = x.Name,
                 SKU = x.SKU,
                 AdditionDate = x.AdditionDate,
-                Photo = x.Photos?.FirstOrDefault().Value
+                Photo = x.Photos?.FirstOrDefault().Value,
+                EAN = x.EAN,
+                Description = x.Description
             }).ToList();
 
             return new ProductGetMinResponse() { ID = random.Next(1, 100000), Model = productList };
