@@ -20,7 +20,7 @@ const LoginForm: React.FC = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:8080/api/login',
+        'https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/login',
         { login, password },
         { headers: { 'Content-Type': 'application/json' } }
       );

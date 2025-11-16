@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import Navbar from '../Components/Navbar';
+import { useNavigate } from 'react-router-dom';
 
 interface Product {
   id: number;
@@ -18,6 +19,7 @@ const ProductList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('Wszystko');
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>('Wszystko');
+  const navigate = useNavigate();
   
 
   const fetchProducts = async () => {
@@ -179,6 +181,16 @@ const ProductList: React.FC = () => {
                     >
                       Usuń
                     </button>
+                    <button
+                      className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
+                      onClick={() => {
+                        localStorage.setItem("editProduct", JSON.stringify(product));
+                        navigate('/EditProducts');; // lub navigate jeśli używasz routera
+                      }}
+                    >
+                      Edytuj
+                    </button>
+
                   </div>
                 </div>
               ))}

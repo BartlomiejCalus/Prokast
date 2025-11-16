@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 
 const EditProducts: React.FC = () => {
   const navigate = useNavigate();
   const [product, setProduct] = useState<any>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const storedProduct = localStorage.getItem("editProduct");
     if (storedProduct) {
       setProduct(JSON.parse(storedProduct));
+    } else {
+      setError("Nie znaleziono danych produktu.");
     }
   }, []);
 
@@ -19,6 +25,7 @@ const EditProducts: React.FC = () => {
         <Navbar />
         <main className="flex flex-col items-center justify-center w-screen mt-10">
           <p className="text-gray-600 text-lg">Ładowanie produktu...</p>
+          {error && <p className="text-red-600 mt-4">{error}</p>}
         </main>
       </div>
     );
@@ -32,9 +39,9 @@ const EditProducts: React.FC = () => {
     }));
   };
 
-
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
+
     setProduct((prev: any) => ({
       ...prev,
       prices: prev.prices
@@ -57,26 +64,46 @@ const EditProducts: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSaving(true);
 
-    const storedProducts = localStorage.getItem("products");
-    if (storedProducts) {
-      const products = JSON.parse(storedProducts);
+    try {
+      const token = Cookies.get("token");
+      if (!token) {
+        setError("Brak tokenu autoryzacyjnego.");
+        return;
+      }
 
-      // 🔸 Znajdź produkt po SKU lub nazwie
-      const updatedProducts = products.map((p: any) =>
-        p.sku === product.sku || p.name === product.name ? product : p
+      await axios.put(
+        `https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/products/products/${product.id}`,
+        {
+          name: product.name,
+          sku: product.sku,
+          ean: product.ean,
+          description: product.description,
+          prices: product.prices || [],
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
 
-      localStorage.setItem("products", JSON.stringify(updatedProducts));
+      localStorage.removeItem("editProduct");
+      navigate("/ProductsList");
+    } catch (err: any) {
+      console.log("Błąd API:", err.response?.data ?? err);
+      setError("Nie udało się zapisać zmian.");
+    } finally {
+      setSaving(false);
     }
-
-    localStorage.removeItem("editProduct");
-    navigate("/ProductsList");
   };
 
   const handleCancel = () => {
+    localStorage.removeItem("editProduct");
     navigate("/ProductsList");
   };
 
@@ -92,7 +119,8 @@ const EditProducts: React.FC = () => {
             Edytuj produkt
           </h2>
 
-          {/* --- PODSTAWOWE DANE --- */}
+          {error && <p className="text-red-600">{error}</p>}
+
           <input
             type="text"
             name="name"
@@ -101,6 +129,7 @@ const EditProducts: React.FC = () => {
             onChange={handleChange}
             className="w-full p-2 border rounded-xl"
           />
+
           <input
             type="text"
             name="sku"
@@ -109,6 +138,7 @@ const EditProducts: React.FC = () => {
             onChange={handleChange}
             className="w-full p-2 border rounded-xl"
           />
+
           <input
             type="text"
             name="ean"
@@ -117,6 +147,7 @@ const EditProducts: React.FC = () => {
             onChange={handleChange}
             className="w-full p-2 border rounded-xl"
           />
+
           <textarea
             name="description"
             placeholder="Opis produktu"
@@ -125,64 +156,9 @@ const EditProducts: React.FC = () => {
             className="w-full p-2 border rounded-xl"
           />
 
-         
           <h3 className="font-semibold mt-4">Cena (brutto)</h3>
-          <input
-            type="number"
-            name="price"
-            placeholder="Cena brutto"
-            value={product.prices?.[0]?.brutto ?? ""}
-            onChange={handlePriceChange}
-            className="w-full p-2 border rounded-xl"
-          />
+          
 
-        
-          <h3 className="font-semibold mt-4">Dodatkowe nazwy</h3>
-          <select className="w-full p-2 border rounded-xl">
-            <option value="">-- Wybierz dodatkową nazwę --</option>
-            <option value="__add_new__" className="text-green-600 font-semibold">
-              + Dodaj nową nazwę
-            </option>
-          </select>
-
-          <h3 className="font-semibold mt-4">Parametry słownikowe</h3>
-          <select className="w-full p-2 border rounded-xl">
-            <option value="">-- Wybierz parametr słownikowy --</option>
-            <option value="__add_new__" className="text-green-600 font-semibold">
-              + Dodaj nowy parametr
-            </option>
-          </select>
-
-          <h3 className="font-semibold mt-4">Własne parametry</h3>
-          <select className="w-full p-2 border rounded-xl">
-            <option value="">-- Wybierz własny parametr --</option>
-            <option value="__add_new__" className="text-green-600 font-semibold">
-              + Dodaj nowy parametr
-            </option>
-          </select>
-
-          <h3 className="font-semibold mt-4">Zdjęcia</h3>
-          <select className="w-full p-2 border rounded-xl">
-            <option value="">-- Wybierz zdjęcie --</option>
-            <option value="__add_new__" className="text-green-600 font-semibold">
-              + Dodaj nowe zdjęcie
-            </option>
-          </select>
-
-          <h3 className="font-semibold mt-4">Ceny</h3>
-          <select className="w-full p-2 border rounded-xl">
-            <option value="">-- Wybierz cenę --</option>
-            <option value="__add_new__" className="text-green-600 font-semibold">
-              + Dodaj nową cenę
-            </option>
-          </select>
-
-          <h3 className="font-semibold mt-4">Lista cenowa</h3>
-          <select className="w-full p-2 border rounded-xl">
-            <option value="">-- Wybierz listę cenową --</option>
-          </select>
-
-          {/* --- PRZYCISKI --- */}
           <div className="flex gap-3 mt-6">
             <button
               type="button"
@@ -193,9 +169,10 @@ const EditProducts: React.FC = () => {
             </button>
             <button
               type="submit"
+              disabled={saving}
               className="flex-1 bg-green-500 hover:bg-green-600 text-white p-2 rounded-xl transition"
             >
-              Zapisz zmiany
+              {saving ? "Zapisywanie..." : "Zapisz zmiany"}
             </button>
           </div>
         </form>
