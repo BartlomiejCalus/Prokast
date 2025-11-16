@@ -10,6 +10,8 @@ interface Product {
   sku: string;
   photo: string;
   additionDate: string;
+  ean: string;
+  description?: string;
 }
 
 const ProductList: React.FC = () => {
@@ -39,7 +41,7 @@ const ProductList: React.FC = () => {
       
 
       const response = await axios.post(
-        "https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/products/productsListFiltered",
+        "https://localhost:7207/api/products/productsListFiltered",
         {
           name: "",
           sku: ""
@@ -73,7 +75,9 @@ const ProductList: React.FC = () => {
           name: item.name,
           sku: item.sku,
           photo: item.photo,
-          additionDate: item.additionDate
+          additionDate: item.additionDate,
+          ean: item.ean,
+          description: item.description,
         }))
       );
 
@@ -171,12 +175,6 @@ const ProductList: React.FC = () => {
 
                   <div className="flex gap-4 mt-6">
                     <button
-                      className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
-                    >
-                      Edytuj
-                    </button>
-
-                    <button
                       className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition"
                     >
                       Usuń
@@ -185,7 +183,7 @@ const ProductList: React.FC = () => {
                       className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
                       onClick={() => {
                         localStorage.setItem("editProduct", JSON.stringify(product));
-                        navigate('/EditProducts');; // lub navigate jeśli używasz routera
+                        navigate('/EditProducts');
                       }}
                     >
                       Edytuj

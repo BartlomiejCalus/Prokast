@@ -76,7 +76,7 @@ const EditProducts: React.FC = () => {
       }
 
       await axios.put(
-        `https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/products/products/${product.id}`,
+        `https://localhost:7207/api/products/products/${product.id}`,
         {
           name: product.name,
           sku: product.sku,
