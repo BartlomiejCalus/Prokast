@@ -9,7 +9,7 @@ namespace Prokast.Server.Seeders
 {
     public class ClientSeeder: ISeeder
     {
-        public int SeedOrder { get; init; } = 3;
+        public int SeedOrder { get; init; } = 4;
 
         public static string getHashed(string text)
         {
@@ -27,6 +27,8 @@ namespace Prokast.Server.Seeders
         {
             if (!dbContext.Clients.Any())
             {
+                var roleMaster = dbContext.Roles.FirstOrDefault(x => x.RoleName == "Master");
+                var roleAdmin = dbContext.Roles.FirstOrDefault(x => x.ID == 2);
                 var clientList = new List<Client>()
                 {
                     new()
@@ -47,11 +49,15 @@ namespace Prokast.Server.Seeders
                             {
                                 Login = "mariuszmetalowiec",
                                 Password = getHashed("password"),
+                                RoleID = roleAdmin.ID,
+                                Role = roleAdmin
                             },
                             new()
                             {
                                 Login = "marmar123",
                                 Password = getHashed("marmar"),
+                                RoleID = roleAdmin.ID,
+                                Role = roleAdmin
                             }
                         }
                     },
