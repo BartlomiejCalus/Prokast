@@ -89,6 +89,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IBlobPhotoStorageService,BlobPhotoStorageService>();
 builder.Services.AddScoped<ISeeder, RegionSeeder>();
 builder.Services.AddScoped<ISeeder, DictionaryParamSeeder>();
+builder.Services.AddScoped<ISeeder, RoleSeeder>();
 builder.Services.AddScoped<ISeeder, ClientSeeder>();
 builder.Services.AddScoped<ISeeder, ProductSeeder>();
 builder.Services.AddScoped<ISeeder, WarehouseSeeder>();
