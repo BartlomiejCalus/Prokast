@@ -20,7 +20,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Prokast.Server.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "1,2,3,4,5")]
     [Route("api/priceLists")]
     public class PricesController : ControllerBase
     {
