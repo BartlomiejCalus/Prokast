@@ -7,17 +7,18 @@ Projekt jest podzielony na trzy główne podprojekty:
 
 ## Stack technologiczny
 
-- **Backend**: ASP.NET Core (C#), Entity Framework
-- **Frontend**: React.js, HTML5, CSS3, JavaScript
-- **Baza danych**: SQL Server
+<p>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg" width="40" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dotnetcore/dotnetcore-original.svg" width="40" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/microsoftsqlserver/microsoftsqlserver-original.svg" width="40" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="40" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" width="40" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" width="40" />
+</p>
 
 ## Zespół
-
-- **FontEnd**: 
   - [Jacek Pelikan](https://github.com/Jacek912)
   - [Jakub Reszczyński](https://github.com/JakubReszczynski)
-  
-- **BackEnd**: 
   - [Marek Grys](https://github.com/MarekGrys)
   - [Hubert Ciura](https://github.com/HubertCiura)
   - [Bartłomiej Całus](https://github.com/BartlomiejCalus)
