@@ -50,11 +50,15 @@ namespace Prokast.Server.Services
             if (reg == null)
                 return new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Błędne dane rejestracji" };
             
+            var role = _dbContext.Roles.FirstOrDefault(x => x.ID == 2);
+            if (role == null)
+                return new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Błąd przy przypisaniu roli" };
+
             var account = new Account
             {
                 Login = registration.Login,
                 Password = getHashed(registration.Password),
-                Role = 1
+                RoleID = role.ID
             };
 
             _dbContext.Accounts.Add(account);

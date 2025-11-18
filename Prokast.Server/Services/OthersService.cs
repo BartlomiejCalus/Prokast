@@ -35,7 +35,7 @@ namespace Prokast.Server.Services
 
         public Response GetMainPage(int clientID)
         {
-            var warehouses = _dbContext.Warehouses.Where(x => x.ClientID == clientID).ToList();
+            var warehouses = _dbContext.Warehouses.Where(x => x.ID == clientID).ToList();
 
             var warehouseIds = warehouses.Select(x => x.ID).ToList();
 

@@ -4,7 +4,7 @@ namespace Prokast.Server.Seeders
 {
     public class ProductSeeder: ISeeder
     {
-        public int SeedOrder { get; init; } = 4;
+        public int SeedOrder { get; init; } = 5;
         public void Seed(ProkastServerDbContext dbContext)
         {
             if (!dbContext.Products.Any())

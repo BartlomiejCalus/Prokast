@@ -14,7 +14,7 @@ using System.Security.Claims;
 
 namespace Prokast.Server.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "1,2,3,5")]
     [Route("api/storedproducts")]
     public class StoredProductController: ControllerBase
     {

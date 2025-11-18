@@ -17,6 +17,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Prokast.Server.Models.JWT;
+using Prokast.Server.Models.ClientModels;
+using Prokast.Server.Models.ResponseModels.CustomParamsResponseModels;
+using Prokast.Server.Models.ResponseModels.RoleResponseModels;
 
 
 
@@ -110,7 +113,7 @@ namespace Prokast.Server.Services
         /// <param name="accountCreate"></param>
         /// <param name="clientID"></param>
         /// <returns></returns>
-        public Response CreateAccount(AccountCreateDto accountCreate, int clientID)
+        public Response CreateAccount(AccountCreateDto accountCreate, int clientID, int roleId)
         {
             const string litery = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
@@ -135,12 +138,16 @@ namespace Prokast.Server.Services
             Console.WriteLine(login);
             Console.WriteLine(password.ToString());
 
+            var role = _dbContext.Roles.FirstOrDefault(x => x.ID == roleId);
+            if (role == null)
+                return new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Błąd przy przypisaniu roli" };
+
             var newAccount = new Account
             {
                 Login = login,
                 Password = getHashed(password.ToString()),
                 WarehouseID = accountCreate.WarehouseID,
-                Role = 1,
+                RoleID = role.ID,
                 FirstName = accountCreate.FirstName,
                 LastName = accountCreate.LastName,
                 ClientID = clientID
@@ -177,7 +184,7 @@ namespace Prokast.Server.Services
             {
                 new Claim(ClaimTypes.Name, user.Login),
                 new Claim(ClaimTypes.NameIdentifier, user.ClientID.ToString()),
-                new Claim(ClaimTypes.Role, user.Role.ToString())
+                new Claim(ClaimTypes.Role, user.RoleID.ToString())
             };
 
             var key = new SymmetricSecurityKey(
@@ -240,6 +247,23 @@ namespace Prokast.Server.Services
 
             return new DeleteResponse() { ID = random.Next(1, 100000), ClientID = clientID, deleteMsg = "Konto zostało usunięte" };
         }
+
         #endregion
+        public Response GetAllRoles(int clientID) 
+        {
+            var roleList = _dbContext.Roles.ToList();
+            if (roleList.Count() == 0)
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma ról!" };
+
+            return new AllRolesGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = roleList };
+        }
+        public Response GetRole(int clientID, int roleID)   
+        {
+            var role = _dbContext.Roles.Where(x => x.ID == roleID).FirstOrDefault();
+            if (role == null)
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiej roli!" };
+            
+            return new RoleGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = role };
+        }
     }
 }

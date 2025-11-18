@@ -11,7 +11,8 @@ namespace Prokast.Server.Configurations
             builder.HasIndex(x => x.ID).IsUnique();
             builder.Property(x => x.Login).IsRequired().HasMaxLength(100);
             builder.Property(x => x.Password).IsRequired().HasMaxLength(200);
-            builder.Property(x => x.Role).HasMaxLength(5);
+            builder.HasOne(x => x.Role).WithMany().HasForeignKey(x => x.RoleID);
+            //builder.Property(x => x.Role).HasMaxLength(5);
             builder.Property(x => x.FirstName).HasMaxLength(50);
             builder.Property(x => x.LastName).HasMaxLength(50);
             //builder.HasOne(x => x.Client).WithMany(y => y.Accounts).HasForeignKey(z => z.ClientID).OnDelete(DeleteBehavior.Cascade);
