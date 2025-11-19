@@ -166,7 +166,7 @@ const EditProducts: React.FC = () => {
             placeholder="Nazwa produktu"
             value={product.name}
             onChange={handleChange}
-            className="w-full p-2 border rounded-xl"
+            className="w-full p-2 border rounded-xl shadow-md"
           />
 
           <input
@@ -175,7 +175,7 @@ const EditProducts: React.FC = () => {
             placeholder="SKU"
             value={product.sku}
             onChange={handleChange}
-            className="w-full p-2 border rounded-xl"
+            className="w-full p-2 border rounded-xl shadow-md"
           />
 
           <input
@@ -184,7 +184,7 @@ const EditProducts: React.FC = () => {
             placeholder="EAN"
             value={product.ean}
             onChange={handleChange}
-            className="w-full p-2 border rounded-xl"
+            className="w-full p-2 border rounded-xl shadow-md"
           />
 
           <textarea
@@ -192,7 +192,7 @@ const EditProducts: React.FC = () => {
             placeholder="Opis produktu"
             value={product.description}
             onChange={handleChange}
-            className="w-full p-2 border rounded-xl"
+            className="w-full p-2 border rounded-xl shadow-md"
           />
 
           <div className="flex flex-row mt-4 gap-4">
