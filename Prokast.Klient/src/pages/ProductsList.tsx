@@ -184,8 +184,8 @@ const ProductList: React.FC = () => {
                     <button
                       className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
                       onClick={() => {
-                        localStorage.setItem("editProduct", JSON.stringify(product));
-                        navigate('/EditProducts');
+                        //localStorage.setItem("editProduct", JSON.stringify(product));
+                        navigate(`/EditProducts/${product.id}`);
                       }}
                     >
                       Edytuj
