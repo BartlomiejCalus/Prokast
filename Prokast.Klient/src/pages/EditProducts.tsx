@@ -58,6 +58,16 @@ const EditProducts: React.FC = () => {
     );
   }
 
+    const renderComponent = () => {
+    if (displayedList == 1) return <div className="mt-4 p-4 border rounded-xl bg-white/70 shadow-md w-full"></div>;
+    else if (displayedList == 2)return <></>;
+    else if (displayedList == 3)return <></>;
+    else if (displayedList == 4)return <></>;
+    else if (displayedList == 5)return <></>;
+
+    return null;
+    };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -237,15 +247,7 @@ const EditProducts: React.FC = () => {
             </div>
           </div>
 
-          if (displayedList = 1)
-
-          else if (displayedList = 2)
-
-          else if (displayedList = 3)
-
-          else if (displayedList = 4)
-          
-          else if (displayedList = 5)
+          {renderComponent()}
 
           <div className="flex gap-3 mt-6">
             <button
