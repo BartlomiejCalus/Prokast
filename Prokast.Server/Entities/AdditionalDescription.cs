@@ -1,6 +1,7 @@
 ﻿using Microsoft.Identity.Client;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Prokast.Server.Entities
 {
@@ -11,6 +12,7 @@ namespace Prokast.Server.Entities
         public required string Value { get; set; }
 
         public int ProductID { get; set; }
+        [JsonIgnore]
         public virtual Product Product { get; set; }
 
         public int RegionID { get; set; }

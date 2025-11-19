@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Prokast.Server.Entities
 {
@@ -14,6 +15,7 @@ namespace Prokast.Server.Entities
         public virtual Region Regions { get; set; }
 
         public int PriceListID { get; set; }
+        [JsonIgnore]
         public virtual PriceList PriceLists { get; set; }
     }
 }

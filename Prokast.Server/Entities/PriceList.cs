@@ -9,9 +9,9 @@ namespace Prokast.Server.Entities
         public required string Name { get; set; }
 
         public int ProductID { get; set; }
+        [JsonIgnore]
         public virtual Product Product { get; set; }
 
-        [JsonIgnore]
         public virtual List<Prices> Prices { get; set; }
     }
 }

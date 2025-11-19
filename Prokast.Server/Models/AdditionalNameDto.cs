@@ -4,7 +4,6 @@ namespace Prokast.Server.Models
 {
     public class AdditionalNameDto
     {
-        
         [Required]
         public string Title { get; set; }
         [Required]
