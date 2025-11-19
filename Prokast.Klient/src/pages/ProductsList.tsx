@@ -4,6 +4,8 @@ import Cookies from 'js-cookie';
 import Navbar from '../Components/Navbar';
 import { useNavigate } from 'react-router-dom';
 
+const API_URL = process.env.REACT_APP_API_URL; 
+
 interface Product {
   id: number;
   name: string;
@@ -41,7 +43,7 @@ const ProductList: React.FC = () => {
       
 
       const response = await axios.post(
-        "https://localhost:7207/api/products/productsListFiltered",
+        `${API_URL}/api/products/productsListFiltered`,
         {
           name: "",
           sku: ""

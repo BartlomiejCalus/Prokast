@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import Navbar from '../Components/Navbar';
 
+const API_URL = process.env.REACT_APP_API_URL; 
+
 const CreateEmployee: React.FC = () => {
   const [response, setResponse] = useState('');
 

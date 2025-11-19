@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../Components/Navbar';
 
+const API_URL = process.env.REACT_APP_API_URL; 
+
 const DictionaryParams: React.FC = () => {
   const [regionOptions, setRegionOptions] = useState<string[]>([]);
   const [paramOptions, setParamOptions] = useState<string[]>([]);

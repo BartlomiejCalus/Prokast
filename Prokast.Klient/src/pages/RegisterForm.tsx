@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
 
+const API_URL = process.env.REACT_APP_API_URL; 
+
 const RegisterForm: React.FC = () => {
   const [form, setForm] = useState({
     login: '',
@@ -73,7 +75,7 @@ const RegisterForm: React.FC = () => {
 
     try {
       const response = await axios.post(
-        'https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/client',
+        `${API_URL}/api/client`,
         { ...form },
         {
           headers: {

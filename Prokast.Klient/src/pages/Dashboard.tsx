@@ -16,6 +16,8 @@ import {
   CartesianGrid,
 } from "recharts";
 
+const API_URL = process.env.REACT_APP_API_URL; 
+
 const Dashboard: React.FC = () => {
   const [data, setData] = useState<any>(null);
 
@@ -31,7 +33,7 @@ const Dashboard: React.FC = () => {
     const clientID = decoded.ClientID;
     console.log("🔹 decoded token:", decoded);
     axios
-      .get(`https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/others/MainPage?clientID=1`,
+      .get(`${API_URL}/api/others/MainPage?clientID=1`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

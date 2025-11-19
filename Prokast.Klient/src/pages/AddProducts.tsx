@@ -2,6 +2,7 @@
 import Navbar from '../Components/Navbar';
 import axios from 'axios';
 
+const API_URL = process.env.REACT_APP_API_URL; 
 
 type CustomParam = {
   id: number;       
@@ -127,7 +128,7 @@ useEffect(() => {
   async function fetchCustomParams() {
     try {
       const resp = await axios.get(
-        "https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/params?clientID=1"
+        `${API_URL}/api/params?clientID=1`
       );
       const data = resp.data.model;
 
@@ -147,7 +148,7 @@ useEffect(() => {
     async function fetchAdditionalNames() {
       try {
         const resp = await axios.get(
-          "https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/additionaldescriptions?clientID=1"
+          `${API_URL}/api/additionaldescriptions?clientID=1`
           
         );
         const data = resp.data.model;

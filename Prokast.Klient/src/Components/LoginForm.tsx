@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie'; // ✅ w pełni typowany
 
+const API_URL = process.env.REACT_APP_API_URL; 
+
 const LoginForm: React.FC = () => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
@@ -19,8 +21,11 @@ const LoginForm: React.FC = () => {
     }
 
     try {
+
+      console.log("ENV TEST:", process.env.REACT_APP_API_URL);
+
       const response = await axios.post(
-        'https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/login',
+        `${API_URL}/api/login`,
         { login, password },
         { headers: { 'Content-Type': 'application/json' } }
       );

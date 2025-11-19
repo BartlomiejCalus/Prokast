@@ -2,6 +2,8 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import Navbar from '../Components/Navbar';
 
+const API_URL = process.env.REACT_APP_API_URL; 
+
 const AddParams: React.FC = () => {
   const [form, setForm] = useState({
     name: '',
@@ -11,9 +13,6 @@ const AddParams: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-
-    
-
   };
 
   const handleAddParam = async(e: React.FormEvent) => {
@@ -21,7 +20,7 @@ const AddParams: React.FC = () => {
     ///const {name, type, value} = form;
     console.log('Dodano parametr:', form);
     try {
-      const response = await axios.post('https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/params',
+      const response = await axios.post(`${API_URL}/api/params`,
         {
           ...form
         },
