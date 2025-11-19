@@ -7,6 +7,8 @@ const EditParams: React.FC = () => {
   const [type, setType] = useState('');
   const [value, setValue] = useState('');
 
+  const API_URL = process.env.REACT_APP_API_URL; 
+
   useEffect(() => {
  
     setParams(['Rozmiar', 'Kolor', 'Materiał']);

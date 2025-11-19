@@ -4,6 +4,8 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 
+const API_URL = process.env.REACT_APP_API_URL; 
+
 const EditProducts: React.FC = () => {
   const navigate = useNavigate();
   const [product, setProduct] = useState<any>(null);
@@ -76,7 +78,7 @@ const EditProducts: React.FC = () => {
       }
 
       await axios.put(
-        `https://localhost:7207/api/products/products/${product.id}`,
+        `${API_URL}/api/products/products/${product.id}`,
         {
           name: product.name,
           sku: product.sku,
