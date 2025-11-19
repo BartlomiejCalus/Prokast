@@ -62,7 +62,7 @@ const EditProducts: React.FC = () => {
     const renderComponent = () => {
     if (displayedList == 1) return <div className="mt-4 p-4 border rounded-xl bg-white/70 shadow-md w-full"></div>;
     else if (displayedList == 2)return <></>;
-    else if (displayedList == 3)return <PriceListComponent data={product.priceList} />;
+    else if (displayedList == 3)return <PriceListComponent data={product.priceList} productId={id} />;
     else if (displayedList == 4)return <></>;
     else if (displayedList == 5)return <></>;
 
