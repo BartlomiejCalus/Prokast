@@ -40,8 +40,8 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddDbContext<ProkastServerDbContext>(opt=>
 {
-    // DEFAULT CONNECTION jak konczysz to zmien a jak robisz u siebie to wpisz DOCKER
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("DEFAULT CONNECTION"), sqlOptions =>
+    // DefaultConnection jak konczysz to zmien a jak robisz u siebie to wpisz DOCKER
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sqlOptions =>
         sqlOptions.EnableRetryOnFailure(
             maxRetryCount: 5,
             maxRetryDelay: TimeSpan.FromSeconds(10),
