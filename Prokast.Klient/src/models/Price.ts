@@ -1,4 +1,5 @@
 export interface Price {
+  id: number;
   name: string;
   regionID: number;
   netto: number;

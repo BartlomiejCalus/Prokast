@@ -7,8 +7,9 @@ import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 import { Price } from "../../models/Price";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { Console } from "console";
+import { isEditable } from "@testing-library/user-event/dist/utils";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -19,21 +20,19 @@ const PriceListComponent = ({
   data: PriceList;
   productId: string | undefined;
 }) => {
+  const navigate = useNavigate();
+
   const [isUpdateOpen, setIsUpdateOpen] = useState<boolean>(false);
   const [isAddOpen, setIsAddOpen] = useState<boolean>(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
+
+  const [toEditablePrice, setToEditablePrice] = useState<boolean>(false);
+
+  const [selectedPrice, setSelectedPrice] = useState<Price | null>(null);
 
   const [regions, setRegions] = useState<{ id: number; name: string }[]>([]);
 
-  const [selectedPrice, setSelectedPrice] = useState<number | null>(null);
-
-  const [newPrice, setNewPrice] = useState<Price>({
-    name: "",
-    regionID: 0,
-    netto: 0,
-    vat: 0,
-    brutto: 0,
-  });
-
+  //#region get regions
   useEffect(() => {
     const token = Cookies.get("token");
 
@@ -51,8 +50,10 @@ const PriceListComponent = ({
       })
       .then((res) => setRegions(res.data.model));
   }, []);
+  //#endregion
 
   const priceSchema = yup.object().shape({
+    id: yup.number().required(),
     name: yup.string().required("Nazwa jest wymagana"),
     netto: yup.number().positive("Musi być większe od 0").required(),
     brutto: yup.number().positive("Musi być większe od 0").required(),
@@ -65,10 +66,12 @@ const PriceListComponent = ({
     handleSubmit,
     watch,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<Price>({
     resolver: yupResolver(priceSchema),
     defaultValues: {
+      id: 0,
       name: "",
       regionID: 0,
       netto: 0,
@@ -87,6 +90,12 @@ const PriceListComponent = ({
     }
   }, [brutto, vat, setValue]);
 
+  useEffect(() => {
+    if (isUpdateOpen && selectedPrice) {
+      reset(selectedPrice);
+    }
+  }, [isUpdateOpen, selectedPrice, reset]);
+
   return (
     <div className="mt-4 p-4 border rounded-xl bg-white/70 shadow-md w-full">
       <table className="w-full mb-4">
@@ -98,16 +107,29 @@ const PriceListComponent = ({
           </tr>
         </thead>
         <tbody>
-          {data.prices.map((price, index) => (
-            <tr key={index}>
+          {data.prices.map((price) => (
+            <tr key={price.id}>
               <td className="p-2 border-b">{price.name}</td>
               <td className="p-2 border-b">{price.brutto}</td>
               <td className="p-2 border-b">
-                <button type="button" className="mr-2" onClick={() => setIsUpdateOpen(true)}>
+                <button
+                  type="button"
+                  className="mr-2"
+                  onClick={() => {
+                    setSelectedPrice(price);
+                    setIsUpdateOpen(true);
+                  }}
+                >
                   <FaEdit />
                 </button>
-                <button type="button" onClick={() => setIsUpdateOpen(true)}>
-                  <FaTrash className="text-red-700"/>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedPrice(price);
+                    setIsDeleteOpen(true);
+                  }}
+                >
+                  <FaTrash className="text-red-700" />
                 </button>
               </td>
             </tr>
@@ -122,6 +144,7 @@ const PriceListComponent = ({
         <FaPlus />
       </button>
 
+      {/*Add Price Modal */}
       {isAddOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-6 w-[450px] shadow-lg space-y-4">
@@ -211,8 +234,6 @@ const PriceListComponent = ({
             <div className="flex justify-end gap-3 pt-2">
               <button
                 onClick={handleSubmit(async (updatedata) => {
-                  console.log("Submitting new price:", updatedata);
-                  console.log("For product ID:", productId);
 
                   const token = Cookies.get("token");
 
@@ -234,6 +255,7 @@ const PriceListComponent = ({
                   );
                   alert("Dodano cenę!");
                   setIsAddOpen(false);
+                  navigate(`/EditProducts/${productId}`);
                 })}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
               >
@@ -261,8 +283,7 @@ const PriceListComponent = ({
             <p>Czy na pewno chcesz usunąć tę cenę?</p>
             <div className="flex justify-end gap-3 pt-2">
               <button
-                onClick={async () =>{
-
+                onClick={async () => {
                   const token = Cookies.get("token");
 
                   if (!token) {
@@ -274,7 +295,7 @@ const PriceListComponent = ({
                     `${API_URL}/api/priceLists/prices/${selectedPrice?.id}`,
                     {
                       headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${token}`,
                       },
                     }
                   );
@@ -295,10 +316,167 @@ const PriceListComponent = ({
               </button>
             </div>
           </div>
-          </div>
-
+        </div>
       )}
 
+      {/* Update Price Modal */}
+      {isUpdateOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg p-6 w-[450px] shadow-lg space-y-4">
+            <h2 className="text-xl font-bold text-gray-800 mb-2">
+              Edytuj cenę
+            </h2>
+
+            {/* Nazwa */}
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Nazwa ceny
+              </label>
+              <input
+                {...register("name")}
+                className={`w-full border rounded px-3 py-2 focus:outline-blue-500 ${
+                  !toEditablePrice ? "bg-gray-100" : ""
+                }`}
+                disabled={!toEditablePrice}
+              />
+              {errors.name && (
+                <p className="text-red-500 text-sm">{errors.name.message}</p>
+              )}
+            </div>
+
+            {/* Region */}
+            <div>
+              <label className="block text-sm font-medium mb-1">Region</label>
+              <select
+                {...register("regionID")}
+                className={`w-full border rounded px-3 py-2 focus:outline-blue-500 ${
+                  !toEditablePrice ? "bg-gray-100" : ""
+                }`}
+                disabled={!toEditablePrice}
+              >
+                <option value="">-- wybierz --</option>
+                {regions.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {r.name}
+                  </option>
+                ))}
+              </select>
+              {errors.regionID && (
+                <p className="text-red-500 text-sm">
+                  {errors.regionID.message}
+                </p>
+              )}
+            </div>
+
+            {/* Brutto*/}
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Cena brutto
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                {...register("brutto")}
+                className={`w-full border rounded px-3 py-2 focus:outline-blue-500 ${
+                  !toEditablePrice ? "bg-gray-100" : ""
+                }`}
+                disabled={!toEditablePrice}
+              />
+              {errors.brutto && (
+                <p className="text-red-500 text-sm">{errors.brutto.message}</p>
+              )}
+            </div>
+
+            {/* VAT*/}
+            <div>
+              <label className="block text-sm font-medium mb-1">VAT (%)</label>
+              <input
+                type="number"
+                {...register("vat")}
+                className={`w-full border rounded px-3 py-2 focus:outline-blue-500 ${
+                  !toEditablePrice ? "bg-gray-100" : ""
+                }`}
+                disabled={!toEditablePrice}
+              />
+              {errors.vat && (
+                <p className="text-red-500 text-sm">{errors.vat.message}</p>
+              )}
+            </div>
+
+            {/* Netto*/}
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Cena netto (liczona)
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                {...register("netto")}
+                className="w-full border rounded px-3 py-2 focus:outline-blue-500 bg-gray-100"
+                disabled
+              />
+            </div>
+
+            {/* Buttons */}
+
+            <div className="flex justify-end gap-3 pt-2">
+              {toEditablePrice === true ? (
+                <button
+                  type="button"
+                  onClick={handleSubmit(async (updatedata) => {
+
+                  const token = Cookies.get("token");
+
+                  if (!token) {
+                    console.error("Brak tokenu autoryzacyjnego.");
+                    return;
+                  }
+
+                  await axios.put(
+                    `${API_URL}/api/priceLists/price/${selectedPrice?.id}`,
+                    updatedata,
+                    {
+                      headers: {
+                        Authorization: `Bearer ${token}`,
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                      },
+                    }
+                  );
+                  alert("Zaktualizowano cenę!");
+                  setIsUpdateOpen(false);
+                  setToEditablePrice(false);
+                  navigate(`/EditProducts/${productId}`);
+                })}
+                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                >
+                  Zapisz
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setToEditablePrice(true)}
+                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                >
+                  Włącz edytowanie
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={() => {
+                  setIsUpdateOpen(false);
+                  setToEditablePrice(false);
+                }}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                Zamknij
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
     </div>
   );
 };
