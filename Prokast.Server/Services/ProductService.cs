@@ -223,7 +223,7 @@ namespace Prokast.Server.Services
 
             foreach(var customParam in productCreateDto.CustomParams)
             {
-                var result = _paramsService.CreateCustomParam(customParam, clientID, regionID, newProduct.ID);
+                var result = _paramsService.CreateCustomParam(customParam, clientID, newProduct.ID);
                 if (result != null && result.GetType() == typeof(ErrorResponse))
                 {
                     return result;

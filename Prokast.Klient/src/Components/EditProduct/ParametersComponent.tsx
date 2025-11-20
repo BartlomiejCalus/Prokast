@@ -1,36 +1,35 @@
 import { useEffect, useState } from "react";
-import { PriceList } from "../../models/PriceList";
-import Cookies from "js-cookie";
-import axios from "axios";
+import { CustomParam } from "../../models/CustomParam";
 import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
-import { Price } from "../../models/Price";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-const PriceListComponent = ({
+const ParametersComponent = ({
   data,
   productId,
 }: {
-  data: PriceList;
+  data: CustomParam[];
   productId: string | undefined;
 }) => {
+  const [params, setParams] = useState<CustomParam[]>(data || []);
 
-  const [isUpdateOpen, setIsUpdateOpen] = useState<boolean>(false);
-  const [isAddOpen, setIsAddOpen] = useState<boolean>(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
+  const [selectedParam, setSelectedParam] = useState<CustomParam | null>(null);
 
-  const [toEditablePrice, setToEditablePrice] = useState<boolean>(false);
+  const [isUpdateOpen, setIsUpdateOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isAddOpen, setIsAddOpen] = useState(false);
 
-  const [selectedPrice, setSelectedPrice] = useState<Price | null>(null);
+  const [toEditableParam, setToEditableParam] = useState(false);
+
+  //#region get regions
 
   const [regions, setRegions] = useState<{ id: number; name: string }[]>([]);
 
-  const [prices, setPrices] = useState<Price[]>(data.prices);
-
-  //#region get regions
   useEffect(() => {
     const token = Cookies.get("token");
 
@@ -50,12 +49,11 @@ const PriceListComponent = ({
   }, []);
   //#endregion
 
-  const priceSchema = yup.object().shape({
+  const paramSchema = yup.object().shape({
     id: yup.number().required(),
     name: yup.string().required("Nazwa jest wymagana"),
-    netto: yup.number().positive("Musi być większe od 0").required(),
-    brutto: yup.number().positive("Musi być większe od 0").required(),
-    vat: yup.number().min(0).max(100).required("VAT 0-100%"),
+    type: yup.string().required("Typ jest wymagany"),
+    value: yup.string().required("Wartość jest wymagana"),
     regionID: yup.number().required("Wybierz region"),
   });
 
@@ -66,33 +64,38 @@ const PriceListComponent = ({
     setValue,
     reset,
     formState: { errors },
-  } = useForm<Price>({
-    resolver: yupResolver(priceSchema),
+  } = useForm<CustomParam>({
+    resolver: yupResolver(paramSchema),
     defaultValues: {
       id: 0,
       name: "",
-      regionID: 0,
-      netto: 0,
-      vat: 23,
-      brutto: 0,
+      regionID: 1,
+      value: "",
+      type: "String",
     },
   });
 
-  const brutto = watch("brutto");
-  const vat = watch("vat");
+  const fetchParams = () => {
+    const token = Cookies.get("token");
+
+    axios
+      .get(`${API_URL}/api/params/product/${productId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => setParams(res.data.model));
+  };
+
+  const selectedType = watch("type");
 
   useEffect(() => {
-    if (brutto > 0 && vat >= 0) {
-      const netto = brutto / (1 + vat / 100);
-      setValue("netto", parseFloat(netto.toFixed(2)));
-    }
-  }, [brutto, vat, setValue]);
+    setValue("value", "");
+  }, [selectedType]);
 
   useEffect(() => {
-    if (isUpdateOpen && selectedPrice) {
-      reset(selectedPrice);
+    if (isUpdateOpen && selectedParam) {
+      reset(selectedParam);
     }
-  }, [isUpdateOpen, selectedPrice, reset]);
+  }, [isUpdateOpen, selectedParam, reset]);
 
   useEffect(() => {
     if (isAddOpen) {
@@ -100,27 +103,15 @@ const PriceListComponent = ({
         id: 0,
         name: "",
         regionID: 1,
-        netto: 0,
-        vat: 23,
-        brutto: 0,
+        value: "",
+        type: "String",
       });
     }
   }, [isAddOpen, reset]);
 
-  const fetchPrices = () => {
-    const token = Cookies.get("token");
-
-    axios
-      .get(`${API_URL}/api/priceLists/prices/byProduct/${productId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => setPrices(res.data.model));
-  };
-
   return (
     <div className="mt-4 p-4 border rounded-xl bg-white/70 shadow-md w-full">
-
-        <button
+      <button
         type="button"
         onClick={() => setIsAddOpen(true)}
         className="group flex items-center justify-center
@@ -140,29 +131,32 @@ const PriceListComponent = ({
             group-hover:max-w-[200px]
             transition-all duration-300"
         >
-          Dodaj cenę
+          Dodaj parametr
         </span>
       </button>
 
       <table className="w-full mb-4">
         <thead>
           <tr>
-            <th className="text-left p-2 border-b">Nazwa ceny</th>
-            <th className="text-left p-2 border-b">Cena brutto</th>
+            <th className="text-left p-2 border-b">Nazwa parametru</th>
+            <th className="text-left p-2 border-b">Wartość</th>
             <th className="text-left p-2 border-b">Akcje</th>
           </tr>
         </thead>
         <tbody>
-          {prices.map((price, index) => (
+          {params.map((param, index) => (
             <tr key={index}>
-              <td className="p-2 border-b">{price.name}</td>
-              <td className="p-2 border-b">{price.brutto}</td>
+              <td className="p-2 border-b">{param.name}</td>
+              <td className="p-2 border-b">
+                {param.value.substring(0, 35) +
+                  (param.value.length > 35 ? "..." : "")}
+              </td>
               <td className="p-2 border-b">
                 <button
                   type="button"
                   className="mr-2"
                   onClick={() => {
-                    setSelectedPrice(price);
+                    setSelectedParam(param);
                     setIsUpdateOpen(true);
                   }}
                 >
@@ -171,7 +165,7 @@ const PriceListComponent = ({
                 <button
                   type="button"
                   onClick={() => {
-                    setSelectedPrice(price);
+                    setSelectedParam(param);
                     setIsDeleteOpen(true);
                   }}
                 >
@@ -183,12 +177,12 @@ const PriceListComponent = ({
         </tbody>
       </table>
 
-      {/*Add Price Modal */}
+      {/*Add Param Modal */}
       {isAddOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-6 w-[450px] shadow-lg space-y-4">
             <h2 className="text-xl font-bold text-gray-800 mb-2">
-              Dodaj nową cenę
+              Dodaj nowy parametr
             </h2>
 
             {/* Nazwa */}
@@ -225,47 +219,45 @@ const PriceListComponent = ({
               )}
             </div>
 
-            {/* Brutto*/}
+            {/* Type*/}
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Cena brutto
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                {...register("brutto")}
+              <label className="block text-sm font-medium mb-1">Typ</label>
+              <select
+                {...register("type")}
                 className="w-full border rounded px-3 py-2 focus:outline-blue-500"
-              />
-              {errors.brutto && (
-                <p className="text-red-500 text-sm">{errors.brutto.message}</p>
+              >
+                <option value="String">TEXT</option>
+                <option value="Number">LICZBA</option>
+                <option value="Boolean">PRAWDA/FAŁSZ</option>
+              </select>
+              {errors.type && (
+                <p className="text-red-500 text-sm">{errors.type.message}</p>
               )}
             </div>
 
-            {/* VAT*/}
+            {/* Value*/}
             <div>
-              <label className="block text-sm font-medium mb-1">VAT (%)</label>
-              <input
-                type="number"
-                {...register("vat")}
-                className="w-full border rounded px-3 py-2 focus:outline-blue-500"
-              />
-              {errors.vat && (
-                <p className="text-red-500 text-sm">{errors.vat.message}</p>
+              <label className="block text-sm font-medium mb-1">Wartość</label>
+              {selectedType !== "Boolean" && (
+                <input
+                  {...register("value")}
+                  className="w-full border rounded px-3 py-2 focus:outline-blue-500"
+                  type={selectedType === "Number" ? "number" : "text"}
+                />
               )}
-            </div>
 
-            {/* Netto*/}
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Cena netto (liczona)
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                {...register("netto")}
-                className="w-full border rounded px-3 py-2 focus:outline-blue-500 bg-gray-100"
-                disabled
-              />
+              {selectedType === "Boolean" && (
+                <select
+                  {...register("value")}
+                  className="w-full border rounded px-3 py-2"
+                >
+                  <option value="true">TRUE</option>
+                  <option value="false">FALSE</option>
+                </select>
+              )}
+              {errors.value && (
+                <p className="text-red-500 text-sm">{errors.value.message}</p>
+              )}
             </div>
 
             {/* Buttons */}
@@ -273,14 +265,14 @@ const PriceListComponent = ({
               <button
                 onClick={handleSubmit(async (newData) => {
                   const token = Cookies.get("token");
-
+                  console.log(newData);
                   if (!token) {
                     console.error("Brak tokenu autoryzacyjnego.");
                     return;
                   }
 
                   await axios.post(
-                    `${API_URL}/api/priceLists/${productId}`,
+                    `${API_URL}/api/params/${productId}`,
                     newData,
                     {
                       headers: {
@@ -290,9 +282,9 @@ const PriceListComponent = ({
                       },
                     }
                   );
-                  alert("Dodano cenę!");
+                  alert("Dodano parametr!");
                   setIsAddOpen(false);
-                  fetchPrices();
+                  fetchParams();
                 })}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
               >
@@ -317,7 +309,7 @@ const PriceListComponent = ({
             <h2 className="text-xl font-bold text-gray-800 mb-2">
               Potwierdzenie usunięcia
             </h2>
-            <p>Czy na pewno chcesz usunąć {selectedPrice?.name}?</p>
+            <p>Czy na pewno chcesz usunąć {selectedParam?.name}?</p>
             <div className="flex justify-end gap-3 pt-2">
               <button
                 type="button"
@@ -330,7 +322,7 @@ const PriceListComponent = ({
                   }
 
                   await axios.delete(
-                    `${API_URL}/api/priceLists/prices/${selectedPrice?.id}`,
+                    `${API_URL}/api/params/${selectedParam?.id}`,
                     {
                       headers: {
                         Authorization: `Bearer ${token}`,
@@ -340,7 +332,7 @@ const PriceListComponent = ({
 
                   alert("Usunięto cenę!");
                   setIsDeleteOpen(false);
-                  fetchPrices();
+                  fetchParams();
                 }}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
               >
@@ -374,9 +366,9 @@ const PriceListComponent = ({
               <input
                 {...register("name")}
                 className={`w-full border rounded px-3 py-2 focus:outline-blue-500 ${
-                  !toEditablePrice ? "bg-gray-100" : ""
+                  !toEditableParam ? "bg-gray-100" : ""
                 }`}
-                disabled={!toEditablePrice}
+                disabled={!toEditableParam}
               />
               {errors.name && (
                 <p className="text-red-500 text-sm">{errors.name.message}</p>
@@ -389,11 +381,10 @@ const PriceListComponent = ({
               <select
                 {...register("regionID")}
                 className={`w-full border rounded px-3 py-2 focus:outline-blue-500 ${
-                  !toEditablePrice ? "bg-gray-100" : ""
+                  !toEditableParam ? "bg-gray-100" : ""
                 }`}
-                disabled={!toEditablePrice}
+                disabled={!toEditableParam}
               >
-                <option value="">-- wybierz --</option>
                 {regions.map((r) => (
                   <option key={r.id} value={r.id}>
                     {r.name}
@@ -407,59 +398,57 @@ const PriceListComponent = ({
               )}
             </div>
 
-            {/* Brutto*/}
+            {/* Type*/}
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Cena brutto
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                {...register("brutto")}
+              <label className="block text-sm font-medium mb-1">Typ</label>
+              <select
+                {...register("type")}
                 className={`w-full border rounded px-3 py-2 focus:outline-blue-500 ${
-                  !toEditablePrice ? "bg-gray-100" : ""
+                  !toEditableParam ? "bg-gray-100" : ""
                 }`}
-                disabled={!toEditablePrice}
-              />
-              {errors.brutto && (
-                <p className="text-red-500 text-sm">{errors.brutto.message}</p>
+                disabled={!toEditableParam}
+              >
+                <option value="String">TEXT</option>
+                <option value="Number">LICZBA</option>
+                <option value="Boolean">PRAWDA/FAŁSZ</option>
+              </select>
+              {errors.type && (
+                <p className="text-red-500 text-sm">{errors.type.message}</p>
               )}
             </div>
 
-            {/* VAT*/}
+            {/* Value*/}
             <div>
-              <label className="block text-sm font-medium mb-1">VAT (%)</label>
-              <input
-                type="number"
-                {...register("vat")}
-                className={`w-full border rounded px-3 py-2 focus:outline-blue-500 ${
-                  !toEditablePrice ? "bg-gray-100" : ""
-                }`}
-                disabled={!toEditablePrice}
-              />
-              {errors.vat && (
-                <p className="text-red-500 text-sm">{errors.vat.message}</p>
+              <label className="block text-sm font-medium mb-1">Wartość</label>
+              {selectedType !== "Boolean" && (
+                <input
+                  {...register("value")}
+                  className={`w-full border rounded px-3 py-2 focus:outline-blue-500 ${
+                    !toEditableParam ? "bg-gray-100" : ""
+                  }`}
+                  type={selectedType === "Number" ? "number" : "text"}
+                  disabled={!toEditableParam}
+                />
               )}
-            </div>
 
-            {/* Netto*/}
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Cena netto (liczona)
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                {...register("netto")}
-                className="w-full border rounded px-3 py-2 focus:outline-blue-500 bg-gray-100"
-                disabled
-              />
+              {selectedType === "Boolean" && (
+                <select
+                  {...register("value")}
+                  className="w-full border rounded px-3 py-2"
+                >
+                  <option value="true">TRUE</option>
+                  <option value="false">FALSE</option>
+                </select>
+              )}
+              {errors.value && (
+                <p className="text-red-500 text-sm">{errors.value.message}</p>
+              )}
             </div>
 
             {/* Buttons */}
 
             <div className="flex justify-end gap-3 pt-2">
-              {toEditablePrice === true ? (
+              {toEditableParam === true ? (
                 <button
                   type="button"
                   onClick={handleSubmit(async (updateData) => {
@@ -473,7 +462,7 @@ const PriceListComponent = ({
                     }
 
                     await axios.put(
-                      `${API_URL}/api/priceLists/prices/${selectedPrice?.id}`,
+                      `${API_URL}/api/params/${selectedParam?.id}`,
                       updateData,
                       {
                         headers: {
@@ -484,8 +473,8 @@ const PriceListComponent = ({
                       }
                     );
                     setIsUpdateOpen(false);
-                    setToEditablePrice(false);
-                    fetchPrices();
+                    setToEditableParam(false);
+                    fetchParams();
                   })}
                   className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                 >
@@ -494,7 +483,7 @@ const PriceListComponent = ({
               ) : (
                 <button
                   type="button"
-                  onClick={() => setToEditablePrice(true)}
+                  onClick={() => setToEditableParam(true)}
                   className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                 >
                   Włącz edytowanie
@@ -505,7 +494,7 @@ const PriceListComponent = ({
                 type="button"
                 onClick={() => {
                   setIsUpdateOpen(false);
-                  setToEditablePrice(false);
+                  setToEditableParam(false);
                 }}
                 className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
               >
@@ -515,8 +504,9 @@ const PriceListComponent = ({
           </div>
         </div>
       )}
+
     </div>
   );
 };
 
-export default PriceListComponent;
+export default ParametersComponent;
