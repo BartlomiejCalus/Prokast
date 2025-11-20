@@ -5,6 +5,8 @@ namespace Prokast.Server.Models
     public class AdditionalDescriptionCreateDto
     {
         [Required]
+        public int ID { get; set; }
+        [Required]
         public string Title { get; set; }
         [Required]
         public string Value { get; set; }

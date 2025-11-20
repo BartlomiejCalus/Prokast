@@ -5,6 +5,8 @@ namespace Prokast.Server.Models.PricesModels
     public class PricesDto
     {
         [Required]
+        public int ID { get; set; }
+        [Required]
         public string Name { get; set; }
         [Required]
         public int RegionID { get; set; }
