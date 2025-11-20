@@ -33,7 +33,7 @@ const Dashboard: React.FC = () => {
     const clientID = decoded.ClientID;
     console.log("🔹 decoded token:", decoded);
     axios
-      .get(`${API_URL}/api/others/MainPage?clientID=1`,
+      .get(`${API_URL}/api/others/MainPage`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

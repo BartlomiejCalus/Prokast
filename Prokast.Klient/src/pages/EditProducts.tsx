@@ -9,6 +9,8 @@ import PriceListComponent from "../Components/EditProduct/PriceListComponent";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
+const API_URL = process.env.REACT_APP_API_URL; 
+
 const EditProducts: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
