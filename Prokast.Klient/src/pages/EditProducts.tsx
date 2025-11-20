@@ -7,6 +7,7 @@ import jwtDecode from "jwt-decode";
 import { ProductModel } from "../models/Product";
 import PriceListComponent from "../Components/EditProduct/PriceListComponent";
 import ParametersComponent from "../Components/EditProduct/ParametersComponent";
+import DictiParmametersComponent from "../Components/EditProduct/DictiParametersComponent";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -70,7 +71,7 @@ const EditProducts: React.FC = () => {
       return <PriceListComponent data={product.priceList} productId={id} />;
     else if (displayedList == 4)
       return <ParametersComponent data={product.customParams} productId={id} />;
-    else if (displayedList == 5) return <></>;
+    else if (displayedList == 5) return <DictiParmametersComponent data={product.dictionaryParams} productId={id} />;
 
     return null;
   };
