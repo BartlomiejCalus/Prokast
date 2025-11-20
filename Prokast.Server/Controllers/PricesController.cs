@@ -8,6 +8,7 @@ using Prokast.Server.Models.PricesModels;
 using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models.ResponseModels.AdditionalDescriptionResponseModels;
 using Prokast.Server.Models.ResponseModels.CustomParamsResponseModels;
+using Prokast.Server.Models.ResponseModels.PriceResponseModels;
 using Prokast.Server.Models.ResponseModels.PriceResponseModels.PriceListResponseModels;
 using Prokast.Server.Services;
 using Prokast.Server.Services.Interfaces;
@@ -166,18 +167,18 @@ namespace Prokast.Server.Controllers
             }
         }
 
-        [HttpGet("Product")]
+        [HttpGet("prices/byProduct/{productId}")]
         [EndpointSummary("Get all prices in Product")]
-        [ProducesResponseType(typeof(AdditionalDescriptionGetResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PricesGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [EndpointDescription("A GET operation. Endpoint returns a list of prices that are components in the same product.")]
-        public ActionResult<Response> GetAllParamsInProduct([FromQuery] int priceListID)
+        public ActionResult<Response> GetAllParamsInProduct([FromRoute] int productId)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
             try
             {
-                var result = _priceService.GetAllPricesInProduct(clientIdFromToken, priceListID);
+                var result = _priceService.GetAllPricesInProduct(clientIdFromToken, productId);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -190,7 +191,7 @@ namespace Prokast.Server.Controllers
         [HttpPut("prices/{priceID}")]
         [ProducesResponseType(typeof(ParamsEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> EditPrice(EditPriceDto editPriceDto, [FromQuery] int priceListID,[FromRoute] int priceID)
+        public ActionResult<Response> EditPrice([FromBody]EditPriceDto editPriceDto, [FromRoute] int priceID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
@@ -200,7 +201,7 @@ namespace Prokast.Server.Controllers
             }
             try
             {
-                var result = _priceService.EditPrice(editPriceDto, clientIdFromToken, priceListID, priceID);
+                var result = _priceService.EditPrice(editPriceDto, clientIdFromToken, priceID);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);
@@ -214,13 +215,13 @@ namespace Prokast.Server.Controllers
         [HttpDelete("prices/{priceID}")]
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> DeletePrice([FromQuery] int priceListID, [FromRoute] int priceID)
+        public ActionResult<Response> DeletePrice([FromRoute] int priceID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
             try
             {
-                var result = _priceService.DeletePrice(clientIdFromToken, priceListID, priceID);
+                var result = _priceService.DeletePrice(clientIdFromToken, priceID);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);

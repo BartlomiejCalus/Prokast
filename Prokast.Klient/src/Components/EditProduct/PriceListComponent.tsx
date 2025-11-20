@@ -32,6 +32,8 @@ const PriceListComponent = ({
 
   const [regions, setRegions] = useState<{ id: number; name: string }[]>([]);
 
+  const [prices, setPrices] = useState<Price[]>(data.prices);
+
   //#region get regions
   useEffect(() => {
     const token = Cookies.get("token");
@@ -96,6 +98,29 @@ const PriceListComponent = ({
     }
   }, [isUpdateOpen, selectedPrice, reset]);
 
+  useEffect(() => {
+    if (isAddOpen) {
+      reset({
+        id: 0,
+        name: "",
+        regionID: 0,
+        netto: 0,
+        vat: 23,
+        brutto: 0,
+      });
+    }
+  }, [isAddOpen, reset]);
+
+  const fetchPrices = () => {
+    const token = Cookies.get("token");
+
+    axios
+      .get(`${API_URL}/api/priceLists/prices/byProduct/${productId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => setPrices(res.data.model));
+  };
+
   return (
     <div className="mt-4 p-4 border rounded-xl bg-white/70 shadow-md w-full">
       <table className="w-full mb-4">
@@ -107,8 +132,8 @@ const PriceListComponent = ({
           </tr>
         </thead>
         <tbody>
-          {data.prices.map((price) => (
-            <tr key={price.id}>
+          {prices.map((price, index) => (
+            <tr key={index}>
               <td className="p-2 border-b">{price.name}</td>
               <td className="p-2 border-b">{price.brutto}</td>
               <td className="p-2 border-b">
@@ -233,8 +258,7 @@ const PriceListComponent = ({
             {/* Buttons */}
             <div className="flex justify-end gap-3 pt-2">
               <button
-                onClick={handleSubmit(async (updatedata) => {
-
+                onClick={handleSubmit(async (newData) => {
                   const token = Cookies.get("token");
 
                   if (!token) {
@@ -244,7 +268,7 @@ const PriceListComponent = ({
 
                   await axios.post(
                     `${API_URL}/api/priceLists/${productId}`,
-                    updatedata,
+                    newData,
                     {
                       headers: {
                         Authorization: `Bearer ${token}`,
@@ -255,7 +279,7 @@ const PriceListComponent = ({
                   );
                   alert("Dodano cenę!");
                   setIsAddOpen(false);
-                  navigate(`/EditProducts/${productId}`);
+                  fetchPrices();
                 })}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
               >
@@ -283,6 +307,7 @@ const PriceListComponent = ({
             <p>Czy na pewno chcesz usunąć tę cenę?</p>
             <div className="flex justify-end gap-3 pt-2">
               <button
+                type="button"
                 onClick={async () => {
                   const token = Cookies.get("token");
 
@@ -302,13 +327,14 @@ const PriceListComponent = ({
 
                   alert("Usunięto cenę!");
                   setIsDeleteOpen(false);
-                  navigate(`/EditProducts/${productId}`);
+                  fetchPrices();
                 }}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
               >
                 Tak
               </button>
               <button
+                type="button"
                 onClick={() => setIsDeleteOpen(false)}
                 className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
               >
@@ -423,31 +449,31 @@ const PriceListComponent = ({
               {toEditablePrice === true ? (
                 <button
                   type="button"
-                  onClick={handleSubmit(async (updatedata) => {
+                  onClick={handleSubmit(async (updateData) => {
+                    const token = Cookies.get("token");
 
-                  const token = Cookies.get("token");
+                    console.log(updateData);
 
-                  if (!token) {
-                    console.error("Brak tokenu autoryzacyjnego.");
-                    return;
-                  }
-
-                  await axios.put(
-                    `${API_URL}/api/priceLists/price/${selectedPrice?.id}`,
-                    updatedata,
-                    {
-                      headers: {
-                        Authorization: `Bearer ${token}`,
-                        Accept: "application/json",
-                        "Content-Type": "application/json",
-                      },
+                    if (!token) {
+                      console.error("Brak tokenu autoryzacyjnego.");
+                      return;
                     }
-                  );
-                  alert("Zaktualizowano cenę!");
-                  setIsUpdateOpen(false);
-                  setToEditablePrice(false);
-                  navigate(`/EditProducts/${productId}`);
-                })}
+
+                    await axios.put(
+                      `${API_URL}/api/priceLists/prices/${selectedPrice?.id}`,
+                      updateData,
+                      {
+                        headers: {
+                          Authorization: `Bearer ${token}`,
+                          Accept: "application/json",
+                          "Content-Type": "application/json",
+                        },
+                      }
+                    );
+                    setIsUpdateOpen(false);
+                    setToEditablePrice(false);
+                    fetchPrices();
+                  })}
                   className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                 >
                   Zapisz
@@ -476,7 +502,6 @@ const PriceListComponent = ({
           </div>
         </div>
       )}
-      
     </div>
   );
 };
