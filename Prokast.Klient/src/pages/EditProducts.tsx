@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import jwtDecode from "jwt-decode";
 import { ProductModel } from "../models/Product";
-import PriceListComponent from "../Components/EditProduct/PriceListComponent";
+import AdditionalDescriptionComponent from "../Components/EditProduct/AdditionalDescriptionComponent";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -60,9 +60,9 @@ const EditProducts: React.FC = () => {
   }
 
     const renderComponent = () => {
-    if (displayedList == 1) return <div className="mt-4 p-4 border rounded-xl bg-white/70 shadow-md w-full"></div>;
+    if (displayedList == 1) return <AdditionalDescriptionComponent data={product.additionalDescriptions} productId={id} />;
     else if (displayedList == 2)return <></>;
-    else if (displayedList == 3)return <PriceListComponent data={product.priceList} productId={id} />;
+    else if (displayedList == 3)return <></>;
     else if (displayedList == 4)return <></>;
     else if (displayedList == 5)return <></>;
 
