@@ -1,15 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { PriceList } from "../../models/PriceList";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 import { Price } from "../../models/Price";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { set, useForm } from "react-hook-form";
-import { Console } from "console";
-import { isEditable } from "@testing-library/user-event/dist/utils";
+import { useForm } from "react-hook-form";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -20,7 +17,6 @@ const PriceListComponent = ({
   data: PriceList;
   productId: string | undefined;
 }) => {
-  const navigate = useNavigate();
 
   const [isUpdateOpen, setIsUpdateOpen] = useState<boolean>(false);
   const [isAddOpen, setIsAddOpen] = useState<boolean>(false);
@@ -103,7 +99,7 @@ const PriceListComponent = ({
       reset({
         id: 0,
         name: "",
-        regionID: 0,
+        regionID: 1,
         netto: 0,
         vat: 23,
         brutto: 0,
@@ -123,6 +119,31 @@ const PriceListComponent = ({
 
   return (
     <div className="mt-4 p-4 border rounded-xl bg-white/70 shadow-md w-full">
+
+        <button
+        type="button"
+        onClick={() => setIsAddOpen(true)}
+        className="group flex items-center justify-center
+            bg-blue-600 text-white rounded-full
+            h-10 w-10
+            hover:w-40
+            transition-all duration-300
+            overflow-hidden
+            hover:bg-blue-700"
+      >
+        <FaPlus className="w-5 h-5 flex-shrink-0" />
+        <span
+          className="ml-2
+            whitespace-nowrap
+            opacity-0 max-w-0
+            group-hover:opacity-100
+            group-hover:max-w-[200px]
+            transition-all duration-300"
+        >
+          Dodaj cenę
+        </span>
+      </button>
+
       <table className="w-full mb-4">
         <thead>
           <tr>
@@ -161,13 +182,6 @@ const PriceListComponent = ({
           ))}
         </tbody>
       </table>
-      <button
-        type="button"
-        onClick={() => setIsAddOpen(true)}
-        className="bg-blue-600 rounded-full p-2 text-white hover:bg-blue-700"
-      >
-        <FaPlus />
-      </button>
 
       {/*Add Price Modal */}
       {isAddOpen && (
@@ -198,7 +212,6 @@ const PriceListComponent = ({
                 {...register("regionID")}
                 className="w-full border rounded px-3 py-2 focus:outline-blue-500"
               >
-                <option value="">-- wybierz --</option>
                 {regions.map((r) => (
                   <option key={r.id} value={r.id}>
                     {r.name}

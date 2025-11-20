@@ -6,6 +6,7 @@ import Navbar from "../Components/Navbar";
 import jwtDecode from "jwt-decode";
 import { ProductModel } from "../models/Product";
 import PriceListComponent from "../Components/EditProduct/PriceListComponent";
+import ParametersComponent from "../Components/EditProduct/ParametersComponent";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -63,7 +64,7 @@ const EditProducts: React.FC = () => {
     if (displayedList == 1) return <div className="mt-4 p-4 border rounded-xl bg-white/70 shadow-md w-full"></div>;
     else if (displayedList == 2)return <></>;
     else if (displayedList == 3)return <PriceListComponent data={product.priceList} productId={id} />;
-    else if (displayedList == 4)return <></>;
+    else if (displayedList == 4)return <ParametersComponent data={product.customParams} productId={id} />;
     else if (displayedList == 5)return <></>;
 
     return null;
