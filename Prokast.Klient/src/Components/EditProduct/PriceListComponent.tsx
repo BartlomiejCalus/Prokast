@@ -304,7 +304,7 @@ const PriceListComponent = ({
             <h2 className="text-xl font-bold text-gray-800 mb-2">
               Potwierdzenie usunięcia
             </h2>
-            <p>Czy na pewno chcesz usunąć tę cenę?</p>
+            <p>Czy na pewno chcesz usunąć {selectedPrice?.name}?</p>
             <div className="flex justify-end gap-3 pt-2">
               <button
                 type="button"
