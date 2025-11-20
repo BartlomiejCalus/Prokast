@@ -117,7 +117,7 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(AdditionalDescriptionGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [EndpointDescription("A GET operation. Endpoint returns a list of custom parameters that are components in the same product.")]
-        public ActionResult<Response> GetAllParamsInProduct([FromForm] int productID)
+        public ActionResult<Response> GetAllParamsInProduct([FromRoute] int productID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
