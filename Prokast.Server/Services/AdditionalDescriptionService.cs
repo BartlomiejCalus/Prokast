@@ -22,7 +22,7 @@ namespace Prokast.Server.Services
         }
 
         #region Create
-        public Response CreateAdditionalDescription(AdditionalDescriptionCreateDto description, int clientID, int regionID, int productID)
+        public Response CreateAdditionalDescription(AdditionalDescriptionCreateDto description, int clientID, int productID)
         {
             if (description == null)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
@@ -35,7 +35,7 @@ namespace Prokast.Server.Services
             {
                 Title = description.Title,
                 Value = description.Value,
-                RegionID = regionID,
+                RegionID = description.RegionID,
                 Product = product
             };
             
