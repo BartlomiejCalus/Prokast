@@ -13,7 +13,7 @@ import { isEditable } from "@testing-library/user-event/dist/utils";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-const AdditionalDescriptionComponent = ({
+const AdditionalNameComponent = ({
   data,
   productId,
 }: {
@@ -26,13 +26,13 @@ const AdditionalDescriptionComponent = ({
   const [isAddOpen, setIsAddOpen] = useState<boolean>(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
 
-  const [toEditableDescription, setToEditableDescription] = useState<boolean>(false);
+  const [toEditableName, settoEditableName] = useState<boolean>(false);
 
-  const [selectedDescription, setSelectedDescription] = useState<AdditionalField | null>(null);
+  const [selectedName, setselectedName] = useState<AdditionalField | null>(null);
 
   const [regions, setRegions] = useState<{ id: number; name: string }[]>([]);
 
-  const [descriptions, setDescriptions] = useState<AdditionalField[]>(data);
+  const [names, setNames] = useState<AdditionalField[]>(data);
 
   //#region get regions
   useEffect(() => {
@@ -89,10 +89,10 @@ const AdditionalDescriptionComponent = ({
   // }, [brutto, vat, setValue]);
 
   useEffect(() => {
-    if (isUpdateOpen && selectedDescription) {
-      reset(selectedDescription);
+    if (isUpdateOpen && selectedName) {
+      reset(selectedName);
     }
-  }, [isUpdateOpen, selectedDescription, reset]);
+  }, [isUpdateOpen, selectedName, reset]);
 
   useEffect(() => {
     if (isAddOpen) {
@@ -109,10 +109,10 @@ const AdditionalDescriptionComponent = ({
     const token = Cookies.get("token");
 
     axios
-      .get(`${API_URL}/api/additionaldescriptions/Product?ProductID=${productId}`, {
+      .get(`${API_URL}/api/addName/Product?ProductID=${productId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
-      .then((res) => setDescriptions(res.data.model));
+      .then((res) => setNames(res.data.model));
   };
 
   return (
@@ -138,19 +138,19 @@ const AdditionalDescriptionComponent = ({
                     group-hover:ml-2
                     transition-all duration-300"
         >
-        Dodaj opis
+        Dodaj nazwę
         </span>
       </button>
       <table className="w-full mb-4">
         <thead>
           <tr>
-            <th className="text-left p-2 border-b">Nazwa opisu</th>
-            <th className="text-left p-2 border-b">Opis</th>
+            <th className="text-left p-2 border-b">Tytuł nazwy</th>
+            <th className="text-left p-2 border-b">Nazwa</th>
             <th className="text-left p-2 border-b">Akcje</th>
           </tr>
         </thead>
         <tbody>
-          {descriptions.map((description, index) => (
+          {names.map((description, index) => (
             <tr key={index}>
               <td className="p-2 border-b">{description.title}</td>
               <td className="p-2 border-b">{description.value}</td>
@@ -159,7 +159,7 @@ const AdditionalDescriptionComponent = ({
                   type="button"
                   className="mr-2"
                   onClick={() => {
-                    setSelectedDescription(description);
+                    setselectedName(description);
                     setIsUpdateOpen(true);
                   }}
                 >
@@ -168,7 +168,7 @@ const AdditionalDescriptionComponent = ({
                 <button
                   type="button"
                   onClick={() => {
-                    setSelectedDescription(description);
+                    setselectedName(description);
                     setIsDeleteOpen(true);
                   }}
                 >
@@ -186,13 +186,13 @@ const AdditionalDescriptionComponent = ({
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-6 w-[450px] shadow-lg space-y-4">
             <h2 className="text-xl font-bold text-gray-800 mb-2">
-              Dodaj nowy opis
+              Dodaj nową nazwę
             </h2>
 
             {/* Nazwa */}
             <div>
               <label className="block text-sm font-medium mb-1">
-                Nazwa Opisu
+                Tytuł Nazwy
               </label>
               <input
                 {...register("title")}
@@ -227,7 +227,7 @@ const AdditionalDescriptionComponent = ({
             {/* Opis*/}
             <div>
               <label className="block text-sm font-medium mb-1">
-                Opis
+                Nazwa
               </label>
               <textarea
                 {...register("value")}
@@ -277,7 +277,7 @@ const AdditionalDescriptionComponent = ({
                   }
 
                   await axios.post(
-                    `${API_URL}/api/additionaldescriptions?ProductID=${productId}`,
+                    `${API_URL}/api/addName?ProductID=${productId}`,
                     newData,
                     {
                       headers: {
@@ -287,7 +287,7 @@ const AdditionalDescriptionComponent = ({
                       },
                     }
                   );
-                  alert("Dodano opis!");
+                  alert("Dodano nazwę!");
                   setIsAddOpen(false);
                   fetchDescriptions();
                 })}
@@ -314,7 +314,7 @@ const AdditionalDescriptionComponent = ({
             <h2 className="text-xl font-bold text-gray-800 mb-2">
               Potwierdzenie usunięcia
             </h2>
-            <p>Czy na pewno chcesz usunąć {selectedDescription?.title}?</p>
+            <p>Czy na pewno chcesz usunąć {selectedName?.title}?</p>
             <div className="flex justify-end gap-3 pt-2">
               <button
                 type="button"
@@ -327,7 +327,7 @@ const AdditionalDescriptionComponent = ({
                   }
 
                   await axios.delete(
-                    `${API_URL}/api/additionaldescriptions/${selectedDescription?.id}`,
+                    `${API_URL}/api/addName/${selectedName?.id}`,
                     {
                       headers: {
                         Authorization: `Bearer ${token}`,
@@ -366,14 +366,14 @@ const AdditionalDescriptionComponent = ({
             {/* Nazwa */}
             <div>
               <label className="block text-sm font-medium mb-1">
-                Nazwa opisu
+                Tytuł nazwy
               </label>
               <input
                 {...register("title")}
                 className={`w-full border rounded px-3 py-2 focus:outline-blue-500 ${
-                  !toEditableDescription ? "bg-gray-100" : ""
+                  !toEditableName ? "bg-gray-100" : ""
                 }`}
-                disabled={!toEditableDescription}
+                disabled={!toEditableName}
               />
               {errors.title && (
                 <p className="text-red-500 text-sm">{errors.title.message}</p>
@@ -386,9 +386,9 @@ const AdditionalDescriptionComponent = ({
               <select
                 {...register("regionID")}
                 className={`w-full border rounded px-3 py-2 focus:outline-blue-500 ${
-                  !toEditableDescription ? "bg-gray-100" : ""
+                  !toEditableName ? "bg-gray-100" : ""
                 }`}
-                disabled={!toEditableDescription}
+                disabled={!toEditableName}
               >
                 <option value="">-- wybierz --</option>
                 {regions.map((r) => (
@@ -407,14 +407,14 @@ const AdditionalDescriptionComponent = ({
             {/* Opis*/}
             <div>
               <label className="block text-sm font-medium mb-1">
-                Opis
+                Nazwa
               </label>
               <textarea
                 {...register("value")}
                 className={`w-full border rounded px-3 py-2 focus:outline-blue-500 ${
-                  !toEditableDescription ? "bg-gray-100" : ""
+                  !toEditableName ? "bg-gray-100" : ""
                 }`}
-                disabled={!toEditableDescription}
+                disabled={!toEditableName}
               />
               {errors.value && (
                 <p className="text-red-500 text-sm">{errors.value.message}</p>
@@ -454,7 +454,7 @@ const AdditionalDescriptionComponent = ({
             {/* Buttons */}
 
             <div className="flex justify-end gap-3 pt-2">
-              {toEditableDescription === true ? (
+              {toEditableName === true ? (
                 <button
                   type="button"
                   onClick={handleSubmit(async (updateData) => {
@@ -468,7 +468,7 @@ const AdditionalDescriptionComponent = ({
                     }
 
                     await axios.put(
-                      `${API_URL}/api/additionaldescriptions/${selectedDescription?.id}`,
+                      `${API_URL}/api/addName/${selectedName?.id}`,
                       updateData,
                       {
                         headers: {
@@ -479,7 +479,7 @@ const AdditionalDescriptionComponent = ({
                       }
                     );
                     setIsUpdateOpen(false);
-                    setToEditableDescription(false);
+                    settoEditableName(false);
                     fetchDescriptions();
                   })}
                   className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
@@ -489,7 +489,7 @@ const AdditionalDescriptionComponent = ({
               ) : (
                 <button
                   type="button"
-                  onClick={() => setToEditableDescription(true)}
+                  onClick={() => settoEditableName(true)}
                   className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                 >
                   Włącz edytowanie
@@ -500,7 +500,7 @@ const AdditionalDescriptionComponent = ({
                 type="button"
                 onClick={() => {
                   setIsUpdateOpen(false);
-                  setToEditableDescription(false);
+                  settoEditableName(false);
                 }}
                 className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
               >
@@ -514,4 +514,4 @@ const AdditionalDescriptionComponent = ({
   );
 };
 
-export default AdditionalDescriptionComponent;
+export default AdditionalNameComponent;

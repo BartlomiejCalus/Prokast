@@ -6,6 +6,7 @@ import Navbar from "../Components/Navbar";
 import jwtDecode from "jwt-decode";
 import { ProductModel } from "../models/Product";
 import AdditionalDescriptionComponent from "../Components/EditProduct/AdditionalDescriptionComponent";
+import AdditionalNameComponent from "../Components/EditProduct/AdditionalNameComponent";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -61,7 +62,7 @@ const EditProducts: React.FC = () => {
 
     const renderComponent = () => {
     if (displayedList == 1) return <AdditionalDescriptionComponent data={product.additionalDescriptions} productId={id} />;
-    else if (displayedList == 2)return <></>;
+    else if (displayedList == 2)return <AdditionalNameComponent data={product.additionalNames} productId={id} />;
     else if (displayedList == 3)return <></>;
     else if (displayedList == 4)return <></>;
     else if (displayedList == 5)return <></>;
