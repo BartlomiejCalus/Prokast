@@ -250,6 +250,55 @@ const PriceListComponent = ({
           </div>
         </div>
       )}
+
+      {/* Delete Price Modal */}
+      {isDeleteOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg p-6 w-[400px] shadow-lg space-y-4">
+            <h2 className="text-xl font-bold text-gray-800 mb-2">
+              Potwierdzenie usunięcia
+            </h2>
+            <p>Czy na pewno chcesz usunąć tę cenę?</p>
+            <div className="flex justify-end gap-3 pt-2">
+              <button
+                onClick={async () =>{
+
+                  const token = Cookies.get("token");
+
+                  if (!token) {
+                    console.error("Brak tokenu autoryzacyjnego.");
+                    return;
+                  }
+
+                  await axios.delete(
+                    `${API_URL}/api/priceLists/prices/${selectedPrice?.id}`,
+                    {
+                      headers: {
+                        Authorization: `Bearer ${token}`
+                      },
+                    }
+                  );
+
+                  alert("Usunięto cenę!");
+                  setIsDeleteOpen(false);
+                  navigate(`/EditProducts/${productId}`);
+                }}
+                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+              >
+                Tak
+              </button>
+              <button
+                onClick={() => setIsDeleteOpen(false)}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Nie
+              </button>
+            </div>
+          </div>
+          </div>
+
+      )}
+
     </div>
   );
 };
