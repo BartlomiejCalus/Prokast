@@ -5,7 +5,7 @@ namespace Prokast.Server.Services.Interfaces
 {
     public interface IAdditionalDescriptionService
     {
-        Response CreateAdditionalDescription(AdditionalDescriptionCreateDto description, int clientID, int regionID, int productID);
+        Response CreateAdditionalDescription(AdditionalDescriptionCreateDto description, int clientID, int productID);
         Response GetAllDescriptions(int clientID);
         Response GetDescriptionsByID(int ID, int clientID);
         Response GetDescriptionsByNames(string Title, int clientID);
