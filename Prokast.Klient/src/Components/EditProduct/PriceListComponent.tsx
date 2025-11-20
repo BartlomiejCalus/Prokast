@@ -133,11 +133,12 @@ const PriceListComponent = ({
       >
         <FaPlus className="w-5 h-5 flex-shrink-0" />
         <span
-          className="ml-2
+          className="
             whitespace-nowrap
             opacity-0 max-w-0
             group-hover:opacity-100
             group-hover:max-w-[200px]
+            group-hover:ml-2
             transition-all duration-300"
         >
           Dodaj cenę

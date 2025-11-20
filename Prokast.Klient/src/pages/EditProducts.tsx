@@ -7,6 +7,7 @@ import jwtDecode from "jwt-decode";
 import { ProductModel } from "../models/Product";
 import PriceListComponent from "../Components/EditProduct/PriceListComponent";
 import ParametersComponent from "../Components/EditProduct/ParametersComponent";
+import PhotoComponent from "../Components/EditProduct/PhotoComponent";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -70,7 +71,7 @@ const EditProducts: React.FC = () => {
       return <PriceListComponent data={product.priceList} productId={id} />;
     else if (displayedList == 4)
       return <ParametersComponent data={product.customParams} productId={id} />;
-    else if (displayedList == 5) return <></>;
+    else if (displayedList == 5) return <PhotoComponent data={product.photos} productId={id} />;
 
     return null;
   };
@@ -265,7 +266,7 @@ const EditProducts: React.FC = () => {
             </div>
             <div className="flex flex-col gap-3 border-rounded p-4 bg-white/70 shadow-md">
               <h3 className="flex-1 font-semibold mt-4">
-                Parametry słownikowe
+                Zdjęcia
               </h3>
               <button
                 type="button"

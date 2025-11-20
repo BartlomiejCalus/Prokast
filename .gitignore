@@ -475,3 +475,4 @@ _[Ss]cripts
 appsettings.json
 bin/
 obj/
+Prokast.Server/docker-compose.yml

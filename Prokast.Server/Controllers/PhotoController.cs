@@ -31,12 +31,12 @@ namespace Prokast.Server.Controllers
             return int.Parse(claim.Value);
         }
 
-        [HttpPost]
+        [HttpPost("Product/{productID}")]
         [EndpointSummary("Creates new photo")]
         [ProducesResponseType(typeof(PhotoGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [EndpointDescription("A POST operation. Endpoint creates a new photo based on provided data.")]
-        public ActionResult<Response> CreatePhoto([FromBody] PhotoDto photo, [FromQuery] int productID)
+        public ActionResult<Response> CreatePhoto([FromBody] PhotoDto photo, [FromRoute] int productID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
@@ -95,11 +95,11 @@ namespace Prokast.Server.Controllers
             }
         }
 
-        [HttpGet("Product")]
+        [HttpGet("Product/{productID}")]
         [EndpointSummary("Get all photos in product")]
         [ProducesResponseType(typeof(PhotoGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetAllPhotosInProduct([FromQuery] int productID)
+        public ActionResult<Response> GetAllPhotosInProduct([FromRoute] int productID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
