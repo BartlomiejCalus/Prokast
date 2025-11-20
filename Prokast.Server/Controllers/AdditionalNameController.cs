@@ -37,13 +37,13 @@ namespace Prokast.Server.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> CreateAdditionalName([FromBody] AdditionalNameDto additionalNameDto, [FromQuery] int regionID, [FromQuery] int productID)
+        public ActionResult<Response> CreateAdditionalName([FromBody] AdditionalNameDto additionalNameDto, [FromQuery] int productID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
             try
             {
-                var result = _additionalNameService.CreateAdditionalName(additionalNameDto, clientIdFromToken, regionID, productID);
+                var result = _additionalNameService.CreateAdditionalName(additionalNameDto, clientIdFromToken, productID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Created();
             }
