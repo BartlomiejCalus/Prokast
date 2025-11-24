@@ -20,6 +20,8 @@ using Prokast.Server.Models.JWT;
 using Prokast.Server.Models.ClientModels;
 using Prokast.Server.Models.ResponseModels.CustomParamsResponseModels;
 using Prokast.Server.Models.ResponseModels.RoleResponseModels;
+using static System.Net.Mime.MediaTypeNames;
+using Microsoft.Identity.Client;
 
 
 
@@ -184,7 +186,8 @@ namespace Prokast.Server.Services
             {
                 new Claim(ClaimTypes.Name, user.Login),
                 new Claim(ClaimTypes.NameIdentifier, user.ClientID.ToString()),
-                new Claim(ClaimTypes.Role, user.RoleID.ToString())
+                new Claim(ClaimTypes.Role, user.RoleID.ToString()),
+                new Claim(ClaimTypes.UserData, user.ID.ToString())
             };
 
             var key = new SymmetricSecurityKey(
@@ -264,6 +267,36 @@ namespace Prokast.Server.Services
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiej roli!" };
             
             return new RoleGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = role };
+        }
+
+        public Response EditRole(int clientID, int accountID, int newRoleID, int roleID) 
+        {
+            //if (roleID != 1 && roleID != 2)
+                //return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie masz upoważnienia do zmiany czyjejś roli!" };
+
+            if (newRoleID == 1)
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie masz uprawnień do przypisania tej roli!" };
+            if (newRoleID == 2 || newRoleID == 3 && roleID != 2 && roleID != 1)
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie masz uprawnień do przypisania tej roli!" };
+
+            var numberOfHeadAdmins = _dbContext.Accounts.Where(x => x.ClientID == clientID && x.RoleID == 2).ToList().Count();
+            var konto = _dbContext.Accounts.Where(x => x.ClientID == clientID && x.ID == accountID).FirstOrDefault();
+            if (roleID != 1 && roleID != 2 && konto.RoleID == 1 || konto.RoleID == 2 || konto.RoleID == 3)
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie masz uprawnień aby zmienic rolę temu userowi!" };
+            if(numberOfHeadAdmins == 1 && newRoleID == 2)
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Może być tylko 1 HeadAdmin!" };
+
+            if (numberOfHeadAdmins == 1 && konto.RoleID == 2)
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie możesz zmienić roli tego konta, ponieważ musi być co najmniej 1 HeadAdmin!" };
+           
+            if (konto == null)
+                    return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego konta!" };
+            
+            konto.RoleID = newRoleID;
+            _dbContext.SaveChanges();
+
+            return new RoleEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, Name = konto.FirstName, Surname = konto.LastName, Role = konto.Role };
+            
         }
     }
 }
