@@ -13,6 +13,7 @@ namespace Prokast.Server.Seeders
                 var roleList = new List<Role>()
                 {
                     new() {RoleName = "Master"},
+                    new() {RoleName = "HeadAdmin"},
                     new() {RoleName = "Admin"},
                     new() {RoleName = "Magazynier"},
                     new() {RoleName = "Sprzedawca"},
