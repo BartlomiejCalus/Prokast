@@ -8,6 +8,8 @@ import { ProductModel } from "../models/Product";
 import PriceListComponent from "../Components/EditProduct/PriceListComponent";
 import ParametersComponent from "../Components/EditProduct/ParametersComponent";
 import PhotoComponent from "../Components/EditProduct/PhotoComponent";
+import AdditionalDescriptionComponent from "../Components/EditProduct/AdditionalDescriptionComponent";
+import AdditionalNameComponent from "../Components/EditProduct/AdditionalNameComponent";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -61,16 +63,11 @@ const EditProducts: React.FC = () => {
     );
   }
 
-  const renderComponent = () => {
-    if (displayedList == 1)
-      return (
-        <div className="mt-4 p-4 border rounded-xl bg-white/70 shadow-md w-full"></div>
-      );
-    else if (displayedList == 2) return <></>;
-    else if (displayedList == 3)
-      return <PriceListComponent data={product.priceList} productId={id} />;
-    else if (displayedList == 4)
-      return <ParametersComponent data={product.customParams} productId={id} />;
+    const renderComponent = () => {
+    if (displayedList == 1) return <AdditionalDescriptionComponent data={product.additionalDescriptions} productId={id} />;
+    else if (displayedList == 2)return <AdditionalNameComponent data={product.additionalNames} productId={id} />;
+    else if (displayedList == 3) return <PriceListComponent data={product.priceList} productId={id} />
+    else if (displayedList == 4) return <ParametersComponent data={product.customParams} productId={id} />;
     else if (displayedList == 5) return <PhotoComponent data={product.photos} productId={id} />;
 
     return null;

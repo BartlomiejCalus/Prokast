@@ -204,7 +204,7 @@ namespace Prokast.Server.Services
 
             foreach(var additionalDescription in productCreateDto.AdditionalDescriptions)
             {
-                var result = _additionalDescriptionService.CreateAdditionalDescription(additionalDescription, clientID, regionID, newProduct.ID);
+                var result = _additionalDescriptionService.CreateAdditionalDescription(additionalDescription, clientID, newProduct.ID);
                 if (result != null && result.GetType() == typeof(ErrorResponse))
                 {
                     return result;
@@ -213,7 +213,7 @@ namespace Prokast.Server.Services
 
             foreach(var additionalName in productCreateDto.AdditionalNames)
             {
-               var result = _additionalNameService.CreateAdditionalName(additionalName, clientID, regionID, newProduct.ID);
+               var result = _additionalNameService.CreateAdditionalName(additionalName, clientID, newProduct.ID);
                 if (result != null && result.GetType() == typeof(ErrorResponse))
                 {
                     return result;

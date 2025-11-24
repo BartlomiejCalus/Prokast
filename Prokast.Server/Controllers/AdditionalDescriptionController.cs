@@ -34,13 +34,13 @@ namespace Prokast.Server.Controllers
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [EndpointDescription("A POST operation. Endpoint creates an additional description for a product.")]
-        public ActionResult<Response> CreateAdditionalDescription([FromBody] AdditionalDescriptionCreateDto additionalDescription, [FromQuery] int regionID, [FromQuery] int productID)
+        public ActionResult<Response> CreateAdditionalDescription([FromBody] AdditionalDescriptionCreateDto additionalDescription, [FromQuery] int productID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
             try
             {
-                var result = _additionalDescriptionService.CreateAdditionalDescription(additionalDescription, clientIdFromToken, regionID, productID);
+                var result = _additionalDescriptionService.CreateAdditionalDescription(additionalDescription, clientIdFromToken, productID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Created();
             }

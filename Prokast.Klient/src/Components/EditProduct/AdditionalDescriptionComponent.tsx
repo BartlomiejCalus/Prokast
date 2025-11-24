@@ -1,34 +1,38 @@
-import { useEffect, useState } from "react";
-import { PriceList } from "../../models/PriceList";
+import React, { useEffect, useState } from "react";
+import { AdditionalField } from "../../models/AdditionalField";
 import Cookies from "js-cookie";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 import { Price } from "../../models/Price";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
+import { Console } from "console";
+import { isEditable } from "@testing-library/user-event/dist/utils";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-const PriceListComponent = ({
+const AdditionalDescriptionComponent = ({
   data,
   productId,
 }: {
-  data: PriceList;
+  data: AdditionalField[];
   productId: string | undefined;
 }) => {
+  const navigate = useNavigate();
 
   const [isUpdateOpen, setIsUpdateOpen] = useState<boolean>(false);
   const [isAddOpen, setIsAddOpen] = useState<boolean>(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
 
-  const [toEditablePrice, setToEditablePrice] = useState<boolean>(false);
+  const [toEditableDescription, setToEditableDescription] = useState<boolean>(false);
 
-  const [selectedPrice, setSelectedPrice] = useState<Price | null>(null);
+  const [selectedDescription, setSelectedDescription] = useState<AdditionalField | null>(null);
 
   const [regions, setRegions] = useState<{ id: number; name: string }[]>([]);
 
-  const [prices, setPrices] = useState<Price[]>(data.prices);
+  const [descriptions, setDescriptions] = useState<AdditionalField[]>(data);
 
   //#region get regions
   useEffect(() => {
@@ -50,12 +54,10 @@ const PriceListComponent = ({
   }, []);
   //#endregion
 
-  const priceSchema = yup.object().shape({
+  const descriptionSchema = yup.object().shape({
     id: yup.number().required(),
-    name: yup.string().required("Nazwa jest wymagana"),
-    netto: yup.number().positive("Musi być większe od 0").required(),
-    brutto: yup.number().positive("Musi być większe od 0").required(),
-    vat: yup.number().min(0).max(100).required("VAT 0-100%"),
+    title: yup.string().required("Nazwa jest wymagana"),
+    value: yup.string().required("Musi być większe od 0"),
     regionID: yup.number().required("Wybierz region"),
   });
 
@@ -66,104 +68,98 @@ const PriceListComponent = ({
     setValue,
     reset,
     formState: { errors },
-  } = useForm<Price>({
-    resolver: yupResolver(priceSchema),
+  } = useForm<AdditionalField>({
+    resolver: yupResolver(descriptionSchema),
     defaultValues: {
       id: 0,
-      name: "",
-      regionID: 0,
-      netto: 0,
-      vat: 23,
-      brutto: 0,
+      title: "",
+      value: "",
+      regionID: 0
     },
   });
 
-  const brutto = watch("brutto");
-  const vat = watch("vat");
+  //const brutto = watch("brutto");
+  //const vat = watch("vat");
+
+  // useEffect(() => {
+  //   if (brutto > 0 && vat >= 0) {
+  //     const netto = brutto / (1 + vat / 100);
+  //     setValue("netto", parseFloat(netto.toFixed(2)));
+  //   }
+  // }, [brutto, vat, setValue]);
 
   useEffect(() => {
-    if (brutto > 0 && vat >= 0) {
-      const netto = brutto / (1 + vat / 100);
-      setValue("netto", parseFloat(netto.toFixed(2)));
+    if (isUpdateOpen && selectedDescription) {
+      reset(selectedDescription);
     }
-  }, [brutto, vat, setValue]);
-
-  useEffect(() => {
-    if (isUpdateOpen && selectedPrice) {
-      reset(selectedPrice);
-    }
-  }, [isUpdateOpen, selectedPrice, reset]);
+  }, [isUpdateOpen, selectedDescription, reset]);
 
   useEffect(() => {
     if (isAddOpen) {
       reset({
-        id: 0,
-        name: "",
-        regionID: 1,
-        netto: 0,
-        vat: 23,
-        brutto: 0,
+      id: 0,
+      title: "",
+      value: "",
+      regionID: 0
       });
     }
   }, [isAddOpen, reset]);
 
-  const fetchPrices = () => {
+  const fetchDescriptions = () => {
     const token = Cookies.get("token");
 
     axios
-      .get(`${API_URL}/api/priceLists/prices/byProduct/${productId}`, {
+      .get(`${API_URL}/api/additionaldescriptions/Product?ProductID=${productId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
-      .then((res) => setPrices(res.data.model));
+      .then((res) => setDescriptions(res.data.model));
   };
 
   return (
     <div className="mt-4 p-4 border rounded-xl bg-white/70 shadow-md w-full">
-
-        <button
+      <button
         type="button"
         onClick={() => setIsAddOpen(true)}
         className="group flex items-center justify-center
-            bg-blue-600 text-white rounded-full
-            h-10 w-10
-            hover:w-40
-            transition-all duration-300
-            overflow-hidden
-            hover:bg-blue-700"
+                    bg-blue-600 text-white rounded-full
+                    h-10 w-10
+                    hover:w-40
+                    transition-all duration-300
+                    overflow-hidden
+                    hover:bg-blue-700"
       >
         <FaPlus className="w-5 h-5 flex-shrink-0" />
         <span
           className="
-            whitespace-nowrap
-            opacity-0 max-w-0
-            group-hover:opacity-100
-            group-hover:max-w-[200px]
-            group-hover:ml-2
-            transition-all duration-300"
+                    whitespace-nowrap
+                    opacity-0 max-w-0
+                    group-hover:opacity-100
+                    group-hover:max-w-[200px]
+                    group-hover:ml-2
+                    transition-all duration-300"
         >
-          Dodaj cenę
+        Dodaj opis
         </span>
       </button>
-
       <table className="w-full mb-4">
         <thead>
           <tr>
-            <th className="text-left p-2 border-b">Nazwa ceny</th>
-            <th className="text-left p-2 border-b">Cena brutto</th>
+            <th className="text-left p-2 border-b">Nazwa opisu</th>
+            <th className="text-left p-2 border-b">Opis</th>
             <th className="text-left p-2 border-b">Akcje</th>
           </tr>
         </thead>
         <tbody>
-          {prices.map((price, index) => (
+          {descriptions.map((description, index) => (
             <tr key={index}>
-              <td className="p-2 border-b">{price.name}</td>
-              <td className="p-2 border-b">{price.brutto}</td>
+              <td className="p-2 border-b">{description.title}</td>
+              <td className="p-2 border-b">{description.value}</td>
               <td className="p-2 border-b">
                 <button
                   type="button"
                   className="mr-2"
                   onClick={() => {
-                    setSelectedPrice(price);
+                    setSelectedDescription(description);
                     setIsUpdateOpen(true);
                   }}
                 >
@@ -172,7 +168,7 @@ const PriceListComponent = ({
                 <button
                   type="button"
                   onClick={() => {
-                    setSelectedPrice(price);
+                    setSelectedDescription(description);
                     setIsDeleteOpen(true);
                   }}
                 >
@@ -183,26 +179,27 @@ const PriceListComponent = ({
           ))}
         </tbody>
       </table>
+      
 
-      {/*Add Price Modal */}
+      {/*Add Description Modal */}
       {isAddOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-6 w-[450px] shadow-lg space-y-4">
             <h2 className="text-xl font-bold text-gray-800 mb-2">
-              Dodaj nową cenę
+              Dodaj nowy opis
             </h2>
 
             {/* Nazwa */}
             <div>
               <label className="block text-sm font-medium mb-1">
-                Nazwa ceny
+                Nazwa Opisu
               </label>
               <input
-                {...register("name")}
+                {...register("title")}
                 className="w-full border rounded px-3 py-2 focus:outline-blue-500"
               />
-              {errors.name && (
-                <p className="text-red-500 text-sm">{errors.name.message}</p>
+              {errors.title && (
+                <p className="text-red-500 text-sm">{errors.title.message}</p>
               )}
             </div>
 
@@ -213,6 +210,7 @@ const PriceListComponent = ({
                 {...register("regionID")}
                 className="w-full border rounded px-3 py-2 focus:outline-blue-500"
               >
+                <option value="">-- wybierz --</option>
                 {regions.map((r) => (
                   <option key={r.id} value={r.id}>
                     {r.name}
@@ -226,23 +224,21 @@ const PriceListComponent = ({
               )}
             </div>
 
-            {/* Brutto*/}
+            {/* Opis*/}
             <div>
               <label className="block text-sm font-medium mb-1">
-                Cena brutto
+                Opis
               </label>
-              <input
-                type="number"
-                step="0.01"
-                {...register("brutto")}
+              <textarea
+                {...register("value")}
                 className="w-full border rounded px-3 py-2 focus:outline-blue-500"
               />
-              {errors.brutto && (
-                <p className="text-red-500 text-sm">{errors.brutto.message}</p>
+              {errors.value && (
+                <p className="text-red-500 text-sm">{errors.value.message}</p>
               )}
             </div>
 
-            {/* VAT*/}
+            {/* VAT
             <div>
               <label className="block text-sm font-medium mb-1">VAT (%)</label>
               <input
@@ -255,7 +251,7 @@ const PriceListComponent = ({
               )}
             </div>
 
-            {/* Netto*/}
+             Netto
             <div>
               <label className="block text-sm font-medium mb-1">
                 Cena netto (liczona)
@@ -267,7 +263,7 @@ const PriceListComponent = ({
                 className="w-full border rounded px-3 py-2 focus:outline-blue-500 bg-gray-100"
                 disabled
               />
-            </div>
+            </div>*/}
 
             {/* Buttons */}
             <div className="flex justify-end gap-3 pt-2">
@@ -281,7 +277,7 @@ const PriceListComponent = ({
                   }
 
                   await axios.post(
-                    `${API_URL}/api/priceLists/${productId}`,
+                    `${API_URL}/api/additionaldescriptions?ProductID=${productId}`,
                     newData,
                     {
                       headers: {
@@ -291,9 +287,9 @@ const PriceListComponent = ({
                       },
                     }
                   );
-                  alert("Dodano cenę!");
+                  alert("Dodano opis!");
                   setIsAddOpen(false);
-                  fetchPrices();
+                  fetchDescriptions();
                 })}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
               >
@@ -311,14 +307,14 @@ const PriceListComponent = ({
         </div>
       )}
 
-      {/* Delete Price Modal */}
+      {/* Delete Description Modal */}
       {isDeleteOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-6 w-[400px] shadow-lg space-y-4">
             <h2 className="text-xl font-bold text-gray-800 mb-2">
               Potwierdzenie usunięcia
             </h2>
-            <p>Czy na pewno chcesz usunąć {selectedPrice?.name}?</p>
+            <p>Czy na pewno chcesz usunąć {selectedDescription?.title}?</p>
             <div className="flex justify-end gap-3 pt-2">
               <button
                 type="button"
@@ -331,7 +327,7 @@ const PriceListComponent = ({
                   }
 
                   await axios.delete(
-                    `${API_URL}/api/priceLists/prices/${selectedPrice?.id}`,
+                    `${API_URL}/api/additionaldescriptions/${selectedDescription?.id}`,
                     {
                       headers: {
                         Authorization: `Bearer ${token}`,
@@ -339,9 +335,9 @@ const PriceListComponent = ({
                     }
                   );
 
-                  alert("Usunięto cenę!");
+                  alert("Usunięto opis!");
                   setIsDeleteOpen(false);
-                  fetchPrices();
+                  fetchDescriptions();
                 }}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
               >
@@ -359,28 +355,28 @@ const PriceListComponent = ({
         </div>
       )}
 
-      {/* Update Price Modal */}
+      {/* Update Description Modal */}
       {isUpdateOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-6 w-[450px] shadow-lg space-y-4">
             <h2 className="text-xl font-bold text-gray-800 mb-2">
-              Edytuj cenę
+              Edytuj opis
             </h2>
 
             {/* Nazwa */}
             <div>
               <label className="block text-sm font-medium mb-1">
-                Nazwa ceny
+                Nazwa opisu
               </label>
               <input
-                {...register("name")}
+                {...register("title")}
                 className={`w-full border rounded px-3 py-2 focus:outline-blue-500 ${
-                  !toEditablePrice ? "bg-gray-100" : ""
+                  !toEditableDescription ? "bg-gray-100" : ""
                 }`}
-                disabled={!toEditablePrice}
+                disabled={!toEditableDescription}
               />
-              {errors.name && (
-                <p className="text-red-500 text-sm">{errors.name.message}</p>
+              {errors.title && (
+                <p className="text-red-500 text-sm">{errors.title.message}</p>
               )}
             </div>
 
@@ -390,9 +386,9 @@ const PriceListComponent = ({
               <select
                 {...register("regionID")}
                 className={`w-full border rounded px-3 py-2 focus:outline-blue-500 ${
-                  !toEditablePrice ? "bg-gray-100" : ""
+                  !toEditableDescription ? "bg-gray-100" : ""
                 }`}
-                disabled={!toEditablePrice}
+                disabled={!toEditableDescription}
               >
                 <option value="">-- wybierz --</option>
                 {regions.map((r) => (
@@ -408,26 +404,24 @@ const PriceListComponent = ({
               )}
             </div>
 
-            {/* Brutto*/}
+            {/* Opis*/}
             <div>
               <label className="block text-sm font-medium mb-1">
-                Cena brutto
+                Opis
               </label>
-              <input
-                type="number"
-                step="0.01"
-                {...register("brutto")}
+              <textarea
+                {...register("value")}
                 className={`w-full border rounded px-3 py-2 focus:outline-blue-500 ${
-                  !toEditablePrice ? "bg-gray-100" : ""
+                  !toEditableDescription ? "bg-gray-100" : ""
                 }`}
-                disabled={!toEditablePrice}
+                disabled={!toEditableDescription}
               />
-              {errors.brutto && (
-                <p className="text-red-500 text-sm">{errors.brutto.message}</p>
+              {errors.value && (
+                <p className="text-red-500 text-sm">{errors.value.message}</p>
               )}
             </div>
 
-            {/* VAT*/}
+            {/* VAT
             <div>
               <label className="block text-sm font-medium mb-1">VAT (%)</label>
               <input
@@ -443,7 +437,7 @@ const PriceListComponent = ({
               )}
             </div>
 
-            {/* Netto*/}
+             Netto
             <div>
               <label className="block text-sm font-medium mb-1">
                 Cena netto (liczona)
@@ -455,12 +449,12 @@ const PriceListComponent = ({
                 className="w-full border rounded px-3 py-2 focus:outline-blue-500 bg-gray-100"
                 disabled
               />
-            </div>
+            </div>*/}
 
             {/* Buttons */}
 
             <div className="flex justify-end gap-3 pt-2">
-              {toEditablePrice === true ? (
+              {toEditableDescription === true ? (
                 <button
                   type="button"
                   onClick={handleSubmit(async (updateData) => {
@@ -474,7 +468,7 @@ const PriceListComponent = ({
                     }
 
                     await axios.put(
-                      `${API_URL}/api/priceLists/prices/${selectedPrice?.id}`,
+                      `${API_URL}/api/additionaldescriptions/${selectedDescription?.id}`,
                       updateData,
                       {
                         headers: {
@@ -485,8 +479,8 @@ const PriceListComponent = ({
                       }
                     );
                     setIsUpdateOpen(false);
-                    setToEditablePrice(false);
-                    fetchPrices();
+                    setToEditableDescription(false);
+                    fetchDescriptions();
                   })}
                   className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                 >
@@ -495,7 +489,7 @@ const PriceListComponent = ({
               ) : (
                 <button
                   type="button"
-                  onClick={() => setToEditablePrice(true)}
+                  onClick={() => setToEditableDescription(true)}
                   className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                 >
                   Włącz edytowanie
@@ -506,7 +500,7 @@ const PriceListComponent = ({
                 type="button"
                 onClick={() => {
                   setIsUpdateOpen(false);
-                  setToEditablePrice(false);
+                  setToEditableDescription(false);
                 }}
                 className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
               >
@@ -520,4 +514,4 @@ const PriceListComponent = ({
   );
 };
 
-export default PriceListComponent;
+export default AdditionalDescriptionComponent;
