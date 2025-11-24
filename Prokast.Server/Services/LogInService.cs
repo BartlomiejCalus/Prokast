@@ -113,7 +113,7 @@ namespace Prokast.Server.Services
         /// <param name="accountCreate"></param>
         /// <param name="clientID"></param>
         /// <returns></returns>
-        public Response CreateAccount(AccountCreateDto accountCreate, int clientID, int roleId)
+        public Response CreateAccount(AccountCreateDto accountCreate, int clientID)
         {
             const string litery = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
@@ -138,7 +138,7 @@ namespace Prokast.Server.Services
             Console.WriteLine(login);
             Console.WriteLine(password.ToString());
 
-            var role = _dbContext.Roles.FirstOrDefault(x => x.ID == roleId);
+            var role = _dbContext.Roles.FirstOrDefault(x => x.ID == accountCreate.RoleID);
             if (role == null)
                 return new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Błąd przy przypisaniu roli" };
 
@@ -147,7 +147,7 @@ namespace Prokast.Server.Services
                 Login = login,
                 Password = getHashed(password.ToString()),
                 WarehouseID = accountCreate.WarehouseID,
-                RoleID = role.ID,
+                RoleID = accountCreate.RoleID,
                 FirstName = accountCreate.FirstName,
                 LastName = accountCreate.LastName,
                 ClientID = clientID

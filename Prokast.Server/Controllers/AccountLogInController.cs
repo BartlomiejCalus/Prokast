@@ -76,15 +76,15 @@ namespace Prokast.Server.Controllers
         #endregion
         [HttpPost("create")]
         [Authorize(Roles = "1,2,3,4,5")]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AccountCredentialsResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> CreateAccount([FromBody] AccountCreateDto accountCreate, [FromBody] int roleId)
+        public ActionResult<Response> CreateAccount([FromBody] AccountCreateDto accountCreate)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
             try
             {
-                var result = _LogInService.CreateAccount(accountCreate, clientIdFromToken, roleId);
+                var result = _LogInService.CreateAccount(accountCreate, clientIdFromToken);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
