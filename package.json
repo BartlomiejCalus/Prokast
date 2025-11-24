@@ -1,0 +1,20 @@
+{
+  "name": "prokast",
+  "version": "1.0.0",
+  "description": "Projekt jest podzielony na trzy główne podprojekty:\r 1. **Aplikacja Klienta** - interfejs główny do zarządzania serwisem\r 2. **Aplikacja Magazynowa** - narzędzie do obsługi procesów na magazynie\r 3. **API do Udostępniania Zasobów** - API, które umożliwia integrację z zewnętrznymi systemami, oferujące dane o zasobach, zamówieniach i stanach magazynowych.",
+  "homepage": "https://github.com/BartlomiejCalus/Prokast#readme",
+  "bugs": {
+    "url": "https://github.com/BartlomiejCalus/Prokast/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BartlomiejCalus/Prokast.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
