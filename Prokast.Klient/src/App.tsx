@@ -83,6 +83,7 @@ function App() {
             <ProtectedRoute>
               <AddProducts />
             </ProtectedRoute>
+      
           }
         />
         <Route
