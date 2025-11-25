@@ -7,7 +7,7 @@ namespace Prokast.Server.Services.Interfaces
 {
     public interface IProductService
     {
-        Response CreateProduct(ProductCreateDto productCreateDto, int clientID, int regionID);
+        Response CreateProduct(ProductCreateDto productCreateDto, int clientID);
         Response GetOneProduct(int clientID, int productID);
         Response GetProducts(int clientID, ProductFilter filter, int pageNumber, int itemsNumber);
         Response EditProduct(ProductEdit productEdit, int clientID, int productID);
