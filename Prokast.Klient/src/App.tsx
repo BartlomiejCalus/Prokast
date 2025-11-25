@@ -11,6 +11,7 @@ import ProductsList from './pages/ProductsList';
 import AddProducts from './pages/AddProducts';
 import EditProducts from './pages/EditProducts';
 import ProtectedRoute from './Components/ProtectedRoute';
+import UsersList from './pages/UsersList';
 
 function App() {
   return (
@@ -90,6 +91,15 @@ function App() {
           element={
             <ProtectedRoute>
               <EditProducts />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/UsersList"
+          element={
+            <ProtectedRoute>
+              <UsersList />
             </ProtectedRoute>
           }
         />
