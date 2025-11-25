@@ -78,13 +78,13 @@ namespace Prokast.Server.Controllers
         [Authorize(Roles = "1,2,3,4,5")]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> CreateAccount([FromBody] AccountCreateDto accountCreate, [FromBody] int roleId)
+        public ActionResult<Response> CreateAccount([FromBody] AccountCreateDto accountCreate, [FromQuery] string mail)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
             try
             {
-                var result = _LogInService.CreateAccount(accountCreate, clientIdFromToken, roleId);
+                var result = _LogInService.CreateAccount(accountCreate, clientIdFromToken, mail);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }
@@ -185,11 +185,11 @@ namespace Prokast.Server.Controllers
             }
         }
 
-        [HttpGet("Role{ID}")]
+        [HttpGet("Role/{ID}")]
         [Authorize(Roles = "1,2,3,4,5")]
         [ProducesResponseType(typeof(ParamsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetRole([FromQuery]int ID)
+        public ActionResult<Response> GetRole([FromRoute]int ID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 

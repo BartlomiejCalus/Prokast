@@ -14,7 +14,7 @@ namespace Prokast.Server.Services.Interfaces
     {
         Response GetLogIns(int clientID);
         Response Log_In(LoginRequest loginRequest);
-        Response CreateAccount(AccountCreateDto accountCreate, int clientID, int roleId);
+        Response CreateAccount(AccountCreateDto accountCreate, int clientID, string mail);
         Response EditAccount(AccountEditDto accountEdit, int clientID);
         Response EditPassword(AccountEditPasswordDto editPasswordDto, int clientID);
         Response DeleteAccount(int clientID, int ID);
