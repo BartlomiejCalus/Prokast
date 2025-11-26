@@ -3,17 +3,15 @@
 import React, { useState } from "react";
 import { storedProduct } from "@/models/Products";
 import DeliveryModal from "@/components/deliveryModal";
-import { useRouter } from "next/navigation";
 
 interface StoredProductsTableProps {
   data: storedProduct[];
+  onDataChange?: () => void; // callback do odświeżenia danych w nadrzędnym komponencie
 }
 
-export default function StoredProductsTable({ data }: StoredProductsTableProps) {
+export default function StoredProductsTable({ data, onDataChange }: StoredProductsTableProps) {
   const [deliveryOpen, setDeliveryOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
-
-  const router = useRouter();
 
   const openDelivery = (id: number) => {
     setSelectedProductId(id);
@@ -21,7 +19,8 @@ export default function StoredProductsTable({ data }: StoredProductsTableProps) 
   };
 
   const handleSaved = () => {
-    router.refresh();       // 🔥 ODSWIEŻENIE STRONY
+    
+    if (onDataChange) onDataChange();
     setDeliveryOpen(false); // zamknięcie modala
   };
 
@@ -62,7 +61,15 @@ export default function StoredProductsTable({ data }: StoredProductsTableProps) 
               Dostawa
             </button>
 
-            <button className="border-2 border-red-600 text-red-600 px-4 py-2 rounded-lg font-semibold hover:bg-red-600 hover:text-white transition">
+            <button
+              className="border-2 border-red-600 text-red-600 px-4 py-2 rounded-lg font-semibold hover:bg-red-600 hover:text-white transition"
+              onClick={() => {
+                // przykładowe usuwanie produktu
+                fetch(`/api/storedProduct/${row.id}`, { method: "DELETE" }).then(() => {
+                  if (onDataChange) onDataChange();
+                });
+              }}
+            >
               Usuń
             </button>
           </div>
