@@ -227,7 +227,7 @@ namespace Prokast.Server.Controllers
         }
 
         [HttpPut("EditRole")]
-        [Authorize(Roles = "1,2,3,4,5")]
+        [Authorize(Roles = "1,2,3")]
         [ProducesResponseType(typeof(AccountEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> EditRole( int accountID, int newRoleID)
@@ -251,34 +251,6 @@ namespace Prokast.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-        [HttpPut("EditOwnRole")]
-        [Authorize(Roles = "1,2,3,4,5")]
-        [ProducesResponseType(typeof(AccountEditResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> EditOwnRole(int newRoleID)
-        {
-            var clientIdFromToken = GetClientIdFromToken();
-            var accountIDFromToken = GetAccountIdFromToken();
-            var roleIDFromToken = GetRoleIdFromToken();
-            if (!ModelState.IsValid)
-            {
-                return BadRequest("Błędne dane");
-            }
-            try
-            {
-                var result = _LogInService.EditRole(clientIdFromToken, accountIDFromToken, newRoleID, roleIDFromToken);
-                if (result is ErrorResponse) return BadRequest(result);
-
-                if (result == null) return NotFound(result);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
 
         [HttpGet("authenticated")]
         [Authorize]
