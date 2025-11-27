@@ -12,6 +12,7 @@ import AddProducts from './pages/AddProducts';
 import EditProducts from './pages/EditProducts';
 import ProtectedRoute from './Components/ProtectedRoute';
 import UsersList from './pages/UsersList';
+import CreateProduct from './pages/CreateProduct';
 
 function App() {
   return (
@@ -67,6 +68,14 @@ function App() {
           element={
             <ProtectedRoute>
               <PriceList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/CreateProduct"
+          element={
+            <ProtectedRoute>
+              <CreateProduct />
             </ProtectedRoute>
           }
         />
