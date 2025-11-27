@@ -27,7 +27,7 @@ const Navbar: React.FC = () => {
         </li>
         <li>
           <Link
-            to="/addProducts"
+            to="/CreateProduct"
             className="text-gray-700 hover:text-blue-500 transition font-medium"
           >
             Dodaj Produkt
