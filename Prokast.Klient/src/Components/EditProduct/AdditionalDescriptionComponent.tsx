@@ -1,5 +1,10 @@
+<<<<<<<< HEAD:Prokast.Klient/src/Components/EditProduct/AdditionalDescriptionComponent.tsx
 import React, { useEffect, useState } from "react";
 import { AdditionalField } from "../../models/AdditionalField";
+========
+import { useEffect, useState } from "react";
+import { PriceList } from "../../models/PriceList";
+>>>>>>>> origin/master:Prokast.Klient/src/Components/EditProduct/PriceListComponent.tsx
 import Cookies from "js-cookie";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -97,10 +102,19 @@ const AdditionalDescriptionComponent = ({
   useEffect(() => {
     if (isAddOpen) {
       reset({
+<<<<<<<< HEAD:Prokast.Klient/src/Components/EditProduct/AdditionalDescriptionComponent.tsx
       id: 0,
       title: "",
       value: "",
       regionID: 0
+========
+        id: 0,
+        name: "",
+        regionID: 1,
+        netto: 0,
+        vat: 23,
+        brutto: 0,
+>>>>>>>> origin/master:Prokast.Klient/src/Components/EditProduct/PriceListComponent.tsx
       });
     }
   }, [isAddOpen, reset]);
@@ -117,6 +131,7 @@ const AdditionalDescriptionComponent = ({
 
   return (
     <div className="mt-4 p-4 border rounded-xl bg-white/70 shadow-md w-full">
+<<<<<<<< HEAD:Prokast.Klient/src/Components/EditProduct/AdditionalDescriptionComponent.tsx
       <button
         type="button"
         onClick={() => setIsAddOpen(true)}
@@ -127,10 +142,24 @@ const AdditionalDescriptionComponent = ({
                     transition-all duration-300
                     overflow-hidden
                     hover:bg-blue-700"
+========
+
+      <button
+        type="button"
+        onClick={() => setIsAddOpen(true)}
+        className="group flex items-center justify-center
+                    bg-blue-600 text-white rounded-full
+                    h-10 w-10
+                    hover:w-40
+                    transition-all duration-300
+                    overflow-hidden
+                    hover:bg-blue-700"
+>>>>>>>> origin/master:Prokast.Klient/src/Components/EditProduct/PriceListComponent.tsx
       >
         <FaPlus className="w-5 h-5 flex-shrink-0" />
         <span
           className="
+<<<<<<<< HEAD:Prokast.Klient/src/Components/EditProduct/AdditionalDescriptionComponent.tsx
                     whitespace-nowrap
                     opacity-0 max-w-0
                     group-hover:opacity-100
@@ -141,11 +170,24 @@ const AdditionalDescriptionComponent = ({
         Dodaj opis
         </span>
       </button>
+========
+            whitespace-nowrap
+            opacity-0 max-w-0
+            group-hover:opacity-100
+            group-hover:max-w-[200px]
+            group-hover:ml-2
+            transition-all duration-300"
+        >
+          Dodaj cenę
+        </span>
+      </button>
+
+>>>>>>>> origin/master:Prokast.Klient/src/Components/EditProduct/PriceListComponent.tsx
       <table className="w-full mb-4">
         <thead>
           <tr>
-            <th className="text-left p-2 border-b">Nazwa ceny</th>
-            <th className="text-left p-2 border-b">Cena brutto</th>
+            <th className="text-left p-2 border-b">Nazwa opisu</th>
+            <th className="text-left p-2 border-b">Opis</th>
             <th className="text-left p-2 border-b">Akcje</th>
           </tr>
         </thead>
@@ -179,7 +221,10 @@ const AdditionalDescriptionComponent = ({
           ))}
         </tbody>
       </table>
+<<<<<<<< HEAD:Prokast.Klient/src/Components/EditProduct/AdditionalDescriptionComponent.tsx
       
+========
+>>>>>>>> origin/master:Prokast.Klient/src/Components/EditProduct/PriceListComponent.tsx
 
       {/*Add Description Modal */}
       {isAddOpen && (
@@ -514,4 +559,8 @@ const AdditionalDescriptionComponent = ({
   );
 };
 
+<<<<<<<< HEAD:Prokast.Klient/src/Components/EditProduct/AdditionalDescriptionComponent.tsx
 export default AdditionalDescriptionComponent;
+========
+export default PriceListComponent;
+>>>>>>>> origin/master:Prokast.Klient/src/Components/EditProduct/PriceListComponent.tsx

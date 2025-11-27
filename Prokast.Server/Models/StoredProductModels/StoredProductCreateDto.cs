@@ -4,8 +4,8 @@ namespace Prokast.Server.Models.StoredProductModels
 {
     public class StoredProductCreateDto
     {
-        //[Required]
-        //public int WarehouseID { get; set; }
+        [Required]
+        public int ProductID { get; set; }
         [Required]
         public int Quantity { get; set; }
         [Required]

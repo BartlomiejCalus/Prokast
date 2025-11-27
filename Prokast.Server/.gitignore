@@ -402,3 +402,4 @@ bin/
 obj/
 obj/Debug/
 Notatki.txt
+docker-compose.yml

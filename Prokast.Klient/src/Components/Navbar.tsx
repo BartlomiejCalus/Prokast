@@ -10,11 +10,12 @@ const Navbar: React.FC = () => {
       <ul className="flex space-x-4">
         <li>
           <Link
-            to="/RegisterForm"
+            to="/dashboard"
             className="text-gray-700 hover:text-blue-500 transition font-medium"
           >
-            Rejestracja
+            Strona główna
           </Link>
+          
         </li>
         <li>
           <Link
@@ -26,10 +27,46 @@ const Navbar: React.FC = () => {
         </li>
         <li>
           <Link
-            to="/addProducts"
+            to="/CreateProduct"
             className="text-gray-700 hover:text-blue-500 transition font-medium"
           >
             Dodaj Produkt
+          </Link>
+          
+        </li>
+        <li>
+          <Link
+            to="/ProductsList"
+            className="text-gray-700 hover:text-blue-500 transition font-medium"
+          >
+            Lista Produktów
+          </Link>
+          
+        </li>
+        <li>
+          <Link
+            to="/CreateEmployee"
+            className="text-gray-700 hover:text-blue-500 transition font-medium"
+          >
+            Dodaj Pracownika
+          </Link>
+          
+        </li>
+        <li>
+          <Link
+            to="/EditParams"
+            className="text-gray-700 hover:text-blue-500 transition font-medium"
+          >
+            Edycja Parametrów
+          </Link>
+          
+        </li>
+        <li>
+          <Link
+            to="/PriceList"
+            className="text-gray-700 hover:text-blue-500 transition font-medium"
+          >
+            Cennik
           </Link>
           
         </li>

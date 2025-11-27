@@ -26,16 +26,16 @@ namespace Prokast.Server.Controllers
         }
 
         #region Create
-        [HttpPost]
+        [HttpPost("{warehouseID}")]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> CreateWarehouse([FromBody] StoredProductCreateMultipleDto storedProducts, [FromQuery] int warehouseID, [FromQuery] int productID)
+        public ActionResult<Response> CreateWarehouse([FromBody] StoredProductCreateDto storedProducts, [FromRoute] int warehouseID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
             try
             {
-                var result = _storedProductService.CreateStoredProduct(storedProducts, warehouseID, clientIdFromToken, productID);
+                var result = _storedProductService.CreateStoredProduct(warehouseID, clientIdFromToken, storedProducts);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Created();
             }
@@ -207,6 +207,31 @@ namespace Prokast.Server.Controllers
             try
             {
                 var result = _storedProductService.EditMultipleStoredProductMinQuantity(clientIdFromToken, listToEdit);
+                if (result is ErrorResponse) return BadRequest(result);
+
+                if (result == null) return NotFound(result);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("storedproducts")]
+        [ProducesResponseType(typeof(StoredProductEditResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public ActionResult<Response> EditStoredProduct([FromBody] StoredProductCreateDto storedProducts)
+        {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Błędne dane");
+            }
+            try
+            {
+                var result = _storedProductService.EditStoredProduct(clientIdFromToken, storedProducts);
                 if (result is ErrorResponse) return BadRequest(result);
 
                 if (result == null) return NotFound(result);

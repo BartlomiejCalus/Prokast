@@ -25,7 +25,7 @@ namespace Prokast.Server.Services
         }
 
         #region Create
-        public Response CreateCustomParam([FromBody] CustomParamsDto customParamsDto, int clientID, int regionID, int productID) 
+        public Response CreateCustomParam([FromBody] CustomParamsDto customParamsDto, int clientID, int productID) 
         {
             if (customParamsDto == null)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
@@ -39,7 +39,7 @@ namespace Prokast.Server.Services
                 Name = customParamsDto.Name.ToString(),
                 Type = customParamsDto.Type.ToString(),
                 Value = customParamsDto.Value.ToString(),
-                RegionID = regionID,
+                RegionID = customParamsDto.RegionID,
                 Product = product
             };
             

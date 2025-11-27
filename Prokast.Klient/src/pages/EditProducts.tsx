@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import jwtDecode from "jwt-decode";
 import { ProductModel } from "../models/Product";
-import AdditionalDescriptionComponent from "../Components/EditProduct/AdditionalDescriptionComponent";
+import PriceListComponent from "../Components/EditProduct/PriceListComponent";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -61,13 +61,13 @@ const EditProducts: React.FC = () => {
 
     const renderComponent = () => {
     if (displayedList == 1) return <AdditionalDescriptionComponent data={product.additionalDescriptions} productId={id} />;
-    else if (displayedList == 2)return <></>;
-    else if (displayedList == 3)return <></>;
-    else if (displayedList == 4)return <></>;
-    else if (displayedList == 5)return <></>;
+    else if (displayedList == 2)return <AdditionalNameComponent data={product.additionalNames} productId={id} />;
+    else if (displayedList == 3) return <PriceListComponent data={product.priceList} productId={id} />
+    else if (displayedList == 4) return <ParametersComponent data={product.customParams} productId={id} />;
+    else if (displayedList == 5) return <PhotoComponent data={product.photos} productId={id} />;
 
     return null;
-    };
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -196,65 +196,12 @@ const EditProducts: React.FC = () => {
             className="w-full p-2 border rounded-xl shadow-md"
           />
 
-          <div className="flex flex-row mt-4 gap-4">
-            <div className="flex flex-col gap-3 border-rounded p-4 bg-white/70 shadow-md">
-              <h3 className="flex-1 font-semibold mt-4">Opisy</h3>
-              <button
-                type="button"
-                onClick={() => setDisplayedList(1)}
-                className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 p-2 rounded-xl transition">
-                Wyświetl
-              </button>
-            </div>
-
-            <div className="flex flex-col gap-3 border-rounded p-4 bg-white/70 shadow-md">
-              <h3 className="flex-1 font-semibold mt-4">Nazwy</h3>
-              <button
-                type="button"
-                onClick={() => setDisplayedList(2)}
-                className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 p-2 rounded-xl transition">
-                Wyświetl
-              </button>
-            </div>
-
-            <div className="flex flex-col gap-3 border-rounded p-4 bg-white/70 shadow-md">
-              <h3 className="flex-1 font-semibold mt-4">Cennik</h3>
-              <button
-                type="button"
-                onClick={() => setDisplayedList(3)}
-                className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 p-2 rounded-xl transition">
-                Wyświetl
-              </button>
-            </div>
-
-            <div className="flex flex-col gap-3 border-rounded p-4 bg-white/70 shadow-md">
-              <h3 className="flex-1 font-semibold mt-4">Parametry</h3>
-              <button
-                type="button"
-                onClick={() => setDisplayedList(4)}
-                className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 p-2 rounded-xl transition">
-                Wyświetl
-              </button>
-
-            </div>
-              <div className="flex flex-col gap-3 border-rounded p-4 bg-white/70 shadow-md">
-              <h3 className="flex-1 font-semibold mt-4">Parametry słownikowe</h3>
-              <button
-                type="button"
-                onClick={() => setDisplayedList(5)}
-                className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 p-2 rounded-xl transition">
-                Wyświetl
-              </button>
-            </div>
-          </div>
-
-          {renderComponent()}
-
           <div className="flex gap-3 mt-6">
             <button
               type="button"
               onClick={handleCancel}
-              className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 p-2 rounded-xl transition">
+              className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 p-2 rounded-xl transition"
+            >
               Anuluj
             </button>
             <button
@@ -265,6 +212,65 @@ const EditProducts: React.FC = () => {
               {saving ? "Zapisywanie..." : "Zapisz zmiany"}
             </button>
           </div>
+
+          <div className="flex flex-row mt-4 gap-4">
+            <div className="flex flex-col gap-3 border-rounded p-4 bg-white/70 shadow-md">
+              <h3 className="flex-1 font-semibold mt-4">Opisy</h3>
+              <button
+                type="button"
+                onClick={() => setDisplayedList(1)}
+                className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 p-2 rounded-xl transition"
+              >
+                Wyświetl
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-3 border-rounded p-4 bg-white/70 shadow-md">
+              <h3 className="flex-1 font-semibold mt-4">Nazwy</h3>
+              <button
+                type="button"
+                onClick={() => setDisplayedList(2)}
+                className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 p-2 rounded-xl transition"
+              >
+                Wyświetl
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-3 border-rounded p-4 bg-white/70 shadow-md">
+              <h3 className="flex-1 font-semibold mt-4">Cennik</h3>
+              <button
+                type="button"
+                onClick={() => setDisplayedList(3)}
+                className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 p-2 rounded-xl transition"
+              >
+                Wyświetl
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-3 border-rounded p-4 bg-white/70 shadow-md">
+              <h3 className="flex-1 font-semibold mt-4">Parametry</h3>
+              <button
+                type="button"
+                onClick={() => setDisplayedList(4)}
+                className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 p-2 rounded-xl transition"
+              >
+                Wyświetl
+              </button>
+            </div>
+            <div className="flex flex-col gap-3 border-rounded p-4 bg-white/70 shadow-md">
+              <h3 className="flex-1 font-semibold mt-4">
+                Zdjęcia
+              </h3>
+              <button
+                type="button"
+                onClick={() => setDisplayedList(5)}
+                className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 p-2 rounded-xl transition"
+              >
+                Wyświetl
+              </button>
+            </div>
+          </div>
+          {renderComponent()}
         </form>
       </main>
     </div>

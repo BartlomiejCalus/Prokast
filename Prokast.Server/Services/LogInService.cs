@@ -63,8 +63,8 @@ namespace Prokast.Server.Services
             var logins = _dbContext.Accounts.Where(x => x.ClientID == clientID).ToList();
             if (logins.Count() == 0)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Klient nie ma parametrów" };
-            
-            return new LogInGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = logins };
+
+            return new LogInGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = [.. logins.Select(x => new AccountGetDto(x))] };
 
         }
         #endregion
@@ -113,7 +113,7 @@ namespace Prokast.Server.Services
         /// <param name="accountCreate"></param>
         /// <param name="clientID"></param>
         /// <returns></returns>
-        public Response CreateAccount(AccountCreateDto accountCreate, int clientID)
+        public Response CreateAccount(AccountCreateDto accountCreate, int clientID, string mail)
         {
             const string litery = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
@@ -138,16 +138,12 @@ namespace Prokast.Server.Services
             Console.WriteLine(login);
             Console.WriteLine(password.ToString());
 
-            var role = _dbContext.Roles.FirstOrDefault(x => x.ID == accountCreate.RoleID);
-            if (role == null)
-                return new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Błąd przy przypisaniu roli" };
-
             var newAccount = new Account
             {
                 Login = login,
                 Password = getHashed(password.ToString()),
                 WarehouseID = accountCreate.WarehouseID,
-                RoleID = accountCreate.RoleID,
+                RoleID = accountCreate.RoleId,
                 FirstName = accountCreate.FirstName,
                 LastName = accountCreate.LastName,
                 ClientID = clientID
@@ -164,12 +160,12 @@ namespace Prokast.Server.Services
             var creds = new AccountCredentials()
             {
                 Login = login,
-                Password = getHashed(password.ToString()),
+                Password = password.ToString(),
             };
 
             var message = new EmailMessage
             {
-                To = [accountCreate.Email],
+                To = [mail],
                 Subject = "Dane Logowania",
                 Body = $"Login: {login}\n Hasło: {password}"
             };
@@ -208,11 +204,17 @@ namespace Prokast.Server.Services
         public Response EditAccount(AccountEditDto accountEdit, int clientID)
         {
             
-            var account = _dbContext.Accounts.FirstOrDefault(x => x.ID == clientID && x.Login == accountEdit.Login);
+            var account = _dbContext.Accounts.FirstOrDefault(x => x.ID == accountEdit.Id);
             if (account == null)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
+
+            if (account.ClientID != clientID)
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak uprawnień do konta" };
+
             account.WarehouseID = accountEdit.WarehouseID;
-            account.Role = accountEdit.Role;
+            account.RoleID = accountEdit.RoleId;
+            account.FirstName = accountEdit.FirstName;
+            account.LastName = accountEdit.LastName;
             _dbContext.SaveChanges();
 
             return new AccountEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = accountEdit };
@@ -251,7 +253,7 @@ namespace Prokast.Server.Services
         #endregion
         public Response GetAllRoles(int clientID) 
         {
-            var roleList = _dbContext.Roles.ToList();
+            var roleList = _dbContext.Roles.Where(x => x.RoleName != "Master" && x.RoleName != "HeadAdmin").ToList();
             if (roleList.Count() == 0)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma ról!" };
 

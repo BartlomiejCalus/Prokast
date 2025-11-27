@@ -14,7 +14,7 @@ namespace Prokast.Server.Controllers
 {
     [Authorize(Roles = "1,2,3,5")]
     [Route("api/params")]
-    public class ParamsController: ControllerBase
+    public class ParamsController : ControllerBase
     {
         private readonly IParamsService _paramsService;
 
@@ -33,16 +33,16 @@ namespace Prokast.Server.Controllers
         }
 
         #region Create
-        [HttpPost]
+        [HttpPost("{productID}")]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> CreateCustonParam([FromBody] CustomParamsDto customParamsDto, [FromQuery] int regionID, [FromQuery] int productID)
+        public ActionResult<Response> CreateCustonParam([FromBody] CustomParamsDto customParamsDto, [FromRoute] int productID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
             try 
             {
-                var result = _paramsService.CreateCustomParam(customParamsDto, clientIdFromToken, regionID, productID);
+                var result = _paramsService.CreateCustomParam(customParamsDto, clientIdFromToken, productID);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Created();
             } catch (Exception ex) 
@@ -112,12 +112,12 @@ namespace Prokast.Server.Controllers
         }
         
 
-        [HttpGet("Product")]
+        [HttpGet("product/{productID}")]
         [EndpointSummary("Get all custom params in Product")]
         [ProducesResponseType(typeof(AdditionalDescriptionGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         [EndpointDescription("A GET operation. Endpoint returns a list of custom parameters that are components in the same product.")]
-        public ActionResult<Response> GetAllParamsInProduct([FromQuery] int productID)
+        public ActionResult<Response> GetAllParamsInProduct([FromRoute] int productID)
         {
             var clientIdFromToken = GetClientIdFromToken();
 

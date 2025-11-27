@@ -38,13 +38,14 @@ namespace Prokast.Server.Services
             if (product == null)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego produktu!" };
 
-            if (!photo.ContentType.Contains("png") && !photo.ContentType.Contains("jpg"))
-                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nieobsługiwany typ pliku!" };
+            var splitType = photo.ContentType.Split('/');
 
-            if (photo.ContentType.Contains("png")) { photo.Name = photo.Name + $"_CID{clientID}_PID{photo.ProductId}.png"; }
-            else if (photo.ContentType.Contains("jpg")) { photo.Name = photo.Name + $"_CID{clientID}_PID{photo.ProductId}.jpg"; }
+            if (splitType.Length > 1)
+                photo.ContentType = splitType[^1];
 
-            var photoList = _dbContext.Photos.Where(x => x.Product.ClientID == clientID && x.Name== photo.Name).ToList();            
+            photo.Name = photo.Name + $"_CID{clientID}_PID{productID}.{photo.ContentType}";
+
+            var photoList = _dbContext.Photos.Where(x => x.Product.ClientID == clientID && x.Name == photo.Name).ToList();            
             if (photoList.Count != 0)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Zdjęcie o takiej nazwie już istnieje!" };
             
@@ -93,7 +94,7 @@ namespace Prokast.Server.Services
 
         public Response GetAllPhotosInProduct(int clientID, int productID)
         {
-            var phohoList = _dbContext.Products.FirstOrDefault(x => x.ClientID == clientID && x.ID == productID).Photos;
+            var phohoList = _dbContext.Photos.Where(x => x.Product.ID == productID).ToList();
 
             if (phohoList.Count == 0)
                 return new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Nie ma takiego zdjecia" };
