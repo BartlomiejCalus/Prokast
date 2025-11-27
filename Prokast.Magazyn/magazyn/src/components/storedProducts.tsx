@@ -60,8 +60,14 @@ export default function StoredProductsTable({ data, onDataChange }: StoredProduc
             >
               Dostawa
             </button>
-
             <button
+              className="border-2 border-blue-600 text-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-blue-600 hover:text-white transition"
+              onClick={() => openDelivery(row.id)}
+            >
+              Sprzedaż
+            </button>
+
+            {/* <button
               className="border-2 border-red-600 text-red-600 px-4 py-2 rounded-lg font-semibold hover:bg-red-600 hover:text-white transition"
               onClick={() => {
                 // przykładowe usuwanie produktu
@@ -71,7 +77,7 @@ export default function StoredProductsTable({ data, onDataChange }: StoredProduc
               }}
             >
               Usuń
-            </button>
+            </button> */}
           </div>
         </div>
       ))}

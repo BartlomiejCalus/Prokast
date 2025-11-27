@@ -25,10 +25,10 @@ export default function DeliveryModal({ open, onClose, onSaved, productId }: Del
   };
 
   const handleSave = async () => {
-    if (amount <= 0) {
-      alert("Podaj poprawną ilość (większą niż 0).");
-      return;
-    }
+    // if (amount <= 0) {
+    //   alert("Podaj poprawną ilość (większą niż 0).");
+    //   return;
+    // }
 
     try {
       await axios.put(
@@ -36,6 +36,32 @@ export default function DeliveryModal({ open, onClose, onSaved, productId }: Del
         {},
         {
           params: { quantity: amount },
+          headers: {
+            Authorization: getAuthHeader(),
+            Accept: "*/*"
+          }
+        }
+      );
+
+      onSaved(); // 🔥 ODŚWIEŻ TABELĘ + zamknij modal z rodzica
+
+    } catch (err) {
+      console.error("Błąd UPDATE:", err);
+      alert("Błąd podczas aktualizacji ilości.");
+    }
+  };
+  const handleSaveSale = async () => {
+     if (amount <= 0) {
+      alert("Podaj poprawną ilość (większą niż 0).");
+       return;
+     }
+
+    try {
+      await axios.put(
+        `/api/quantityEdit/${productId}`,
+        {},
+        {
+          params: { quantity: -1*amount },
           headers: {
             Authorization: getAuthHeader(),
             Accept: "*/*"
@@ -77,7 +103,7 @@ export default function DeliveryModal({ open, onClose, onSaved, productId }: Del
           </button>
 
           <button
-            onClick={handleSave}
+            onClick={handleSaveSale}
             className="px-4 py-2 rounded-lg border-2 border-blue-600 text-blue-600 font-semibold hover:bg-blue-600 hover:text-white transition"
           >
             Zapisz
