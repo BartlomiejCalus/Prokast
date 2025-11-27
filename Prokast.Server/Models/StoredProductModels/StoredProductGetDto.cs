@@ -17,5 +17,7 @@ namespace Prokast.Server.Models.StoredProductModels
         public DateTime LastUpdated { get; set; }
         [Required]
         public string ProductName { get; set; }
+        [Required]
+        public string Sku { get; set; }
     }
 }

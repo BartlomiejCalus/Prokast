@@ -12,6 +12,8 @@ import AddProducts from './pages/AddProducts';
 import EditProducts from './pages/EditProducts';
 import ProtectedRoute from './Components/ProtectedRoute';
 import UsersList from './pages/UsersList';
+import WarehouseEdit from './pages/EditWarehouse';
+import AddWarehouse from './pages/AddWarehouse';
 
 function App() {
   return (
@@ -101,6 +103,24 @@ function App() {
           element={
             <ProtectedRoute>
               <UsersList />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/EditWarehouse/:id"
+          element={
+            <ProtectedRoute>
+              <WarehouseEdit />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/AddWarehouse"
+          element={
+            <ProtectedRoute>
+              <AddWarehouse />
             </ProtectedRoute>
           }
         />

@@ -4,6 +4,7 @@ using Prokast.Server.Entities;
 using Prokast.Server.Models;
 using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models.ResponseModels.WarehouseResponseModels;
+using Prokast.Server.Models.StoredProductModels;
 using Prokast.Server.Models.WarehouseModels;
 using Prokast.Server.Services.Interfaces;
 using System.Web.Http;
@@ -66,8 +67,37 @@ namespace Prokast.Server.Services
             if (warehouse == null)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak magazynów!" };
 
-            return new WarehouseGetOneResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = warehouse };
+            var storedProducts = _dbContext.StoredProducts.Include(x => x.Product).Where(x => x.WarehouseID == warehouse.ID).ToList();
+
+            var storedProductsList = storedProducts.Select(sp => new StoredProductGetDto
+            {
+                ID = sp.ID,
+                ProductID = (int)sp.ProductID,
+                ProductName = sp.Product.Name,
+                Quantity = sp.Quantity,
+                MinQuantity = sp.MinQuantity,
+                Sku = sp.Product.SKU,
+                WarehouseID = sp.WarehouseID,
+                LastUpdated = sp.LastUpdated
+            }).ToList();
+
+            var result = new WarehouseGetAllData(warehouse, storedProductsList);
+
+            return new WarehouseGetOneResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = result };
         }
+
+        public Response GetProductsToAdd(int clientID, int ID)
+        {
+            var storedProds = _dbContext.StoredProducts.Where(x => x.WarehouseID == ID).Select(x => x.ProductID).ToList();
+
+            var productsToAdd = _dbContext.Products
+                .Where(x => x.ClientID == clientID && !storedProds.Contains(x.ID))
+                .Select(x => new WarehouseGetProdstToAddDto() { ID = x.ID, Sku = x.SKU})
+                .ToList();
+
+            return new ResponseWarehouseGetProdstToAdd() { ID = random.Next(1, 100000), ClientID = clientID, Model = productsToAdd };
+        }
+
         public Response GetWarehousesByName(int clientID, string name)
         {
             var warehouseList = _dbContext.Warehouses.Where(x => x.Name.Contains(name) && x.ClientID == clientID).ToList();
