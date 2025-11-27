@@ -4,4 +4,5 @@ export interface CustomParam {
   type: string;
   value: string;
   regionID: number;
+  localId?: number;
 }

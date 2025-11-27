@@ -5,4 +5,5 @@ export interface Price {
   netto: number;
   vat: number;
   brutto: number;
+  localId?: number;
 }

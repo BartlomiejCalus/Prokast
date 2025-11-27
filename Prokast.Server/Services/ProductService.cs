@@ -179,7 +179,7 @@ namespace Prokast.Server.Services
             return response;
         }*/
 
-        public Response CreateProduct(ProductCreateDto productCreateDto, int clientID, int regionID)
+        public Response CreateProduct(ProductCreateDto productCreateDto, int clientID)
         {
             if (productCreateDto == null)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };

@@ -14,6 +14,7 @@ import ProtectedRoute from './Components/ProtectedRoute';
 import UsersList from './pages/UsersList';
 import WarehouseEdit from './pages/EditWarehouse';
 import AddWarehouse from './pages/AddWarehouse';
+import CreateProduct from './pages/CreateProduct';
 
 function App() {
   return (
@@ -69,6 +70,14 @@ function App() {
           element={
             <ProtectedRoute>
               <PriceList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/CreateProduct"
+          element={
+            <ProtectedRoute>
+              <CreateProduct />
             </ProtectedRoute>
           }
         />

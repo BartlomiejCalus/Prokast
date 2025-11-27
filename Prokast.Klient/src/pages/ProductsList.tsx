@@ -3,8 +3,9 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import Navbar from '../Components/Navbar';
 import { useNavigate } from 'react-router-dom';
+import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 
-const API_URL = process.env.REACT_APP_API_URL; 
+const API_URL = process.env.REACT_APP_API_URL;
 
 interface Product {
   id: number;
@@ -24,7 +25,7 @@ const ProductList: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('Wszystko');
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>('Wszystko');
   const navigate = useNavigate();
-  
+
 
   const fetchProducts = async () => {
     try {
@@ -40,7 +41,7 @@ const ProductList: React.FC = () => {
       const nubmerOfIitemsOnListString = prompt("Podaj ilość produktów do wyświetlenia na liście:", "10");
       const nubmerOfIitemsOnList = nubmerOfIitemsOnListString ? parseInt(nubmerOfIitemsOnListString) : null;
 
-      
+
 
       const response = await axios.post(
         `${API_URL}/api/products/productsListFiltered`,
@@ -53,15 +54,15 @@ const ProductList: React.FC = () => {
             Authorization: `Bearer ${token}`,
             Accept: "application/json"
           }
-        ,
-          params:{
+          ,
+          params: {
             pageNumber: 1,
             itemsNumber: nubmerOfIitemsOnList ?? 10
 
           }
-        
+
         }
-        
+
       );
 
       const model = response.data?.model ?? response.data;
@@ -127,11 +128,13 @@ const ProductList: React.FC = () => {
       <Navbar />
 
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row mt-8 p-4 gap-6">
-        
+
         <aside className="w-full lg:w-1/4 bg-white/80 backdrop-blur-md shadow-lg rounded-2xl p-6 h-fit">
+
           <h2 className="text-xl font-bold text-gray-800 mb-4">Filtry</h2>
 
           <div className="mb-6">
+
             <label className="block text-gray-600 mb-2 font-semibold">Szukaj produktu</label>
             <input
               type="text"
@@ -150,10 +153,22 @@ const ProductList: React.FC = () => {
               Zastosuj filtry
             </button>
           </div>
+
         </aside>
 
         <main className="flex-1">
-          <h1 className="text-2xl font-bold text-gray-800 mb-6">Lista produktów</h1>
+
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-2xl font-bold text-gray-800">Lista produktów</h1>
+
+            <button
+              onClick={() => navigate("/CreateProduct")}
+              className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700 transition"
+            >
+              <FaPlus />
+              Dodaj produkt
+            </button>
+          </div>
 
           {filteredProducts.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -192,6 +207,7 @@ const ProductList: React.FC = () => {
                     </button>
 
                   </div>
+
                 </div>
               ))}
             </div>

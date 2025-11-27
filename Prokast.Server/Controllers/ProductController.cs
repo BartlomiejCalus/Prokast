@@ -27,13 +27,13 @@ namespace Prokast.Server.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> CreateProduct([FromBody] ProductCreateDto productCreateDto, [FromQuery] int regionID)
+        public ActionResult<Response> CreateProduct([FromBody] ProductCreateDto productCreateDto)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
             try
             {
-                var result = _productService.CreateProduct(productCreateDto, clientIdFromToken, regionID);
+                var result = _productService.CreateProduct(productCreateDto, clientIdFromToken);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Created();
             }
