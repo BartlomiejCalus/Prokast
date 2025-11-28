@@ -14,11 +14,13 @@ namespace Prokast.Server.Services.Interfaces
     {
         Response GetLogIns(int clientID);
         Response Log_In(LoginRequest loginRequest);
-        Response CreateAccount(AccountCreateDto accountCreate, int clientID, string mail);
+        Response Log_In_Warehouse([FromBody] LoginRequest loginRequest);
+        Response CreateAccount(AccountCreateDto accountCreate, int clientID, int roleId);
         Response EditAccount(AccountEditDto accountEdit, int clientID);
         Response EditPassword(AccountEditPasswordDto editPasswordDto, int clientID);
         Response DeleteAccount(int clientID, int ID);
         Response GetAllRoles(int clientID);
         Response GetRole(int clientID, int roleID);
+        Response EditRole(int clientID, int accountID, int newRoleID, int userRoleID);
     }
 }
