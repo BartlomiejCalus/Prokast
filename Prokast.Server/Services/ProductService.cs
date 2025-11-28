@@ -292,7 +292,7 @@ namespace Prokast.Server.Services
 
             if (products.Count() == 0)
             {
-                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak produktów!" };    
+                return new Response() { ID = random.Next(1, 100000), ClientID = clientID };
             }
 
             var productList = result.Items.Select(x => new ProductGetMin
