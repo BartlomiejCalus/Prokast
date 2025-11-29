@@ -125,25 +125,29 @@ namespace Prokast.Server.Services
             return new WarehouseGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = warehouseList };
         }
 
-        public Response GetWarehousesMinimalData(int clientID)
+        public Response GetWarehousesMinimalData(int clientID, int pageNumber, int pageSize)
         {
-            var warehouses = _dbContext.Warehouses.Where(x => x.ClientID == clientID).ToList();
-            if (warehouses.Count == 0)
-                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak magazynów!" };
+            var warehouses = _dbContext.Warehouses.Where(x => x.ClientID == clientID);
+            
 
+            var paginatedResult = PaginationExtension.Paginate(warehouses, pageNumber, pageSize);
+            if (paginatedResult == null)
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak magazynów!" };
             var warehousesList = new List<WarehouseGetMinimal>();
 
-            foreach(var warehouse in warehouses)
+            foreach(var warehouse in paginatedResult.Items)
             {
                 var warehouseToList = new WarehouseGetMinimal()
                 {
                     ID = warehouse.ID,
-                    Name = warehouse.Name
+                    Name = warehouse.Name,
+                    City = warehouse.City,
+                    Country = warehouse.Country,
                 };
                 warehousesList.Add(warehouseToList);
             }
 
-            return new WarehouseGetMinimalResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = warehousesList };
+            return new WarehouseGetMinimalResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = warehousesList, TotalItems = paginatedResult.TotalItems };
         }
         #endregion
 
