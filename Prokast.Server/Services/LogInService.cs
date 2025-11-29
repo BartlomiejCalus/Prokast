@@ -20,6 +20,9 @@ using Prokast.Server.Models.JWT;
 using Prokast.Server.Models.ClientModels;
 using Prokast.Server.Models.ResponseModels.CustomParamsResponseModels;
 using Prokast.Server.Models.ResponseModels.RoleResponseModels;
+using static System.Net.Mime.MediaTypeNames;
+using Microsoft.Identity.Client;
+using Azure.Storage.Blobs.Models;
 
 
 
@@ -180,7 +183,8 @@ namespace Prokast.Server.Services
             {
                 new Claim(ClaimTypes.Name, user.Login),
                 new Claim(ClaimTypes.NameIdentifier, user.ClientID.ToString()),
-                new Claim(ClaimTypes.Role, user.RoleID.ToString())
+                new Claim(ClaimTypes.Role, user.RoleID.ToString()),
+                new Claim(ClaimTypes.UserData, user.ID.ToString())
             };
 
             var key = new SymmetricSecurityKey(
@@ -238,6 +242,12 @@ namespace Prokast.Server.Services
         #region Delete
         public Response DeleteAccount(int clientID, int ID)
         {
+            var konto = _dbContext.Accounts.Where(x => x.ClientID == clientID && x.ID == ID).FirstOrDefault();
+            var numberOfHeadAdmins = _dbContext.Accounts.Where(x => x.ClientID == clientID && x.RoleID == 2).ToList().Count();
+
+            if (numberOfHeadAdmins == 1 && konto.RoleID == 2)
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie możesz usunąć tego konta, ponieważ musi być co najmniej 1 HeadAdmin" };
+
             var account = _dbContext.Accounts.FirstOrDefault(x => x.ID == ID);
             if (account == null)
             {
@@ -266,6 +276,30 @@ namespace Prokast.Server.Services
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiej roli!" };
             
             return new RoleGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = role };
+        }
+
+        public Response EditRole(int clientID, int accountID, int newRoleID, int userRoleID) 
+        {
+            var numberOfHeadAdmins = _dbContext.Accounts.Where(x => x.ClientID == clientID && x.RoleID == 2).ToList().Count();
+            var konto = _dbContext.Accounts.Where(x => x.ClientID == clientID && x.ID == accountID).FirstOrDefault();
+            
+            if (numberOfHeadAdmins == 1 && konto.RoleID == 2)
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie możesz zmienić roli tego konta, ponieważ musi być co najmniej 1 HeadAdmin!" };
+           
+            if(userRoleID == 3 && (konto.RoleID == 2 || konto.RoleID == 3))
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie masz uprawnień do zmiany tych ról!" };
+            
+            if(userRoleID == 3 && (newRoleID == 2 || newRoleID == 3))
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie masz uprawnień do nadania tych ról!" };
+
+            if(konto == null)
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego konta!" };
+            
+            konto.RoleID = newRoleID;
+            _dbContext.SaveChanges();
+
+            return new RoleEditResponse() { ID = random.Next(1, 100000), ClientID = clientID, Name = konto.FirstName, Surname = konto.LastName, Role = konto.RoleID };
+            
         }
     }
 }

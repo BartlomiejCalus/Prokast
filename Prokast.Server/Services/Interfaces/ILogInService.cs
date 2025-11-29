@@ -20,5 +20,6 @@ namespace Prokast.Server.Services.Interfaces
         Response DeleteAccount(int clientID, int ID);
         Response GetAllRoles(int clientID);
         Response GetRole(int clientID, int roleID);
+        Response EditRole(int clientID, int accountID, int newRoleID, int userRoleID);
     }
 }
