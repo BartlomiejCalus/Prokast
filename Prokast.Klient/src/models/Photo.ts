@@ -3,4 +3,5 @@ export interface Photo {
   name: string;
   value: string;
   contentType : string;
+  localId?: number;
 }

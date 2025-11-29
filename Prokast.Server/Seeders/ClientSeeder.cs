@@ -79,11 +79,13 @@ namespace Prokast.Server.Seeders
                             {
                                 Login = "albertkorniszon",
                                 Password = getHashed("albert"),
+                                RoleID = 2
                             },
                             new()
                             {
                                 Login = "ugauga444",
                                 Password = getHashed("ugaaa"),
+                                RoleID = 3
                             }
                         }
                     }

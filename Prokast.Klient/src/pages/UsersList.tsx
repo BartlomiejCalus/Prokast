@@ -539,7 +539,7 @@ const UsersList = () => {
             </div>
 
             {/* Dane do logowania */}
-            {!addedSuccessfully && (
+            {addedSuccessfully && (
               <div className="p-4 bg-green-100 border border-green-400 rounded">
                 <h3 className="text-lg font-semibold mb-2 text-green-800">
                   POPRAWNIE DODANO UŻYTKOWNIKA. <br/>
