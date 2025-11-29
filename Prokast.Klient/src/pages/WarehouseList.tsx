@@ -1,0 +1,260 @@
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import Navbar from '../Components/Navbar';
+import { useNavigate } from 'react-router-dom';
+import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
+
+const API_URL = process.env.REACT_APP_API_URL;
+
+interface Warehouse {
+    id: number;
+    name: string;
+    city: string;
+    country: string;
+}
+
+const ProductList: React.FC = () => {
+    const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [selectedCategory, setSelectedCategory] = useState<string>('Wszystko');
+    const [selectedPriceRange, setSelectedPriceRange] = useState<string>('Wszystko');
+    const navigate = useNavigate();
+
+
+    const fetchWarehouses = async () => {
+        try {
+            setLoading(true);
+            const token = Cookies.get("token");
+
+            if (!token) {
+                setError("Brak tokenu autoryzacyjnego.");
+                setLoading(false);
+                return;
+            }
+
+            const response = await axios.get(
+                `${API_URL}/api/warehouses/Minimal`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        Accept: "application/json"
+                    }
+                    ,
+                    params: {
+                        pageNumber: currentPage,
+                        pageSize: itemsPerPage
+
+                    }
+
+                }
+
+            );
+
+            const model = response.data?.model ?? response.data;
+            const totalItems = response.data?.totalItems ?? 0;
+            console.log("MODEL:", response.data);
+            setTotalPages(Math.ceil(totalItems / itemsPerPage));
+            if (!model || model.length === 0) {
+                setError("Brak magazynów dla podanego magazynu.");
+                return;
+            }
+
+            setWarehouses(
+                model.map((item: any) => ({
+                    id: item.id,
+                    name: item.name,
+                    city: item.city,
+                    country: item.country
+                }))
+            );
+
+            setError("");
+        } catch (err: any) {
+            // console.error("Błąd API:", err.response?.data ?? err);
+            // setError("Nie udało się pobrać listy magazynów.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchWarehouses();
+    }, [currentPage, itemsPerPage]);
+
+    const filteredWarehouses = warehouses.filter((p) =>
+        p.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    // if (loading) {
+    //   return (
+    //     <div className="min-h-screen flex items-center justify-center text-gray-700 text-lg">
+    //       Wczytywanie magazynów...
+    //     </div>
+    //   );
+    // }
+
+    if (error) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center text-center text-red-600">
+                <p>{error}</p>
+                <button
+                    onClick={fetchWarehouses}
+                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
+                >
+                    Spróbuj ponownie
+                </button>
+            </div>
+        );
+    }
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-200">
+            <Navbar />
+
+            <div className="max-w-7xl mx-auto flex flex-col lg:flex-row mt-8 p-4 gap-6">
+
+                <aside className="w-full lg:w-1/4 bg-white/80 backdrop-blur-md shadow-lg rounded-2xl p-6 h-fit">
+
+                    <h2 className="text-xl font-bold text-gray-800 mb-4">Filtry</h2>
+
+                    <div className="mb-6">
+
+                        <label className="block text-gray-600 mb-2 font-semibold">Szukaj magazynu</label>
+                        <input
+                            type="text"
+                            placeholder="np. Magazyn"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full p-3 border rounded-xl shadow-sm focus:ring focus:ring-blue-300"
+                        />
+                    </div>
+                    <div className="mb-6">
+                        <label className="block text-gray-600 mb-2 font-semibold">
+                            Ilość magazynów na stronę
+                        </label>
+
+                        <select
+                            value={itemsPerPage}
+                            onChange={(e) => {
+                                setItemsPerPage(Number(e.target.value));
+                                setCurrentPage(1);
+                            }}
+                            className="w-full p-3 border rounded-xl shadow-sm focus:ring focus:ring-blue-300"
+                        >
+                            <option value={1}>1</option>
+                            <option value={2}>2</option>
+                            <option value={5}>5</option>
+                            <option value={10}>10</option>
+                            <option value={25}>25</option>
+                        </select>
+                    </div>
+
+                    <div className="mt-6">
+                        <button
+                            onClick={fetchWarehouses}
+                            className="w-full bg-blue-600 text-white font-semibold py-3 rounded-xl hover:bg-blue-700 transition"
+                        >
+                            Zastosuj filtry
+                        </button>
+                    </div>
+
+                </aside>
+
+                <main className="flex-1">
+
+                    <div className="flex items-center justify-between mb-6">
+                        <h1 className="text-2xl font-bold text-gray-800">Lista magazynów</h1>
+
+                        <button
+                            onClick={() => navigate("/AddWarehouse")}
+                            className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700 transition"
+                        >
+                            <FaPlus />
+                            Dodaj magazyn
+                        </button>
+                    </div>
+
+                    {filteredWarehouses.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {filteredWarehouses.map((warehouse) => (
+                                <div
+                                    key={warehouse.id}
+                                    className="bg-white/80 backdrop-blur-md shadow-lg rounded-2xl p-6 hover:shadow-xl transition"
+                                >
+
+                                    <h2 className="text-2xl font-bold text-gray-800 mb-2">{warehouse.name}</h2>
+
+                                    <div className="text-gray-600 mb-4">
+                                        <p> {warehouse.city}</p>
+                                        <p> {warehouse.country}</p>
+                                    </div>
+
+                                    <div className="flex gap-4 mt-6">
+                                        <button
+                                            className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition"
+                                        >
+                                            Usuń
+                                        </button>
+                                        <button
+                                            className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
+                                            onClick={() => {
+                                                //localStorage.setItem("editProduct", JSON.stringify(warehouse));
+                                                navigate(`/EditWarehouses/${warehouse.id}`);
+                                            }}
+                                        >
+                                            Edytuj
+                                        </button>
+
+                                    </div>
+
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-gray-600 text-center mt-10">Brak magazynów do wyświetlenia.</p>
+                    )}
+                    <div className="flex justify-center mt-10 gap-2">
+
+                        <button
+                            disabled={currentPage === 1}
+                            onClick={() => setCurrentPage(currentPage - 1)}
+                            className="px-3 py-2 bg-gray-300 rounded disabled:opacity-50"
+                        >
+                            ←
+                        </button>
+
+                        {[...Array(totalPages)].map((_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => setCurrentPage(i + 1)}
+                                className={`px-3 py-2 rounded ${currentPage === i + 1
+                                    ? "bg-blue-600 text-white"
+                                    : "bg-gray-200"
+                                    }`}
+                            >
+                                {i + 1}
+                            </button>
+                        ))}
+
+                        <button
+                            disabled={currentPage === totalPages}
+                            onClick={() => setCurrentPage(currentPage + 1)}
+                            className="px-3 py-2 bg-gray-300 rounded disabled:opacity-50"
+                        >
+                            →
+                        </button>
+
+                    </div>
+                </main>
+            </div>
+        </div>
+    );
+};
+
+export default ProductList;
