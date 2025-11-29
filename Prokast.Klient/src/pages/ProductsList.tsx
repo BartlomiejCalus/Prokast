@@ -22,6 +22,9 @@ const ProductList: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [selectedCategory, setSelectedCategory] = useState<string>('Wszystko');
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>('Wszystko');
   const navigate = useNavigate();
@@ -38,11 +41,6 @@ const ProductList: React.FC = () => {
         return;
       }
 
-      const nubmerOfIitemsOnListString = prompt("Podaj ilość produktów do wyświetlenia na liście:", "10");
-      const nubmerOfIitemsOnList = nubmerOfIitemsOnListString ? parseInt(nubmerOfIitemsOnListString) : null;
-
-
-
       const response = await axios.post(
         `${API_URL}/api/products/productsListFiltered`,
         {
@@ -56,8 +54,8 @@ const ProductList: React.FC = () => {
           }
           ,
           params: {
-            pageNumber: 1,
-            itemsNumber: nubmerOfIitemsOnList ?? 10
+            pageNumber: currentPage,
+            itemsNumber: itemsPerPage
 
           }
 
@@ -66,7 +64,9 @@ const ProductList: React.FC = () => {
       );
 
       const model = response.data?.model ?? response.data;
-
+      const totalItems = response.data?.totalItems ?? 0;
+      console.log("MODEL:", response.data);
+      setTotalPages(Math.ceil(totalItems / itemsPerPage));
       if (!model || model.length === 0) {
         setError("Brak produktów dla podanego magazynu.");
         return;
@@ -86,8 +86,8 @@ const ProductList: React.FC = () => {
 
       setError("");
     } catch (err: any) {
-      console.error("Błąd API:", err.response?.data ?? err);
-      setError("Nie udało się pobrać listy produktów.");
+      // console.error("Błąd API:", err.response?.data ?? err);
+      // setError("Nie udało się pobrać listy produktów.");
     } finally {
       setLoading(false);
     }
@@ -95,19 +95,19 @@ const ProductList: React.FC = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [currentPage, itemsPerPage]);
 
   const filteredProducts = products.filter((p) =>
     p.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-gray-700 text-lg">
-        Wczytywanie produktów...
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="min-h-screen flex items-center justify-center text-gray-700 text-lg">
+  //       Wczytywanie produktów...
+  //     </div>
+  //   );
+  // }
 
   if (error) {
     return (
@@ -143,6 +143,26 @@ const ProductList: React.FC = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full p-3 border rounded-xl shadow-sm focus:ring focus:ring-blue-300"
             />
+          </div>
+          <div className="mb-6">
+            <label className="block text-gray-600 mb-2 font-semibold">
+              Ilość produktów na stronę
+            </label>
+
+            <select
+              value={itemsPerPage}
+              onChange={(e) => {
+                setItemsPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className="w-full p-3 border rounded-xl shadow-sm focus:ring focus:ring-blue-300"
+            >
+              <option value={1}>1</option>
+              <option value={2}>2</option>
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+            </select>
           </div>
 
           <div className="mt-6">
@@ -214,6 +234,38 @@ const ProductList: React.FC = () => {
           ) : (
             <p className="text-gray-600 text-center mt-10">Brak produktów do wyświetlenia.</p>
           )}
+          <div className="flex justify-center mt-10 gap-2">
+
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(currentPage - 1)}
+              className="px-3 py-2 bg-gray-300 rounded disabled:opacity-50"
+            >
+              ←
+            </button>
+
+            {[...Array(totalPages)].map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentPage(i + 1)}
+                className={`px-3 py-2 rounded ${currentPage === i + 1
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200"
+                  }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(currentPage + 1)}
+              className="px-3 py-2 bg-gray-300 rounded disabled:opacity-50"
+            >
+              →
+            </button>
+
+          </div>
         </main>
       </div>
     </div>

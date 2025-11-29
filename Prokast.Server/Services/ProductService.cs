@@ -292,7 +292,7 @@ namespace Prokast.Server.Services
 
             if (products.Count() == 0)
             {
-                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak produktów!" };    
+                return new Response() { ID = random.Next(1, 100000), ClientID = clientID };
             }
 
             var productList = result.Items.Select(x => new ProductGetMin
@@ -306,7 +306,8 @@ namespace Prokast.Server.Services
                 Description = x.Description
             }).ToList();
 
-            return new ProductGetMinResponse() { ID = random.Next(1, 100000), Model = productList };
+
+            return new ProductGetMinResponse() { ID = random.Next(1, 100000), Model = productList, TotalItems = result.TotalItems };
         }
 
             /*var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
