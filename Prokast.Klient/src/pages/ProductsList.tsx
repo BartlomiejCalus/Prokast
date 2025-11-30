@@ -25,12 +25,9 @@ const ProductList: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [selectedCategory, setSelectedCategory] = useState<string>('Wszystko');
-  const [selectedPriceRange, setSelectedPriceRange] = useState<string>('Wszystko');
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const navigate = useNavigate();
-
 
   const fetchProducts = async () => {
     try {
@@ -45,32 +42,27 @@ const ProductList: React.FC = () => {
 
       const response = await axios.post(
         `${API_URL}/api/products/productsListFiltered`,
-        {
-          name: "",
-          sku: ""
-        },
+        { name: "", sku: "" },
         {
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: "application/json"
-          }
-          ,
+          },
           params: {
             pageNumber: currentPage,
             itemsNumber: itemsPerPage
-
           }
-
         }
-
       );
 
       const model = response.data?.model ?? response.data;
       const totalItems = response.data?.totalItems ?? 0;
-      console.log("MODEL:", response.data);
+
       setTotalPages(Math.ceil(totalItems / itemsPerPage));
+
       if (!model || model.length === 0) {
         setError("Brak produktów dla podanego magazynu.");
+        setProducts([]);
         return;
       }
 
@@ -88,17 +80,17 @@ const ProductList: React.FC = () => {
 
       setError("");
     } catch (err: any) {
-      // console.error("Błąd API:", err.response?.data ?? err);
-      // setError("Nie udało się pobrać listy produktów.");
+      setError("Nie udało się pobrać listy produktów.");
     } finally {
       setLoading(false);
     }
   };
 
-  const openDeleteDialog = (warehouse: Product) => {
-    setProductToDelete(warehouse);
+  const openDeleteDialog = (product: Product) => {
+    setProductToDelete(product);
     setIsDeleteOpen(true);
   };
+
   const confirmDelete = async () => {
     if (!productToDelete) return;
 
@@ -111,19 +103,15 @@ const ProductList: React.FC = () => {
       }
 
       await axios.delete(`${API_URL}/api/products/${productToDelete.id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       setIsDeleteOpen(false);
       setProductToDelete(null);
-
       fetchProducts();
-
     } catch (err) {
-      console.error("Błąd podczas usuwania magazynu:", err);
-      alert("Nie udało się usunąć magazynu.");
+      console.error("Błąd podczas usuwania produktu:", err);
+      alert("Nie udało się usunąć produktu.");
     }
   };
 
@@ -135,27 +123,27 @@ const ProductList: React.FC = () => {
     p.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // if (loading) {
-  //   return (
-  //     <div className="min-h-screen flex items-center justify-center text-gray-700 text-lg">
-  //       Wczytywanie produktów...
-  //     </div>
-  //   );
-  // }
+  const getPageNumbers = (
+    current: number,
+    total: number,
+    visibleAround = 2
+  ) => {
+    const pages: (number | string)[] = [];
+    const start = Math.max(2, current - visibleAround);
+    const end = Math.min(total - 1, current + visibleAround);
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center text-center text-red-600">
-        <p>{error}</p>
-        <button
-          onClick={fetchProducts}
-          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
-        >
-          Spróbuj ponownie
-        </button>
-      </div>
-    );
-  }
+    pages.push(1);
+
+    if (start > 2) pages.push('...');
+
+    for (let i = start; i <= end; i++) pages.push(i);
+
+    if (end < total - 1) pages.push('...');
+
+    if (total > 1) pages.push(total);
+
+    return pages;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-200">
@@ -164,11 +152,9 @@ const ProductList: React.FC = () => {
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row mt-8 p-4 gap-6">
 
         <aside className="w-full lg:w-1/4 bg-white/80 backdrop-blur-md shadow-lg rounded-2xl p-6 h-fit">
-
           <h2 className="text-xl font-bold text-gray-800 mb-4">Filtry</h2>
 
           <div className="mb-6">
-
             <label className="block text-gray-600 mb-2 font-semibold">Szukaj produktu</label>
             <input
               type="text"
@@ -178,11 +164,9 @@ const ProductList: React.FC = () => {
               className="w-full p-3 border rounded-xl shadow-sm focus:ring focus:ring-blue-300"
             />
           </div>
-          <div className="mb-6">
-            <label className="block text-gray-600 mb-2 font-semibold">
-              Ilość produktów na stronę
-            </label>
 
+          <div className="mb-6">
+            <label className="block text-gray-600 mb-2 font-semibold">Ilość produktów na stronę</label>
             <select
               value={itemsPerPage}
               onChange={(e) => {
@@ -207,11 +191,9 @@ const ProductList: React.FC = () => {
               Zastosuj filtry
             </button>
           </div>
-
         </aside>
 
         <main className="flex-1">
-
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold text-gray-800">Lista produktów</h1>
 
@@ -219,8 +201,7 @@ const ProductList: React.FC = () => {
               onClick={() => navigate("/CreateProduct")}
               className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700 transition"
             >
-              <FaPlus />
-              Dodaj produkt
+              <FaPlus /> Dodaj produkt
             </button>
           </div>
 
@@ -236,14 +217,11 @@ const ProductList: React.FC = () => {
                     alt={product.name}
                     className="w-full h-48 object-contain rounded-xl mb-4"
                   />
-
                   <h2 className="text-2xl font-bold text-gray-800 mb-2">{product.name}</h2>
-
                   <div className="text-gray-600 mb-4">
                     <p>SKU: {product.sku}</p>
                     <p>Dodano: {new Date(product.additionDate).toLocaleString()}</p>
                   </div>
-
                   <div className="flex gap-4 mt-6">
                     <button
                       onClick={() => openDeleteDialog(product)}
@@ -253,24 +231,19 @@ const ProductList: React.FC = () => {
                     </button>
                     <button
                       className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
-                      onClick={() => {
-                        //localStorage.setItem("editProduct", JSON.stringify(product));
-                        navigate(`/EditProducts/${product.id}`);
-                      }}
+                      onClick={() => navigate(`/EditProducts/${product.id}`)}
                     >
                       Edytuj
                     </button>
-
                   </div>
-
                 </div>
               ))}
             </div>
           ) : (
             <p className="text-gray-600 text-center mt-10">Brak produktów do wyświetlenia.</p>
           )}
-          <div className="flex justify-center mt-10 gap-2">
 
+          <div className="flex justify-center mt-10 gap-2">
             <button
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(currentPage - 1)}
@@ -279,18 +252,21 @@ const ProductList: React.FC = () => {
               ←
             </button>
 
-            {[...Array(totalPages)].map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i + 1)}
-                className={`px-3 py-2 rounded ${currentPage === i + 1
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200"
+            {getPageNumbers(currentPage, totalPages).map((page, idx) =>
+              typeof page === 'number' ? (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentPage(page)}
+                  className={`px-3 py-2 rounded ${
+                    currentPage === page ? "bg-blue-600 text-white" : "bg-gray-200"
                   }`}
-              >
-                {i + 1}
-              </button>
-            ))}
+                >
+                  {page}
+                </button>
+              ) : (
+                <span key={idx} className="px-3 py-2">{page}</span>
+              )
+            )}
 
             <button
               disabled={currentPage === totalPages}
@@ -299,38 +275,34 @@ const ProductList: React.FC = () => {
             >
               →
             </button>
-
           </div>
         </main>
+
         {isDeleteOpen && productToDelete && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                        <div className="bg-white rounded-lg p-6 w-[400px] shadow-lg space-y-4">
-                            <h2 className="text-xl font-bold text-gray-800 mb-2">
-                                Potwierdzenie usunięcia
-                            </h2>
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-white rounded-lg p-6 w-[400px] shadow-lg space-y-4">
+              <h2 className="text-xl font-bold text-gray-800 mb-2">Potwierdzenie usunięcia</h2>
+              <p>Czy na pewno chcesz usunąć produkt <strong>{productToDelete.name}</strong>?</p>
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={confirmDelete}
+                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                >
+                  Tak
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsDeleteOpen(false)}
+                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                >
+                  Nie
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
-                            <p>Czy na pewno chcesz usunąć produkt <strong>{productToDelete.name}</strong>?</p>
-
-                            <div className="flex justify-end gap-3 pt-2">
-                                <button
-                                    type="button"
-                                    onClick={confirmDelete}
-                                    className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                                >
-                                    Tak
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={() => setIsDeleteOpen(false)}
-                                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-                                >
-                                    Nie
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
       </div>
     </div>
   );

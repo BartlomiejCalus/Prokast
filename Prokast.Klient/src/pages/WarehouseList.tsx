@@ -14,7 +14,7 @@ interface Warehouse {
     country: string;
 }
 
-const ProductList: React.FC = () => {
+const WarehouseList: React.FC = () => {
     const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -22,18 +22,14 @@ const ProductList: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
-    const [selectedCategory, setSelectedCategory] = useState<string>('Wszystko');
-    const [selectedPriceRange, setSelectedPriceRange] = useState<string>('Wszystko');
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
     const [warehouseToDelete, setWarehouseToDelete] = useState<Warehouse | null>(null);
     const navigate = useNavigate();
-
 
     const fetchWarehouses = async () => {
         try {
             setLoading(true);
             const token = Cookies.get("token");
-
             if (!token) {
                 setError("Brak tokenu autoryzacyjnego.");
                 setLoading(false);
@@ -43,27 +39,18 @@ const ProductList: React.FC = () => {
             const response = await axios.get(
                 `${API_URL}/api/warehouses/Minimal`,
                 {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        Accept: "application/json"
-                    }
-                    ,
-                    params: {
-                        pageNumber: currentPage,
-                        pageSize: itemsPerPage
-
-                    }
-
+                    headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+                    params: { pageNumber: currentPage, pageSize: itemsPerPage }
                 }
-
             );
 
             const model = response.data?.model ?? response.data;
             const totalItems = response.data?.totalItems ?? 0;
-            console.log("MODEL:", response.data);
             setTotalPages(Math.ceil(totalItems / itemsPerPage));
+
             if (!model || model.length === 0) {
-                setError("Brak magazynów dla podanego magazynu.");
+                setError("Brak magazynów do wyświetlenia.");
+                setWarehouses([]);
                 return;
             }
 
@@ -75,89 +62,66 @@ const ProductList: React.FC = () => {
                     country: item.country
                 }))
             );
-
-            setError("");
-        } catch (err: any) {
-            // console.error("Błąd API:", err.response?.data ?? err);
-            // setError("Nie udało się pobrać listy magazynów.");
+            setError('');
+        } catch (err) {
+            setError("Nie udało się pobrać listy magazynów.");
         } finally {
             setLoading(false);
         }
     };
+
     const openDeleteDialog = (warehouse: Warehouse) => {
         setWarehouseToDelete(warehouse);
         setIsDeleteOpen(true);
     };
+
     const confirmDelete = async () => {
         if (!warehouseToDelete) return;
-
         try {
             const token = Cookies.get("token");
-
-            if (!token) {
-                console.error("Brak tokenu autoryzacyjnego.");
-                return;
-            }
+            if (!token) return;
 
             await axios.delete(`${API_URL}/api/warehouses/${warehouseToDelete.id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                headers: { Authorization: `Bearer ${token}` },
             });
 
             setIsDeleteOpen(false);
             setWarehouseToDelete(null);
-
             fetchWarehouses();
-
         } catch (err) {
             console.error("Błąd podczas usuwania magazynu:", err);
             alert("Nie udało się usunąć magazynu.");
         }
     };
-    
-    useEffect(() => {
-        fetchWarehouses();
-    }, [currentPage, itemsPerPage]);
 
-    const filteredWarehouses = warehouses.filter((p) =>
-        p.name.toLowerCase().includes(searchTerm.toLowerCase())
+    useEffect(() => { fetchWarehouses(); }, [currentPage, itemsPerPage]);
+
+    const filteredWarehouses = warehouses.filter((w) =>
+        w.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // if (loading) {
-    //   return (
-    //     <div className="min-h-screen flex items-center justify-center text-gray-700 text-lg">
-    //       Wczytywanie magazynów...
-    //     </div>
-    //   );
-    // }
+    const getPageNumbers = (current: number, total: number, visibleAround = 2) => {
+        const pages: (number | string)[] = [];
+        const start = Math.max(2, current - visibleAround);
+        const end = Math.min(total - 1, current + visibleAround);
 
-    if (error) {
-        return (
-            <div className="min-h-screen flex flex-col items-center justify-center text-center text-red-600">
-                <p>{error}</p>
-                <button
-                    onClick={fetchWarehouses}
-                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
-                >
-                    Spróbuj ponownie
-                </button>
-            </div>
-        );
-    }
+        pages.push(1);
+        if (start > 2) pages.push('...');
+        for (let i = start; i <= end; i++) pages.push(i);
+        if (end < total - 1) pages.push('...');
+        if (total > 1) pages.push(total);
+
+        return pages;
+    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-200">
             <Navbar />
-
             <div className="max-w-7xl mx-auto flex flex-col lg:flex-row mt-8 p-4 gap-6">
 
                 <aside className="w-full lg:w-1/4 bg-white/80 backdrop-blur-md shadow-lg rounded-2xl p-6 h-fit">
-
                     <h2 className="text-xl font-bold text-gray-800 mb-4">Filtry</h2>
-
                     <div className="mb-6">
-
                         <label className="block text-gray-600 mb-2 font-semibold">Szukaj magazynu</label>
                         <input
                             type="text"
@@ -168,16 +132,10 @@ const ProductList: React.FC = () => {
                         />
                     </div>
                     <div className="mb-6">
-                        <label className="block text-gray-600 mb-2 font-semibold">
-                            Ilość magazynów na stronę
-                        </label>
-
+                        <label className="block text-gray-600 mb-2 font-semibold">Ilość magazynów na stronę</label>
                         <select
                             value={itemsPerPage}
-                            onChange={(e) => {
-                                setItemsPerPage(Number(e.target.value));
-                                setCurrentPage(1);
-                            }}
+                            onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
                             className="w-full p-3 border rounded-xl shadow-sm focus:ring focus:ring-blue-300"
                         >
                             <option value={1}>1</option>
@@ -187,7 +145,6 @@ const ProductList: React.FC = () => {
                             <option value={25}>25</option>
                         </select>
                     </div>
-
                     <div className="mt-6">
                         <button
                             onClick={fetchWarehouses}
@@ -196,20 +153,16 @@ const ProductList: React.FC = () => {
                             Zastosuj filtry
                         </button>
                     </div>
-
                 </aside>
 
                 <main className="flex-1">
-
                     <div className="flex items-center justify-between mb-6">
                         <h1 className="text-2xl font-bold text-gray-800">Lista magazynów</h1>
-
                         <button
                             onClick={() => navigate("/AddWarehouse")}
                             className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700 transition"
                         >
-                            <FaPlus />
-                            Dodaj magazyn
+                            <FaPlus /> Dodaj magazyn
                         </button>
                     </div>
 
@@ -220,14 +173,11 @@ const ProductList: React.FC = () => {
                                     key={warehouse.id}
                                     className="bg-white/80 backdrop-blur-md shadow-lg rounded-2xl p-6 hover:shadow-xl transition"
                                 >
-
                                     <h2 className="text-2xl font-bold text-gray-800 mb-2">{warehouse.name}</h2>
-
                                     <div className="text-gray-600 mb-4">
-                                        <p> {warehouse.city},</p>
-                                        <p> {warehouse.country}</p>
+                                        <p>{warehouse.city},</p>
+                                        <p>{warehouse.country}</p>
                                     </div>
-
                                     <div className="flex gap-4 mt-6">
                                         <button
                                             onClick={() => openDeleteDialog(warehouse)}
@@ -237,80 +187,55 @@ const ProductList: React.FC = () => {
                                         </button>
                                         <button
                                             className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
-                                            onClick={() => {
-                                                //localStorage.setItem("editProduct", JSON.stringify(warehouse));
-                                                navigate(`/EditWarehouse/${warehouse.id}`);
-                                            }}
+                                            onClick={() => navigate(`/EditWarehouse/${warehouse.id}`)}
                                         >
                                             Edytuj
                                         </button>
-
                                     </div>
-
                                 </div>
                             ))}
                         </div>
                     ) : (
                         <p className="text-gray-600 text-center mt-10">Brak magazynów do wyświetlenia.</p>
                     )}
-                    <div className="flex justify-center mt-10 gap-2">
 
+                    <div className="flex justify-center mt-10 gap-2">
                         <button
                             disabled={currentPage === 1}
                             onClick={() => setCurrentPage(currentPage - 1)}
                             className="px-3 py-2 bg-gray-300 rounded disabled:opacity-50"
-                        >
-                            ←
-                        </button>
+                        >←</button>
 
-                        {[...Array(totalPages)].map((_, i) => (
-                            <button
-                                key={i}
-                                onClick={() => setCurrentPage(i + 1)}
-                                className={`px-3 py-2 rounded ${currentPage === i + 1
-                                    ? "bg-blue-600 text-white"
-                                    : "bg-gray-200"
-                                    }`}
-                            >
-                                {i + 1}
-                            </button>
-                        ))}
+                        {getPageNumbers(currentPage, totalPages).map((page, idx) =>
+                            typeof page === 'number' ? (
+                                <button
+                                    key={idx}
+                                    onClick={() => setCurrentPage(page)}
+                                    className={`px-3 py-2 rounded ${currentPage === page ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+                                >
+                                    {page}
+                                </button>
+                            ) : (
+                                <span key={idx} className="px-3 py-2">{page}</span>
+                            )
+                        )}
 
                         <button
                             disabled={currentPage === totalPages}
                             onClick={() => setCurrentPage(currentPage + 1)}
                             className="px-3 py-2 bg-gray-300 rounded disabled:opacity-50"
-                        >
-                            →
-                        </button>
-
+                        >→</button>
                     </div>
                 </main>
+
                 {isDeleteOpen && warehouseToDelete && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                         <div className="bg-white rounded-lg p-6 w-[400px] shadow-lg space-y-4">
-                            <h2 className="text-xl font-bold text-gray-800 mb-2">
-                                Potwierdzenie usunięcia
-                            </h2>
-
+                            <h2 className="text-xl font-bold text-gray-800 mb-2">Potwierdzenie usunięcia</h2>
                             <p>Czy na pewno chcesz usunąć magazyn <strong>{warehouseToDelete.name}</strong>?</p>
-
                             <div className="flex justify-end gap-3 pt-2">
-                                <button
-                                    type="button"
-                                    onClick={confirmDelete}
-                                    className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                                >
-                                    Tak
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={() => setIsDeleteOpen(false)}
-                                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-                                >
-                                    Nie
-                                </button>
+                                <button onClick={confirmDelete} className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Tak</button>
+                                <button onClick={() => setIsDeleteOpen(false)} className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Nie</button>
                             </div>
                         </div>
                     </div>
@@ -320,4 +245,4 @@ const ProductList: React.FC = () => {
     );
 };
 
-export default ProductList;
+export default WarehouseList;
