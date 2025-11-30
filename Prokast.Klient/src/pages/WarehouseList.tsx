@@ -24,6 +24,8 @@ const ProductList: React.FC = () => {
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [selectedCategory, setSelectedCategory] = useState<string>('Wszystko');
     const [selectedPriceRange, setSelectedPriceRange] = useState<string>('Wszystko');
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+    const [warehouseToDelete, setWarehouseToDelete] = useState<Warehouse | null>(null);
     const navigate = useNavigate();
 
 
@@ -82,7 +84,60 @@ const ProductList: React.FC = () => {
             setLoading(false);
         }
     };
+    const openDeleteDialog = (warehouse: Warehouse) => {
+        setWarehouseToDelete(warehouse);
+        setIsDeleteOpen(true);
+    };
+    const confirmDelete = async () => {
+        if (!warehouseToDelete) return;
 
+        try {
+            const token = Cookies.get("token");
+
+            if (!token) {
+                console.error("Brak tokenu autoryzacyjnego.");
+                return;
+            }
+
+            await axios.delete(`${API_URL}/api/warehouses/${warehouseToDelete.id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            setIsDeleteOpen(false);
+            setWarehouseToDelete(null);
+
+            fetchWarehouses();
+
+        } catch (err) {
+            console.error("Błąd podczas usuwania magazynu:", err);
+            alert("Nie udało się usunąć magazynu.");
+        }
+    };
+    const deleteWarehouse = async (id: number) => {
+        if (!window.confirm("Czy na pewno chcesz usunąć ten magazyn?")) return;
+
+        try {
+            const token = Cookies.get("token");
+            if (!token) {
+                alert("Brak tokenu autoryzacyjnego.");
+                return;
+            }
+
+            await axios.delete(`${API_URL}/api/warehouses/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            fetchWarehouses();
+
+        } catch (err: any) {
+            console.error("Błąd przy usuwaniu magazynu:", err.response?.data ?? err);
+            alert("Nie udało się usunąć magazynu.");
+        }
+    };
     useEffect(() => {
         fetchWarehouses();
     }, [currentPage, itemsPerPage]);
@@ -197,6 +252,7 @@ const ProductList: React.FC = () => {
 
                                     <div className="flex gap-4 mt-6">
                                         <button
+                                            onClick={() => openDeleteDialog(warehouse)}
                                             className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition"
                                         >
                                             Usuń
@@ -252,6 +308,35 @@ const ProductList: React.FC = () => {
 
                     </div>
                 </main>
+                {isDeleteOpen && warehouseToDelete && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                        <div className="bg-white rounded-lg p-6 w-[400px] shadow-lg space-y-4">
+                            <h2 className="text-xl font-bold text-gray-800 mb-2">
+                                Potwierdzenie usunięcia
+                            </h2>
+
+                            <p>Czy na pewno chcesz usunąć magazyn <strong>{warehouseToDelete.name}</strong>?</p>
+
+                            <div className="flex justify-end gap-3 pt-2">
+                                <button
+                                    type="button"
+                                    onClick={confirmDelete}
+                                    className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                                >
+                                    Tak
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => setIsDeleteOpen(false)}
+                                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                                >
+                                    Nie
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
