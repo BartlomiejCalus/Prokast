@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 import Navbar from '../Components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
+import { WarehouseMinInfo } from '../models/WarehouseMinInfo';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -15,7 +16,7 @@ interface Warehouse {
 }
 
 const WarehouseList: React.FC = () => {
-    const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
+    const [warehouses, setWarehouses] = useState<WarehouseMinInfo[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
@@ -23,7 +24,7 @@ const WarehouseList: React.FC = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-    const [warehouseToDelete, setWarehouseToDelete] = useState<Warehouse | null>(null);
+    const [warehouseToDelete, setWarehouseToDelete] = useState<WarehouseMinInfo | null>(null);
     const navigate = useNavigate();
 
     const fetchWarehouses = async () => {
@@ -59,7 +60,8 @@ const WarehouseList: React.FC = () => {
                     id: item.id,
                     name: item.name,
                     city: item.city,
-                    country: item.country
+                    country: item.country,
+                    productsCount: item.productsCount
                 }))
             );
             setError('');
@@ -70,7 +72,7 @@ const WarehouseList: React.FC = () => {
         }
     };
 
-    const openDeleteDialog = (warehouse: Warehouse) => {
+    const openDeleteDialog = (warehouse: WarehouseMinInfo) => {
         setWarehouseToDelete(warehouse);
         setIsDeleteOpen(true);
     };
@@ -177,6 +179,7 @@ const WarehouseList: React.FC = () => {
                                     <div className="text-gray-600 mb-4">
                                         <p>{warehouse.city},</p>
                                         <p>{warehouse.country}</p>
+                                        <p>Ilość produktów: {warehouse.productsCount}</p>
                                     </div>
                                     <div className="flex gap-4 mt-6">
                                         <button

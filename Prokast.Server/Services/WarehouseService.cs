@@ -127,7 +127,7 @@ namespace Prokast.Server.Services
 
         public Response GetWarehousesMinimalData(int clientID, int pageNumber, int pageSize)
         {
-            var warehouses = _dbContext.Warehouses.Where(x => x.ClientID == clientID);
+            var warehouses = _dbContext.Warehouses.Include(x => x.StoredProducts).Where(x => x.ClientID == clientID);
             
 
             var paginatedResult = PaginationExtension.Paginate(warehouses, pageNumber, pageSize);
@@ -143,6 +143,7 @@ namespace Prokast.Server.Services
                     Name = warehouse.Name,
                     City = warehouse.City,
                     Country = warehouse.Country,
+                    ProductsCount = warehouse.StoredProducts.Count
                 };
                 warehousesList.Add(warehouseToList);
             }
