@@ -254,7 +254,7 @@ const StoredProductList = ({
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-6 w-[450px] shadow-lg space-y-4">
             <h2 className="text-xl font-bold text-gray-800 mb-2">
-              Dodaj nowy parametr
+              Dodaj nowy produkt do magazynu
             </h2>
 
             {/* Ilość na magazynie */}
@@ -291,9 +291,9 @@ const StoredProductList = ({
               )}
             </div>
 
-            {/* Produktu */}
+            {/* Produkt */}
             <div>
-              <label className="block text-sm font-medium mb-1">Produktu</label>
+              <label className="block text-sm font-medium mb-1">Produkt</label>
               <select
                 {...register("productId")}
                 className="w-full border rounded px-3 py-2 focus:outline-blue-500"
