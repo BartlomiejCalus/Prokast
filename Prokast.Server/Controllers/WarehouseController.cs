@@ -160,13 +160,13 @@ namespace Prokast.Server.Controllers
         [HttpGet("Minimal")]
         [ProducesResponseType(typeof(WarehouseGetMinimalResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetWarehousesMinimalData()
+        public ActionResult<Response> GetWarehousesMinimalData([FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
             try
             {
-                var result = _warehouseService.GetWarehousesMinimalData(clientIdFromToken);
+                var result = _warehouseService.GetWarehousesMinimalData(clientIdFromToken, pageNumber, pageSize);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }

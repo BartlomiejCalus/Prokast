@@ -15,6 +15,7 @@ import UsersList from './pages/UsersList';
 import WarehouseEdit from './pages/EditWarehouse';
 import AddWarehouse from './pages/AddWarehouse';
 import CreateProduct from './pages/CreateProduct';
+import WarehouseList from './pages/WarehouseList';
 
 function App() {
   return (
@@ -86,6 +87,14 @@ function App() {
           element={
             <ProtectedRoute>
               <ProductsList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/WarehouseList"
+          element={
+            <ProtectedRoute>
+              <WarehouseList />
             </ProtectedRoute>
           }
         />
