@@ -179,7 +179,7 @@ const AddWarehouse = () => {
                     },
                   });
                   alert("Zaktualizowanyo magazyn!");
-                  navigate("/dashboard"); //TODOO: change route to warehouses list
+                  navigate("/WarehouseList");
                 })}
               >
                 Dodaj

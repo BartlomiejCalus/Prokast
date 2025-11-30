@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Warehouse } from "../models/Warehouse";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
@@ -16,7 +16,7 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 const WarehouseEdit = () => {
   const { id } = useParams<{ id: string }>();
-
+  const navigate = useNavigate();
   const [warehouse, setWarehouse] = useState<Warehouse | null>(null);
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -340,6 +340,7 @@ const WarehouseEdit = () => {
                   });
                   alert("Zaktualizowanyo magazyn!");
                   fetchWarehouseData();
+                  navigate("/WarehouseList");
                 })}
               >
                 Zapisz
