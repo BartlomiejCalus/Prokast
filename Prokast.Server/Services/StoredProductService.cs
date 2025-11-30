@@ -56,8 +56,6 @@ namespace Prokast.Server.Services
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego magazynu!" };
             
             var storedProductsDb = _dbContext.StoredProducts.Include(x => x.Product).Where(x => x.WarehouseID == warehouseID).ToList();
-            if (storedProductsDb.Count == 0)
-                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak produktów!" };
 
             var storedProductsList = new List<StoredProductGetDto>();
 
