@@ -105,7 +105,7 @@ const StoredProductList = ({
     }
 
     axios
-      .get(`${API_URL}/Api/Warehouses/ProductToAdd/${warehouseId}`, {
+      .get(`${API_URL}/Api/Warehouses/ProductsToAdd`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",

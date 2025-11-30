@@ -81,16 +81,16 @@ namespace Prokast.Server.Controllers
             }
         }
 
-        [HttpGet("ProductToAdd/{ID}")]
+        [HttpGet("ProductsToAdd")]
         [ProducesResponseType(typeof(WarehouseGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetProductsToAdd([FromRoute] int ID)
+        public ActionResult<Response> GetProductsToAdd()
         {
             var clientIdFromToken = GetClientIdFromToken();
 
             try
             {
-                var result = _warehouseService.GetProductsToAdd(clientIdFromToken, ID);
+                var result = _warehouseService.GetProductsToAdd(clientIdFromToken);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }

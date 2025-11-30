@@ -86,9 +86,9 @@ namespace Prokast.Server.Services
             return new WarehouseGetOneResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = result };
         }
 
-        public Response GetProductsToAdd(int clientID, int ID)
+        public Response GetProductsToAdd(int clientID)
         {
-            var storedProds = _dbContext.StoredProducts.Where(x => x.WarehouseID == ID).Select(x => x.ProductID).ToList();
+            var storedProds = _dbContext.StoredProducts.Select(x => x.ProductID).ToList();
 
             var productsToAdd = _dbContext.Products
                 .Where(x => x.ClientID == clientID && !storedProds.Contains(x.ID))

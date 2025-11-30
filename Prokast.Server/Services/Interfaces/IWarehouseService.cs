@@ -15,6 +15,6 @@ namespace Prokast.Server.Services.Interfaces
         Response GetWarehousesMinimalData(int clientID, int pageNumber, int pageSize);
         Response EditWarehouse(int clientID, int ID, WarehouseCreateDto warehouseCreateDto);
         Response DeleteWarehouse(int clientID, int ID);
-        Response GetProductsToAdd(int clientID, int ID);
+        Response GetProductsToAdd(int clientID);
     }
 }
