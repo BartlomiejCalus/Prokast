@@ -115,29 +115,7 @@ const ProductList: React.FC = () => {
             alert("Nie udało się usunąć magazynu.");
         }
     };
-    const deleteWarehouse = async (id: number) => {
-        if (!window.confirm("Czy na pewno chcesz usunąć ten magazyn?")) return;
-
-        try {
-            const token = Cookies.get("token");
-            if (!token) {
-                alert("Brak tokenu autoryzacyjnego.");
-                return;
-            }
-
-            await axios.delete(`${API_URL}/api/warehouses/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-
-            fetchWarehouses();
-
-        } catch (err: any) {
-            console.error("Błąd przy usuwaniu magazynu:", err.response?.data ?? err);
-            alert("Nie udało się usunąć magazynu.");
-        }
-    };
+    
     useEffect(() => {
         fetchWarehouses();
     }, [currentPage, itemsPerPage]);
