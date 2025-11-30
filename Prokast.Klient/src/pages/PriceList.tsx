@@ -52,7 +52,7 @@ const PriceList: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-200 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-100 via-white to-green-200 p-4">
       <Navbar />
 
       <main className="max-w-5xl mx-auto mt-8 space-y-6">

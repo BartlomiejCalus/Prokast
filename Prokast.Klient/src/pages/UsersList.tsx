@@ -154,7 +154,7 @@ const UsersList = () => {
   }, [isAddOpen, reset]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-200 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-100 via-white to-green-200 p-4">
       <Navbar />
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row mt-8 p-4 gap-6">
         <main className="flex-1">

@@ -23,7 +23,7 @@ const CreateEmployee: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-200 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-100 via-white to-green-200 p-4">
       <Navbar />
       <div className="max-w-2xl mx-auto bg-white/80 backdrop-blur-md shadow-xl rounded-2xl p-6 mt-8">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Stwórz konto pracownika</h2>
