@@ -191,7 +191,7 @@ const ProductList: React.FC = () => {
                                     <h2 className="text-2xl font-bold text-gray-800 mb-2">{warehouse.name}</h2>
 
                                     <div className="text-gray-600 mb-4">
-                                        <p> {warehouse.city}</p>
+                                        <p> {warehouse.city},</p>
                                         <p> {warehouse.country}</p>
                                     </div>
 
@@ -205,7 +205,7 @@ const ProductList: React.FC = () => {
                                             className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
                                             onClick={() => {
                                                 //localStorage.setItem("editProduct", JSON.stringify(warehouse));
-                                                navigate(`/EditWarehouses/${warehouse.id}`);
+                                                navigate(`/EditWarehouse/${warehouse.id}`);
                                             }}
                                         >
                                             Edytuj
