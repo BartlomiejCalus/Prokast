@@ -440,7 +440,7 @@ const UsersList = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-6 w-[450px] shadow-lg space-y-4">
             <h2 className="text-xl font-bold text-gray-800 mb-2">
-              Edytuj użytkownika
+              Dodaj użytkownika
             </h2>
 
             {/* imie */}
