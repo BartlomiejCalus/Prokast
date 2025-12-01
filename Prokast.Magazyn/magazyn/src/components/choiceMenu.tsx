@@ -6,7 +6,7 @@ function ChoiceMenu(){
 
             <div className="flex gap-10 text-lg font-semibold text-white pl-6">
                 <Link href="/afterLoginPage" className="hover:text-yellow-300 transition">Strona Główna</Link>
-                <Link href="/test" className="hover:text-yellow-300 transition">Panel magazyniera</Link>
+                <Link href="/taskpanel" className="hover:text-yellow-300 transition">Panel magazyniera</Link>
                 <Link href="/storedProductsPage" className="hover:text-yellow-300 transition">Produkty</Link>
             </div>
 
