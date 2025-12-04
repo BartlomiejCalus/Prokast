@@ -22,6 +22,7 @@ const ProductList: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [skuSearch, setSkuSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -120,9 +121,9 @@ const ProductList: React.FC = () => {
   }, [currentPage, itemsPerPage]);
 
   const filteredProducts = products.filter((p) =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
+  p.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+  (skuSearch === "" || p.sku.toLowerCase().includes(skuSearch.toLowerCase()))
+);
   const getPageNumbers = (
     current: number,
     total: number,
@@ -164,7 +165,16 @@ const ProductList: React.FC = () => {
               className="w-full p-3 border rounded-xl shadow-sm focus:ring focus:ring-blue-300"
             />
           </div>
-
+          <div className="mb-6">
+            <label className="block text-gray-600 mb-2 font-semibold">Szukaj po SKU</label>
+            <input
+              type="text"
+              placeholder="np. ABC123"
+              value={skuSearch}
+              onChange={(e) => setSkuSearch(e.target.value)}
+              className="w-full p-3 border rounded-xl shadow-sm focus:ring focus:ring-blue-300"
+            />
+          </div>
           <div className="mb-6">
             <label className="block text-gray-600 mb-2 font-semibold">Ilość produktów na stronę</label>
             <select
@@ -183,14 +193,7 @@ const ProductList: React.FC = () => {
             </select>
           </div>
 
-          <div className="mt-6">
-            <button
-              onClick={fetchProducts}
-              className="w-full bg-blue-600 text-white font-semibold py-3 rounded-xl hover:bg-blue-700 transition"
-            >
-              Zastosuj filtry
-            </button>
-          </div>
+
         </aside>
 
         <main className="flex-1">
@@ -257,9 +260,8 @@ const ProductList: React.FC = () => {
                 <button
                   key={idx}
                   onClick={() => setCurrentPage(page)}
-                  className={`px-3 py-2 rounded ${
-                    currentPage === page ? "bg-blue-600 text-white" : "bg-gray-200"
-                  }`}
+                  className={`px-3 py-2 rounded ${currentPage === page ? "bg-blue-600 text-white" : "bg-gray-200"
+                    }`}
                 >
                   {page}
                 </button>

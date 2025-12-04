@@ -147,14 +147,6 @@ const WarehouseList: React.FC = () => {
                             <option value={25}>25</option>
                         </select>
                     </div>
-                    <div className="mt-6">
-                        <button
-                            onClick={fetchWarehouses}
-                            className="w-full bg-blue-600 text-white font-semibold py-3 rounded-xl hover:bg-blue-700 transition"
-                        >
-                            Zastosuj filtry
-                        </button>
-                    </div>
                 </aside>
 
                 <main className="flex-1">
