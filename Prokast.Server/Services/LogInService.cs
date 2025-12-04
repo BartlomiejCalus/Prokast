@@ -152,6 +152,8 @@ namespace Prokast.Server.Services
         {
             const string litery = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
+            var accounts = _dbContext.Accounts.Where(x => x.ClientID == clientID).ToList();
+
             var responseNull = new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
             if (accountCreate == null)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
@@ -160,11 +162,16 @@ namespace Prokast.Server.Services
             if (client == null)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Klient nie istnieje!" };
 
+            
             string login = new string(accountCreate.FirstName.Take(3).Concat(accountCreate.LastName.Take(2)).
                 Concat(random.Next(1,100000).ToString()).ToArray());
             StringBuilder password = new StringBuilder();
+            if(accounts.Any(x => x.Login == login))
+            {
+                login += random.Next(1, 100).ToString();
+            }
 
-            foreach(char znak in login)
+            foreach (char znak in login)
             {
                 int index = random.Next(litery.Length);
                 password.Append(litery[index]);
