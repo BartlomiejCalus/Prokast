@@ -6,7 +6,7 @@ using System.Security.Claims;
 
 namespace Prokast.Server.Controllers
 {
-    [Authorize(Roles = "1,2,3,4,5")]
+    [Authorize(Roles = "1,2,3,4,5,6")]
     [Route("api/mailing")]
     public class MailingController: ControllerBase
     {

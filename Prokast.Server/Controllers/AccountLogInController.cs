@@ -94,7 +94,7 @@ namespace Prokast.Server.Controllers
 
         #region GetAll
         [HttpGet]
-        [Authorize(Roles = "1,2,3,4,5")]
+        [Authorize(Roles = "1,2,3,4,5,6")]
         [ProducesResponseType(typeof(LogInGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetAll() 
@@ -113,7 +113,7 @@ namespace Prokast.Server.Controllers
         }
         #endregion
         [HttpPost("create")]
-        [Authorize(Roles = "1,2,3,4,5")]
+        [Authorize(Roles = "1,2,3,4,5,6")]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> CreateAccount([FromBody] AccountCreateDto accountCreate, [FromQuery] string mail)
@@ -132,7 +132,7 @@ namespace Prokast.Server.Controllers
             }
         }
         [HttpPut]
-        [Authorize(Roles = "1,2,3,4,5")]
+        [Authorize(Roles = "1,2,3,4,5,6")]
         [ProducesResponseType(typeof(AccountEditResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> EditAccount([FromBody] AccountEditDto accountEdit)
@@ -157,7 +157,7 @@ namespace Prokast.Server.Controllers
             }
         }
         [HttpPut("Password")]
-        [Authorize(Roles = "1,2,3,4,5")]
+        [Authorize(Roles = "1,2,3,4,5,6")]
         [ProducesResponseType(typeof(AccountEditPasswordResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> EditPassword([FromBody] AccountEditPasswordDto editPasswordDto)
@@ -182,7 +182,7 @@ namespace Prokast.Server.Controllers
             }
         }
         [HttpDelete("{ID}")]
-        [Authorize(Roles = "1,2,3,4,5")]
+        [Authorize(Roles = "1,2,3,4,5,6")]
         [ProducesResponseType(typeof(DeleteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> DeleteAccount( [FromRoute] int ID)
@@ -204,7 +204,7 @@ namespace Prokast.Server.Controllers
         }
 
         [HttpGet("Role")]
-        [Authorize(Roles = "1,2,3,4,5")]
+        [Authorize(Roles = "1,2,3,4,5,6")]
         [ProducesResponseType(typeof(ParamsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetAllRoles()
@@ -224,7 +224,7 @@ namespace Prokast.Server.Controllers
         }
 
         [HttpGet("Role/{ID}")]
-        [Authorize(Roles = "1,2,3,4,5")]
+        [Authorize(Roles = "1,2,3,4,5,6")]
         [ProducesResponseType(typeof(ParamsGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public ActionResult<Response> GetRole([FromRoute]int ID)
