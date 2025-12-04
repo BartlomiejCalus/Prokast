@@ -47,6 +47,8 @@ namespace Prokast.Server.Seeders
                         {
                             new()
                             {
+                                FirstName = "Mariusz",
+                                LastName = "Metalowiec II",
                                 Login = "mariuszmetalowiec",
                                 Password = getHashed("password"),
                                 RoleID = roleAdmin.ID,
@@ -54,6 +56,8 @@ namespace Prokast.Server.Seeders
                             },
                             new()
                             {
+                                FirstName = "Marcin",
+                                LastName = "Marożek",
                                 Login = "marmar123",
                                 Password = getHashed("marmar"),
                                 RoleID = roleAdmin.ID,
@@ -77,12 +81,16 @@ namespace Prokast.Server.Seeders
                         {
                             new()
                             {
+                                FirstName = "Albert",
+                                LastName = "Korniszon Jr.",
                                 Login = "albertkorniszon",
                                 Password = getHashed("albert"),
                                 RoleID = 2
                             },
                             new()
                             {
+                                FirstName = "Uga",
+                                LastName = "Uga",
                                 Login = "ugauga444",
                                 Password = getHashed("ugaaa"),
                                 RoleID = 3

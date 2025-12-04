@@ -8,5 +8,5 @@ public class AccountGetDto (Account account)
     public string FirstName { get; set; } = account.FirstName!;
     public string LastName { get; set; } = account.LastName!;
     public int RoleId { get; set; } = (int)account.RoleID!;
-    public int WarehouseId { get; set; } = (int)account.WarehouseID!;
+    public int? WarehouseId { get; set; } = account.WarehouseID == null ? (int?)null : (int)account.WarehouseID;
 }
