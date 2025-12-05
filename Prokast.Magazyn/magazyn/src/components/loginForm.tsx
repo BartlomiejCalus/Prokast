@@ -26,13 +26,14 @@ function LoginForm() {
             });
 
             if (response.status === 200) {
-                const token = response.data.token; // ← Zakładamy że API zwraca token jako { token: "..." }
+                //const token = response.data.token;
 
                 // Przejdź do strony po zalogowaniu
                 router.replace("/dashboard");
             }
         } catch (error) {
             console.error("Login failed:", error);
+        
         }
     };
 

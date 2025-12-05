@@ -24,32 +24,32 @@ export default function DeliveryModal({ open, onClose, onSaved, productId }: Del
     return token ? `Bearer ${token}` : "";
   };
 
-  const handleSave = async () => {
-    // if (amount <= 0) {
-    //   alert("Podaj poprawną ilość (większą niż 0).");
-    //   return;
-    // }
+  // const handleSave = async () => {
+  //   // if (amount <= 0) {
+  //   //   alert("Podaj poprawną ilość (większą niż 0).");
+  //   //   return;
+  //   // }
 
-    try {
-      await axios.put(
-        `/api/quantityEdit/${productId}`,
-        {},
-        {
-          params: { quantity: amount },
-          headers: {
-            Authorization: getAuthHeader(),
-            Accept: "*/*"
-          }
-        }
-      );
+  //   try {
+  //     await axios.put(
+  //       `/api/quantityEdit/${productId}`,
+  //       {},
+  //       {
+  //         params: { quantity: amount },
+  //         headers: {
+  //           Authorization: getAuthHeader(),
+  //           Accept: "*/*"
+  //         }
+  //       }
+  //     );
 
-      onSaved(); // 🔥 ODŚWIEŻ TABELĘ + zamknij modal z rodzica
+  //     onSaved(); 
 
-    } catch (err) {
-      console.error("Błąd UPDATE:", err);
-      alert("Błąd podczas aktualizacji ilości.");
-    }
-  };
+  //   } catch (err) {
+  //     console.error("Błąd UPDATE:", err);
+  //     alert("Błąd podczas aktualizacji ilości.");
+  //   }
+  // };
   const handleSaveSale = async () => {
      if (amount <= 0) {
       alert("Podaj poprawną ilość (większą niż 0).");

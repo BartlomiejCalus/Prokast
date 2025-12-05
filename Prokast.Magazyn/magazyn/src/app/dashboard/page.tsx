@@ -1,7 +1,7 @@
 'use client';
 import ChoiceMenu from "@/components/choiceMenu";
 import React, { useEffect, useState } from "react";
-import { storedProduct } from "@/models/Products";
+
 import { storageResponse } from "@/models/Products";
 import axios from "axios";
 import StoredProductsTable from "@/components/storedProducts";
