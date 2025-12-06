@@ -17,15 +17,6 @@ const Navbar: React.FC = () => {
 
       {/* Menu */}
       <ul className="flex flex-wrap gap-4 items-center mt-2 md:mt-0">
-        {/* Strona główna */}
-        <li>
-          <Link
-            to="/dashboard"
-            className="text-gray-700 hover:text-blue-500 transition font-medium"
-          >
-            Strona główna
-          </Link>
-        </li>
 
         {/* Produkty */}
         <li
@@ -59,34 +50,13 @@ const Navbar: React.FC = () => {
         </li>
 
         {/* Użytkownicy */}
-        <li
-          className="relative"
-          onMouseEnter={() => setOpenDropdown("users")}
-        >
-          <button className="cursor-pointer text-gray-700 hover:text-blue-500 transition font-medium px-2 py-1 min-w-[100px]">
-            Użytkownicy
-          </button>
-          <div
-            className={`absolute left-0 mt-2 bg-white shadow-lg rounded-xl py-2 w-48 z-50 origin-top-left
-              transform transition-all duration-150
-              ${openDropdown === "users"
-                ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
-                : "opacity-0 scale-95 -translate-y-1 pointer-events-none"
-              }`}
+        <li>
+          <Link
+            to="/UsersList"
+            className="text-gray-700 hover:text-blue-500 transition font-medium"
           >
-            <Link
-              to="/CreateEmployee"
-              className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition"
-            >
-              Dodaj Pracownika
-            </Link>
-            <Link
-              to="/UsersList"
-              className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition"
-            >
-              Lista Użytkowników
-            </Link>
-          </div>
+            Użytkownicy
+          </Link>
         </li>
 
         {/* Magazyny */}

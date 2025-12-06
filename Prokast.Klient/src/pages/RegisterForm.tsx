@@ -183,16 +183,6 @@ const RegisterForm: React.FC = () => {
           />
 
           <input
-            type="text"
-            name="address"
-            placeholder="Adres"
-            className="w-full p-2 border rounded-xl"
-            value={form.address}
-            onChange={handleChange}
-            required
-          />
-
-          <input
             type="tel"
             name="phoneNumber"
             placeholder="Numer telefonu"
@@ -208,6 +198,16 @@ const RegisterForm: React.FC = () => {
             placeholder="Kod pocztowy"
             className="w-full p-2 border rounded-xl"
             value={form.postalCode}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="text"
+            name="address"
+            placeholder="Adres"
+            className="w-full p-2 border rounded-xl"
+            value={form.address}
             onChange={handleChange}
             required
           />

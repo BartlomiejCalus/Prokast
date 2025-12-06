@@ -106,7 +106,7 @@ const Dashboard: React.FC = () => {
       {/* Wykresy */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
         <div className="bg-white rounded-2xl shadow-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Zajętość magazynów</h2>
+          <h2 className="text-xl font-semibold mb-4">Ilość produktów w  magazynach</h2>
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
               <Pie
