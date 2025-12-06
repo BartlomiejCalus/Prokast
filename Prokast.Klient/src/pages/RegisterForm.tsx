@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 const API_URL = process.env.REACT_APP_API_URL;
 
 const RegisterForm: React.FC = () => {
+  const navigate = useNavigate();
+  
   const [form, setForm] = useState({
     login: '',
     password: '',
@@ -101,6 +103,7 @@ const RegisterForm: React.FC = () => {
       }
 
       console.log('Odpowiedź z API:', response.data);
+      navigate('/'); 
     } catch (error: any) {
       console.error('Błąd podczas rejestracji:', error);
       if (error.response) {
