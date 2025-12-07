@@ -29,7 +29,9 @@ const UsersList = () => {
   const [email, setEmail] = useState<string>("");
   const [errorEmail, setEmailError] = useState<string>("");
 
-  const [responseMessage, setResponseMessage] = useState<NewAccResp | null>(null);
+  const [responseMessage, setResponseMessage] = useState<NewAccResp | null>(
+    null
+  );
   const [addedSuccessfully, setAddedSuccessfully] = useState<boolean>(false);
 
   const [copied, setCopied] = useState<boolean>(false);
@@ -114,7 +116,16 @@ const UsersList = () => {
     firstName: yup.string().required("Imię jest wymagane"),
     lastName: yup.string().required("Nazwisko jest wymagane"),
     roleId: yup.number().required("Rola jest wymagana"),
-    warehouseID: yup.number().required("ID magazynu jest wymagane"),
+    warehouseID: yup
+      .number()
+      .transform((value, originalValue) => {
+        if (originalValue === "" || originalValue === undefined) {
+          return null;
+        }
+        return value;
+      })
+      .nullable()
+      .default(null),
   });
 
   const {
@@ -131,7 +142,7 @@ const UsersList = () => {
       firstName: "",
       lastName: "",
       roleId: 1,
-      warehouseID: 1,
+      warehouseID: null,
     },
   });
 
@@ -371,6 +382,7 @@ const UsersList = () => {
                     {r.name}
                   </option>
                 ))}
+                <option value="">Brak przypisanego magazynu</option>
               </select>
               {errors.warehouseID && (
                 <p className="text-red-500 text-sm">
@@ -530,6 +542,7 @@ const UsersList = () => {
                     {r.name}
                   </option>
                 ))}
+                <option value="">Brak przypisanego magazynu</option>
               </select>
               {errors.warehouseID && (
                 <p className="text-red-500 text-sm">
@@ -542,7 +555,7 @@ const UsersList = () => {
             {addedSuccessfully && (
               <div className="p-4 bg-green-100 border border-green-400 rounded">
                 <h3 className="text-lg font-semibold mb-2 text-green-800">
-                  POPRAWNIE DODANO UŻYTKOWNIKA. <br/>
+                  POPRAWNIE DODANO UŻYTKOWNIKA. <br />
                   Dane do logowania:
                 </h3>
                 <p>Login: {responseMessage?.login}</p>
@@ -557,9 +570,13 @@ const UsersList = () => {
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
                   }}
-                  className={`px-3 py-1 text-white rounded ${copied ? "bg-green-600 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}
+                  className={`px-3 py-1 text-white rounded ${
+                    copied
+                      ? "bg-green-600 cursor-not-allowed"
+                      : "bg-blue-600 hover:bg-blue-700"
+                  }`}
                 >
-                  {!copied ? <FaCopy /> : <FaCheck/>}
+                  {!copied ? <FaCopy /> : <FaCheck />}
                 </button>
               </div>
             )}
@@ -591,7 +608,11 @@ const UsersList = () => {
                     });
                   setAddedSuccessfully(true);
                 })}
-                className={`px-4 py-2 bg-green-600 text-white rounded ${addedSuccessfully ? "opacity-50 cursor-not-allowed" : "hover:bg-green-700"} `}
+                className={`px-4 py-2 bg-green-600 text-white rounded ${
+                  addedSuccessfully
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-green-700"
+                } `}
                 disabled={addedSuccessfully}
               >
                 Zapisz

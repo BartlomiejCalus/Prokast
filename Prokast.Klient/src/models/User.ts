@@ -3,5 +3,5 @@ export interface User {
     firstName: string;
     lastName: string;
     roleId: number;
-    warehouseID: number;
+    warehouseID: number | null;
 }

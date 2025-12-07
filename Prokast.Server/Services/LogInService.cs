@@ -170,9 +170,6 @@ namespace Prokast.Server.Services
                 password.Append(litery[index]);
             }
 
-            Console.WriteLine(login);
-            Console.WriteLine(password.ToString());
-
             var newAccount = new Account
             {
                 Login = login,
