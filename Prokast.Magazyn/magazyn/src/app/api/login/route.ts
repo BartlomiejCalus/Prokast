@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     console.log("Sending request to external API...");
     console.log(
       "Request URL:",
-      "http://localhost:8080/api/login"
+      "https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/login"
     );
     console.log("Request Headers:", {
       "Content-Type": "application/json",
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     console.log("Request Body:", { Login, Password });
 
     const response = await axios.post(
-      "http://localhost:8080/api/login",
+      "https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/login",
       { Login, Password },
       { headers: { "Content-Type": "application/json" } }
     );
