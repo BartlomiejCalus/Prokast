@@ -1,11 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Navbar: React.FC = () => {
   const [openDropdown, setOpenDropdown] = React.useState<string | null>(null);
 
   return (
+    <>
     <nav
       className="bg-white shadow-md rounded-2xl px-4 py-3 flex flex-wrap justify-between items-center relative"
       onMouseLeave={() => setOpenDropdown(null)}
@@ -144,6 +147,8 @@ const Navbar: React.FC = () => {
         </li>
       </ul>
     </nav>
+    <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
+    </>
   );
 };
 

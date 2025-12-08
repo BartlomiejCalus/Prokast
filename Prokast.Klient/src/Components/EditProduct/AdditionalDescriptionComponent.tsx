@@ -10,6 +10,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { set, useForm } from "react-hook-form";
 import { Console } from "console";
 import { isEditable } from "@testing-library/user-event/dist/utils";
+import { toast } from "react-toastify";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -289,7 +290,7 @@ const AdditionalDescriptionComponent = ({
                       },
                     }
                   );
-                  alert("Dodano opis!");
+                  toast.success("Dodano opis!");
                   setIsAddOpen(false);
                   fetchDescriptions();
                   await onAdd();
@@ -338,7 +339,7 @@ const AdditionalDescriptionComponent = ({
                     }
                   );
 
-                  alert("Usunięto opis!");
+                  toast.success("Usunięto opis!");
                   setIsDeleteOpen(false);
                   fetchDescriptions();
                   await onAdd();
@@ -425,36 +426,6 @@ const AdditionalDescriptionComponent = ({
               )}
             </div>
 
-            {/* VAT
-            <div>
-              <label className="block text-sm font-medium mb-1">VAT (%)</label>
-              <input
-                type="number"
-                {...register("vat")}
-                className={`w-full border rounded px-3 py-2 focus:outline-blue-500 ${
-                  !toEditablePrice ? "bg-gray-100" : ""
-                }`}
-                disabled={!toEditablePrice}
-              />
-              {errors.vat && (
-                <p className="text-red-500 text-sm">{errors.vat.message}</p>
-              )}
-            </div>
-
-             Netto
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Cena netto (liczona)
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                {...register("netto")}
-                className="w-full border rounded px-3 py-2 focus:outline-blue-500 bg-gray-100"
-                disabled
-              />
-            </div>*/}
-
             {/* Buttons */}
 
             <div className="flex justify-end gap-3 pt-2">
@@ -484,6 +455,7 @@ const AdditionalDescriptionComponent = ({
                     );
                     setIsUpdateOpen(false);
                     setToEditableDescription(false);
+                    toast.success("Zaktualizowano opis!");
                     fetchDescriptions();
                     await onAdd();
                   })}
