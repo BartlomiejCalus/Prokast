@@ -27,7 +27,7 @@ export async function PUT(
     );
   }
 
-  const backendUrl = `${apiBase}/api/storedproducts/quantity/${id}?quantity=${quantity}`;
+  const backendUrl = `https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/storedproducts/quantity/${id}?quantity=${quantity}`;
 
   const token = await (await cookies()).get("token")?.value;
   console.log("TOKEN W ROUTE.TS:", token);
