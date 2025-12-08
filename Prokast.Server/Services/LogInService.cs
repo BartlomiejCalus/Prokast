@@ -292,7 +292,7 @@ namespace Prokast.Server.Services
         #endregion
         public Response GetAllRoles(int clientID) 
         {
-            var roleList = _dbContext.Roles.Where(x => x.RoleName != "Master" && x.RoleName != "HeadAdmin").ToList();
+            var roleList = _dbContext.Roles.Where(x => x.RoleName != "Master").ToList();
             if (roleList.Count() == 0)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma ról!" };
 

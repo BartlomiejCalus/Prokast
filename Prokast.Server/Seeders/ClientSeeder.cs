@@ -28,7 +28,8 @@ namespace Prokast.Server.Seeders
             if (!dbContext.Clients.Any())
             {
                 var roleMaster = dbContext.Roles.FirstOrDefault(x => x.RoleName == "Master");
-                var roleAdmin = dbContext.Roles.FirstOrDefault(x => x.ID == 2);
+                var roleAdmin = dbContext.Roles.FirstOrDefault(x => x.RoleName == "Admin");
+                var roleHeadAdmin = dbContext.Roles.FirstOrDefault(x => x.RoleName == "HeadAdmin");
                 var clientList = new List<Client>()
                 {
                     new()
@@ -52,7 +53,6 @@ namespace Prokast.Server.Seeders
                                 Login = "mariuszmetalowiec",
                                 Password = getHashed("password"),
                                 RoleID = roleAdmin.ID,
-                                Role = roleAdmin
                             },
                             new()
                             {
@@ -60,8 +60,7 @@ namespace Prokast.Server.Seeders
                                 LastName = "Marożek",
                                 Login = "marmar123",
                                 Password = getHashed("marmar"),
-                                RoleID = roleAdmin.ID,
-                                Role = roleAdmin
+                                RoleID = roleHeadAdmin.ID,
                             }
                         }
                     },

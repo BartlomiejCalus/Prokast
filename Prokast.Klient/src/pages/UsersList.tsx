@@ -238,6 +238,8 @@ const UsersList = () => {
                     </button>
                     <button
                       type="button"
+                      disabled = {roles.find((r) => r.id === user.roleId)?.roleName === "HeadAdmin"}
+                      className={`${roles.find((r) => r.id === user.roleId)?.roleName === "HeadAdmin" ? "opacity-50 cursor-not-allowed mr-2" : "mr-2"}`}
                       onClick={() => {
                         setSelectedUser(user);
                         setIsDeleteOpen(true);
