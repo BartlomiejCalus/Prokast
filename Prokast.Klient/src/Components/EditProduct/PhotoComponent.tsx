@@ -6,6 +6,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { set, useForm } from "react-hook-form";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -226,7 +227,7 @@ const PhotoComponent = ({
                       },
                     }
                   );
-                  alert("Dodano zdjęcie!");
+                  toast.success("Dodano zdjęcie!");
                   setIsAddOpen(false);
                   setPreview(null);
                   fetchPhoto();
@@ -279,7 +280,7 @@ const PhotoComponent = ({
                     }
                   );
 
-                  alert("Usunięto zdjęcie!");
+                  toast.success("Usunięto zdjęcie!");
                   setIsDeleteOpen(false);
                   fetchPhoto();
                   await onAdd();

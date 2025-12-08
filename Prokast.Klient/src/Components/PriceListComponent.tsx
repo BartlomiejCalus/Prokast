@@ -7,6 +7,7 @@ import { Price } from "../models/Price";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -291,7 +292,7 @@ const PriceListComponent = ({
                                             },
                                         }
                                     );
-                                    alert("Dodano cenę!");
+                                    toast.success("Dodano cenę!");
                                     setIsAddOpen(false);
                                     fetchPrices();
                                 })}
@@ -339,7 +340,7 @@ const PriceListComponent = ({
                                         }
                                     );
 
-                                    alert("Usunięto cenę!");
+                                    toast.success("Usunięto cenę!");
                                     setIsDeleteOpen(false);
                                     fetchPrices();
                                 }}
@@ -482,6 +483,7 @@ const PriceListComponent = ({
                                         );
                                         setIsUpdateOpen(false);
                                         setToEditablePrice(false);
+                                        toast.success("Zaktualizowano nazwę!");
                                         fetchPrices();
                                     })}
                                     className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
