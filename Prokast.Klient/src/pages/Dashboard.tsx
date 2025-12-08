@@ -72,7 +72,7 @@ const Dashboard: React.FC = () => {
   const COLORS = ["#3b82f6", "#22c55e", "#f59e0b", "#ef4444"];
 
   return (
-    <div className="min-w-full min-h-screen text-center bg-gradient-to-br from-blue-100 via-white to-blue-200 p-6">
+    <div className="min-w-full min-h-screen text-center bg-gradient-to-br from-green-100 via-white to-green-200 p-6">
       <Navbar />
       <h1 className="text-3xl font-bold mt-6">📊 Panel użytkownika</h1>
 

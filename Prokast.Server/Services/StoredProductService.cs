@@ -23,7 +23,7 @@ namespace Prokast.Server.Services
         }
 
         #region Create
-        public Response CreateStoredProduct(StoredProductCreateMultipleDto storedProducts,int warehouseID, int clientID, int productID)
+        public Response CreateStoredProduct(int warehouseID, int clientID, StoredProductCreateDto storedProducts)
         {
             if (storedProducts == null)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Błędnie podane dane" };
@@ -34,20 +34,15 @@ namespace Prokast.Server.Services
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego magazynu" };
             }
 
-            var productList = new List<StoredProduct>();
-            foreach (var product in storedProducts.StoredProducts)
+            var storedProduct = new StoredProduct
             {
-                var storedProduct = new StoredProduct
-                {
-                    Quantity = product.Quantity,
-                    MinQuantity = product.MinQuantity,
-                    Warehouse = warehouse
-                };
-                productList.Add(storedProduct);
-                /*_dbContext.StoredProducts.Add(storedProduct);
-                _dbContext.SaveChanges();*/
-            }
-            warehouse.StoredProducts.AddRange(productList);
+                Quantity = storedProducts.Quantity,
+                MinQuantity = storedProducts.MinQuantity,
+                WarehouseID = warehouseID,
+                ProductID = storedProducts.ProductID,
+            };
+            _dbContext.StoredProducts.Add(storedProduct);
+            _dbContext.SaveChanges();
 
             return new Response() { ID = random.Next(1, 100000), ClientID = clientID };
         }
@@ -61,8 +56,6 @@ namespace Prokast.Server.Services
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego magazynu!" };
             
             var storedProductsDb = _dbContext.StoredProducts.Include(x => x.Product).Where(x => x.WarehouseID == warehouseID).ToList();
-            if (storedProductsDb.Count == 0)
-                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak produktów!" };
 
             var storedProductsList = new List<StoredProductGetDto>();
 
@@ -80,7 +73,8 @@ namespace Prokast.Server.Services
                     Quantity = storedProduct.Quantity,
                     MinQuantity = storedProduct.MinQuantity,
                     LastUpdated = storedProduct.LastUpdated,
-                    ProductName = product.Name
+                    ProductName = product.Name,
+                    Sku = product.SKU
                 };
                 storedProductsList.Add(storedProductToList);
             }
@@ -265,6 +259,18 @@ namespace Prokast.Server.Services
             _dbContext.SaveChanges();
 
             return new StoredProductEditMulipleResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = storedProduct };
+        }
+
+        public Response EditStoredProduct(int clientID, StoredProductCreateDto storedProductEdit)
+        {
+            var storedProduct = _dbContext.StoredProducts.Include(x =>x.Product).FirstOrDefault(x => x.ID == storedProductEdit.ProductID && x.Product.ClientID == clientID);
+            if (storedProduct == null)
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Nie ma takiego produktu!" };
+            storedProduct.Quantity = storedProductEdit.Quantity;
+            storedProduct.MinQuantity = storedProductEdit.MinQuantity;
+            storedProduct.LastUpdated = DateTime.Now;
+            _dbContext.SaveChanges();
+            return new Response() { ID = random.Next(1, 100000), ClientID = clientID};
         }
         #endregion
 

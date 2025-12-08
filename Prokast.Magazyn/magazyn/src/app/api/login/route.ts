@@ -7,8 +7,18 @@ export async function POST(req: Request) {
   try {
     const { Login, Password } = await req.json();
 
+    console.log("Sending request to external API...");
+    console.log(
+      "Request URL:",
+      "http://localhost:8080/api/login"
+    );
+    console.log("Request Headers:", {
+      "Content-Type": "application/json",
+    });
+    console.log("Request Body:", { Login, Password });
+
     const response = await axios.post(
-      `${apilink}/api/login`,
+      "http://localhost:8080/api/login",
       { Login, Password },
       { headers: { "Content-Type": "application/json" } }
     );

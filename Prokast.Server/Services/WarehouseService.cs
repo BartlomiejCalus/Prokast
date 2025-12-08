@@ -4,6 +4,7 @@ using Prokast.Server.Entities;
 using Prokast.Server.Models;
 using Prokast.Server.Models.ResponseModels;
 using Prokast.Server.Models.ResponseModels.WarehouseResponseModels;
+using Prokast.Server.Models.StoredProductModels;
 using Prokast.Server.Models.WarehouseModels;
 using Prokast.Server.Services.Interfaces;
 using System.Web.Http;
@@ -66,8 +67,37 @@ namespace Prokast.Server.Services
             if (warehouse == null)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak magazynów!" };
 
-            return new WarehouseGetOneResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = warehouse };
+            var storedProducts = _dbContext.StoredProducts.Include(x => x.Product).Where(x => x.WarehouseID == warehouse.ID).ToList();
+
+            var storedProductsList = storedProducts.Select(sp => new StoredProductGetDto
+            {
+                ID = sp.ID,
+                ProductID = (int)sp.ProductID,
+                ProductName = sp.Product.Name,
+                Quantity = sp.Quantity,
+                MinQuantity = sp.MinQuantity,
+                Sku = sp.Product.SKU,
+                WarehouseID = sp.WarehouseID,
+                LastUpdated = sp.LastUpdated
+            }).ToList();
+
+            var result = new WarehouseGetAllData(warehouse, storedProductsList);
+
+            return new WarehouseGetOneResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = result };
         }
+
+        public Response GetProductsToAdd(int clientID)
+        {
+            var storedProds = _dbContext.StoredProducts.Select(x => x.ProductID).ToList();
+
+            var productsToAdd = _dbContext.Products
+                .Where(x => x.ClientID == clientID && !storedProds.Contains(x.ID))
+                .Select(x => new WarehouseGetProdstToAddDto() { ID = x.ID, Sku = x.SKU})
+                .ToList();
+
+            return new ResponseWarehouseGetProdstToAdd() { ID = random.Next(1, 100000), ClientID = clientID, Model = productsToAdd };
+        }
+
         public Response GetWarehousesByName(int clientID, string name)
         {
             var warehouseList = _dbContext.Warehouses.Where(x => x.Name.Contains(name) && x.ClientID == clientID).ToList();
@@ -95,25 +125,30 @@ namespace Prokast.Server.Services
             return new WarehouseGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = warehouseList };
         }
 
-        public Response GetWarehousesMinimalData(int clientID)
+        public Response GetWarehousesMinimalData(int clientID, int pageNumber, int pageSize)
         {
-            var warehouses = _dbContext.Warehouses.Where(x => x.ClientID == clientID).ToList();
-            if (warehouses.Count == 0)
-                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak magazynów!" };
+            var warehouses = _dbContext.Warehouses.Include(x => x.StoredProducts).Where(x => x.ClientID == clientID);
+            
 
+            var paginatedResult = PaginationExtension.Paginate(warehouses, pageNumber, pageSize);
+            if (paginatedResult == null)
+                return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak magazynów!" };
             var warehousesList = new List<WarehouseGetMinimal>();
 
-            foreach(var warehouse in warehouses)
+            foreach(var warehouse in paginatedResult.Items)
             {
                 var warehouseToList = new WarehouseGetMinimal()
                 {
                     ID = warehouse.ID,
-                    Name = warehouse.Name
+                    Name = warehouse.Name,
+                    City = warehouse.City,
+                    Country = warehouse.Country,
+                    ProductsCount = warehouse.StoredProducts.Count
                 };
                 warehousesList.Add(warehouseToList);
             }
 
-            return new WarehouseGetMinimalResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = warehousesList };
+            return new WarehouseGetMinimalResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = warehousesList, TotalItems = paginatedResult.TotalItems };
         }
         #endregion
 

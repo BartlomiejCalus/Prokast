@@ -11,6 +11,11 @@ import ProductsList from './pages/ProductsList';
 import AddProducts from './pages/AddProducts';
 import EditProducts from './pages/EditProducts';
 import ProtectedRoute from './Components/ProtectedRoute';
+import UsersList from './pages/UsersList';
+import WarehouseEdit from './pages/EditWarehouse';
+import AddWarehouse from './pages/AddWarehouse';
+import CreateProduct from './pages/CreateProduct';
+import WarehouseList from './pages/WarehouseList';
 
 function App() {
   return (
@@ -70,10 +75,26 @@ function App() {
           }
         />
         <Route
+          path="/CreateProduct"
+          element={
+            <ProtectedRoute>
+              <CreateProduct />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/ProductsList"
           element={
             <ProtectedRoute>
               <ProductsList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/WarehouseList"
+          element={
+            <ProtectedRoute>
+              <WarehouseList />
             </ProtectedRoute>
           }
         />
@@ -83,6 +104,7 @@ function App() {
             <ProtectedRoute>
               <AddProducts />
             </ProtectedRoute>
+      
           }
         />
         <Route
@@ -90,6 +112,33 @@ function App() {
           element={
             <ProtectedRoute>
               <EditProducts />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/UsersList"
+          element={
+            <ProtectedRoute>
+              <UsersList />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/EditWarehouse/:id"
+          element={
+            <ProtectedRoute>
+              <WarehouseEdit />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/AddWarehouse"
+          element={
+            <ProtectedRoute>
+              <AddWarehouse />
             </ProtectedRoute>
           }
         />

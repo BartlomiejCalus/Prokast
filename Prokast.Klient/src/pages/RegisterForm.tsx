@@ -1,9 +1,9 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../Components/Navbar';
+//import Navbar from '../Components/Navbar';
 
-const API_URL = process.env.REACT_APP_API_URL; 
+const API_URL = process.env.REACT_APP_API_URL;
 
 const RegisterForm: React.FC = () => {
   const [form, setForm] = useState({
@@ -19,7 +19,9 @@ const RegisterForm: React.FC = () => {
     city: '',
     country: ''
   });
-
+  const [errors, setErrors] = useState({
+    login: ''
+  });
   const normalizeInput = (name: string, value: string) => {
     switch (name) {
       case 'nip': {
@@ -73,6 +75,15 @@ const RegisterForm: React.FC = () => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(form.login)) {
+      setErrors(prev => ({ ...prev, login: 'Login musi być poprawnym adresem e-mail.' }));
+      return;
+    } else {
+      setErrors(prev => ({ ...prev, login: '' }));
+    }
+
     try {
       const response = await axios.post(
         `${API_URL}/api/client`,
@@ -100,129 +111,131 @@ const RegisterForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col  bg-gradient-to-br from-blue-100 via-white to-blue-200">
-      <Navbar />
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-green-100 via-white to-green-200">
       <main className="flex flex-col items-center justify-center w-screen mt-10">
-      <form onSubmit={handleRegister} className="w-full max-w-md p-6 bg-white/80 backdrop-blur-md shadow-lg rounded-2xl space-y-2">
-        <h2 className="text-2xl font-bold text-center text-gray-800">Rejestracja</h2>
+        <form onSubmit={handleRegister} className="w-full max-w-md p-6 bg-white/80 backdrop-blur-md shadow-lg rounded-2xl space-y-2">
+          <h2 className="text-2xl font-bold text-center text-gray-800">Rejestracja</h2>
 
-        <input
-          type="text"
-          name="login"
-          placeholder="Login"
-          className="w-full p-2 border rounded-xl"
-          value={form.login}
-          onChange={handleChange}
-          required
-        />
+          {errors.login && (
+            <p className="text-red-500 text-sm">{errors.login}</p>
+          )}
+          <input
+            type="text"
+            name="login"
+            placeholder="E-mail (Login)"
+            className="w-full p-2 border rounded-xl"
+            value={form.login}
+            onChange={handleChange}
+            required
+          />
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Hasło"
-          className="w-full p-2 border rounded-xl"
-          value={form.password}
-          onChange={handleChange}
-          required
-        />
+          <input
+            type="password"
+            name="password"
+            placeholder="Hasło"
+            className="w-full p-2 border rounded-xl"
+            value={form.password}
+            onChange={handleChange}
+            required
+          />
 
-        <input
-          type="text"
-          name="firstName"
-          placeholder="Imię"
-          className="w-full p-2 border rounded-xl"
-          value={form.firstName}
-          onChange={handleChange}
-          required
-        />
+          <input
+            type="text"
+            name="firstName"
+            placeholder="Imię"
+            className="w-full p-2 border rounded-xl"
+            value={form.firstName}
+            onChange={handleChange}
+            required
+          />
 
-        <input
-          type="text"
-          name="lastName"
-          placeholder="Nazwisko"
-          className="w-full p-2 border rounded-xl"
-          value={form.lastName}
-          onChange={handleChange}
-          required
-        />
+          <input
+            type="text"
+            name="lastName"
+            placeholder="Nazwisko"
+            className="w-full p-2 border rounded-xl"
+            value={form.lastName}
+            onChange={handleChange}
+            required
+          />
 
-        <input
-          type="text"
-          name="businessName"
-          placeholder="Nazwa firmy"
-          className="w-full p-2 border rounded-xl"
-          value={form.businessName}
-          onChange={handleChange}
-          required
-        />
+          <input
+            type="text"
+            name="businessName"
+            placeholder="Nazwa firmy"
+            className="w-full p-2 border rounded-xl"
+            value={form.businessName}
+            onChange={handleChange}
+            required
+          />
 
-        <input
-          type="text"
-          name="nip"
-          placeholder="NIP"
-          className="w-full p-2 border rounded-xl"
-          value={form.nip}
-          onChange={handleChange}
-          required
-        />
+          <input
+            type="text"
+            name="nip"
+            placeholder="NIP"
+            className="w-full p-2 border rounded-xl"
+            value={form.nip}
+            onChange={handleChange}
+            required
+          />
 
-        <input
-          type="text"
-          name="address"
-          placeholder="Adres"
-          className="w-full p-2 border rounded-xl"
-          value={form.address}
-          onChange={handleChange}
-          required
-        />
+          <input
+            type="text"
+            name="address"
+            placeholder="Adres"
+            className="w-full p-2 border rounded-xl"
+            value={form.address}
+            onChange={handleChange}
+            required
+          />
 
-        <input
-          type="tel"
-          name="phoneNumber"
-          placeholder="Numer telefonu"
-          className="w-full p-2 border rounded-xl"
-          value={form.phoneNumber}
-          onChange={handleChange}
-          required
-        />
+          <input
+            type="tel"
+            name="phoneNumber"
+            placeholder="Numer telefonu"
+            className="w-full p-2 border rounded-xl"
+            value={form.phoneNumber}
+            onChange={handleChange}
+            required
+          />
 
-        <input
-          type="text"
-          name="postalCode"
-          placeholder="Kod pocztowy"
-          className="w-full p-2 border rounded-xl"
-          value={form.postalCode}
-          onChange={handleChange}
-          required
-        />
+          <input
+            type="text"
+            name="postalCode"
+            placeholder="Kod pocztowy"
+            className="w-full p-2 border rounded-xl"
+            value={form.postalCode}
+            onChange={handleChange}
+            required
+          />
 
-        <input
-          type="text"
-          name="city"
-          placeholder="Miasto"
-          className="w-full p-2 border rounded-xl"
-          value={form.city}
-          onChange={handleChange}
-          required
-        />
+          <input
+            type="text"
+            name="city"
+            placeholder="Miasto"
+            className="w-full p-2 border rounded-xl"
+            value={form.city}
+            onChange={handleChange}
+            required
+          />
 
-        <input
-          type="text"
-          name="country"
-          placeholder="Państwo"
-          className="w-full p-2 border rounded-xl"
-          value={form.country}
-          onChange={handleChange}
-          required
-        />
+          <input
+            type="text"
+            name="country"
+            placeholder="Państwo"
+            className="w-full p-2 border rounded-xl"
+            value={form.country}
+            onChange={handleChange}
+            required
+          />
 
-        <button
-          type="submit"
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-xl transition"
-        >
-          Stwórz konto
-        </button>
-      </form>
+          <button
+            type="submit"
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-xl transition"
+          >
+            Stwórz konto
+          </button>
+        </form>
       </main>
     </div>
   );

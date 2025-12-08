@@ -1,9 +1,9 @@
-﻿using Prokast.Server.Entities;
+﻿using Prokast.Server.Models.AccountModels;
 
 namespace Prokast.Server.Models.ResponseModels.AccountResponseModels
 {
     public class LogInGetResponse : Response
     {
-        public List<Account> Model { get; set; }
+        public List<AccountGetDto> Model { get; set; }
     }
 }
