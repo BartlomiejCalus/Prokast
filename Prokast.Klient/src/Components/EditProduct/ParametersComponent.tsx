@@ -12,9 +12,11 @@ const API_URL = process.env.REACT_APP_API_URL;
 const ParametersComponent = ({
   data,
   productId,
+  onAdd,
 }: {
   data: CustomParam[];
   productId: string | undefined;
+  onAdd: () => void;
 }) => {
   const [params, setParams] = useState<CustomParam[]>(data || []);
 
@@ -286,6 +288,7 @@ const ParametersComponent = ({
                   alert("Dodano parametr!");
                   setIsAddOpen(false);
                   fetchParams();
+                  await onAdd();
                 })}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
               >
@@ -334,6 +337,7 @@ const ParametersComponent = ({
                   alert("Usunięto cenę!");
                   setIsDeleteOpen(false);
                   fetchParams();
+                  await onAdd();
                 }}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
               >
@@ -476,6 +480,7 @@ const ParametersComponent = ({
                     setIsUpdateOpen(false);
                     setToEditableParam(false);
                     fetchParams();
+                    await onAdd();
                   })}
                   className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                 >

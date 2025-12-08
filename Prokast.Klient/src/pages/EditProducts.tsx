@@ -23,7 +23,7 @@ const EditProducts: React.FC = () => {
   const [error, setError] = useState("");
   const [displayedList, setDisplayedList] = useState<number>(0);
 
-  useEffect(() => {
+  const fetchProduct = async () => {
     const token = Cookies.get("token");
 
     if (!token) {
@@ -34,21 +34,24 @@ const EditProducts: React.FC = () => {
     const decoded: any = jwtDecode(token);
     const clientID = decoded.ClientID;
     console.log("🔹 decoded token:", decoded);
-    axios
-      .get(`${API_URL}/api/products/products/${id}`, {
+
+    try {
+      const res = await axios.get(`${API_URL}/api/products/products/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
         },
-      })
-
-      .then((res) => {
-        console.log("🔵 Odpowiedź z API:", res.data);
-        setProduct(res.data.model);
-      })
-      .catch((err) => {
-        console.error("Błąd przy pobieraniu danych:", err);
       });
+
+      console.log("🔵 Odpowiedź z API:", res.data);
+      setProduct(res.data.model);
+    } catch (err) {
+      console.error("Błąd przy pobieraniu danych:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchProduct();
   }, []);
 
   if (!product) {
@@ -63,13 +66,29 @@ const EditProducts: React.FC = () => {
     );
   }
 
-    const renderComponent = () => {
-    if (displayedList == 1) return <AdditionalDescriptionComponent data={product.additionalDescriptions} productId={id} />;
-    else if (displayedList == 2)return <AdditionalNameComponent data={product.additionalNames} productId={id} />;
-    else if (displayedList == 3) return <PriceListComponent data={product.priceList} productId={id} />
-    else if (displayedList == 4) return <ParametersComponent data={product.customParams} productId={id} />;
-    else if (displayedList == 5) return <PhotoComponent data={product.photos} productId={id} />;
-
+  const renderComponent = () => {
+    if (displayedList == 1)
+      return (
+        <AdditionalDescriptionComponent
+          data={product.additionalDescriptions}
+          productId={id}
+          onAdd= {fetchProduct}
+        />
+      );
+    else if (displayedList == 2)
+      return (
+        <AdditionalNameComponent
+          data={product.additionalNames}
+          productId={id}
+          onAdd= {fetchProduct}
+        />
+      );
+    else if (displayedList == 3)
+      return <PriceListComponent data={product.priceList} productId={id} onAdd={fetchProduct} />;
+    else if (displayedList == 4)
+      return <ParametersComponent data={product.customParams} productId={id} onAdd={fetchProduct} />;
+    else if (displayedList == 5)
+      return <PhotoComponent data={product.photos} productId={id} onAdd={fetchProduct} />;
     return null;
   };
 
@@ -262,9 +281,7 @@ const EditProducts: React.FC = () => {
               </button>
             </div>
             <div className="flex flex-col gap-3 border-rounded p-4 bg-white/70 shadow-md">
-              <h3 className="flex-1 font-semibold mt-4">
-                Zdjęcia
-              </h3>
+              <h3 className="flex-1 font-semibold mt-4">Zdjęcia</h3>
               <button
                 type="button"
                 onClick={() => setDisplayedList(5)}

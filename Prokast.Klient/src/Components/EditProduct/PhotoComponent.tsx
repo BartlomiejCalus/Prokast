@@ -12,9 +12,11 @@ const API_URL = process.env.REACT_APP_API_URL;
 const PhotoComponent = ({
   data,
   productId,
+  onAdd,
 }: {
   data: Photo[];
   productId: string | undefined;
+  onAdd: () => void;
 }) => {
   const [isViewOpen, setIsViewOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -228,6 +230,7 @@ const PhotoComponent = ({
                   setIsAddOpen(false);
                   setPreview(null);
                   fetchPhoto();
+                  await onAdd();
                 })}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
               >
@@ -279,6 +282,7 @@ const PhotoComponent = ({
                   alert("Usunięto zdjęcie!");
                   setIsDeleteOpen(false);
                   fetchPhoto();
+                  await onAdd();
                 }}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
               >

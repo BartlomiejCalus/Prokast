@@ -16,9 +16,11 @@ const API_URL = process.env.REACT_APP_API_URL;
 const AdditionalDescriptionComponent = ({
   data,
   productId,
+  onAdd,
 }: {
   data: AdditionalField[];
   productId: string | undefined;
+  onAdd: () => void;
 }) => {
   const navigate = useNavigate();
 
@@ -290,6 +292,7 @@ const AdditionalDescriptionComponent = ({
                   alert("Dodano opis!");
                   setIsAddOpen(false);
                   fetchDescriptions();
+                  await onAdd();
                 })}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
               >
@@ -338,6 +341,7 @@ const AdditionalDescriptionComponent = ({
                   alert("Usunięto opis!");
                   setIsDeleteOpen(false);
                   fetchDescriptions();
+                  await onAdd();
                 }}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
               >
@@ -481,6 +485,7 @@ const AdditionalDescriptionComponent = ({
                     setIsUpdateOpen(false);
                     setToEditableDescription(false);
                     fetchDescriptions();
+                    await onAdd();
                   })}
                   className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                 >

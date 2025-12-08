@@ -13,9 +13,11 @@ const API_URL = process.env.REACT_APP_API_URL;
 const PriceListComponent = ({
   data,
   productId,
+  onAdd,
 }: {
   data: PriceList;
   productId: string | undefined;
+  onAdd: () => void;
 }) => {
 
   const [isUpdateOpen, setIsUpdateOpen] = useState<boolean>(false);
@@ -294,6 +296,7 @@ const PriceListComponent = ({
                   alert("Dodano cenę!");
                   setIsAddOpen(false);
                   fetchPrices();
+                  await onAdd();
                 })}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
               >
@@ -342,6 +345,7 @@ const PriceListComponent = ({
                   alert("Usunięto cenę!");
                   setIsDeleteOpen(false);
                   fetchPrices();
+                  await onAdd();
                 }}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
               >
@@ -487,6 +491,7 @@ const PriceListComponent = ({
                     setIsUpdateOpen(false);
                     setToEditablePrice(false);
                     fetchPrices();
+                    await onAdd();
                   })}
                   className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                 >

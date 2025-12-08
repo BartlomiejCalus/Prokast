@@ -8,15 +8,18 @@ import { Price } from "../../models/Price";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
+import { on } from "events";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const AdditionalNameComponent = ({
   data,
   productId,
+  onAdd
 }: {
   data: AdditionalField[];
   productId: string | undefined;
+  onAdd: () => void;
 }) => {
 
   const [isUpdateOpen, setIsUpdateOpen] = useState<boolean>(false);
@@ -286,6 +289,7 @@ const AdditionalNameComponent = ({
                   alert("Dodano nazwę!");
                   setIsAddOpen(false);
                   fetchDescriptions();
+                  await onAdd();
                 })}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
               >
@@ -334,6 +338,7 @@ const AdditionalNameComponent = ({
                   alert("Usunięto opis!");
                   setIsDeleteOpen(false);
                   fetchDescriptions();
+                  await onAdd();
                 }}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
               >
@@ -477,6 +482,7 @@ const AdditionalNameComponent = ({
                     setIsUpdateOpen(false);
                     settoEditableName(false);
                     fetchDescriptions();
+                    await onAdd();
                   })}
                   className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                 >
