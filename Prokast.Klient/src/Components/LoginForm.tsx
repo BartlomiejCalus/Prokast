@@ -37,7 +37,7 @@ const LoginForm: React.FC = () => {
 
       navigate('/dashboard');
     } catch (err: any) {
-      if (err.response?.status === 401) {
+      if (err.response?.status === 400) {
         setError('Nieprawidłowy login lub hasło.');
       } else {
         setError('Wystąpił błąd podczas logowania.');

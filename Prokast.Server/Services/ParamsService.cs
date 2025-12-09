@@ -87,7 +87,7 @@ namespace Prokast.Server.Services
         {
 
             var paramList = _dbContext.CustomParams.Where(x => x.ProductID == productID).ToList();
-            if (paramList.Count() == 0)
+            if (paramList is null)
                 return new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Produkt nie ma tych parametrów!" };
 
             return new ParamsGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = paramList };

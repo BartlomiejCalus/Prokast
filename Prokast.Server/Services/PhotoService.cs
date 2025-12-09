@@ -96,7 +96,7 @@ namespace Prokast.Server.Services
         {
             var phohoList = _dbContext.Photos.Where(x => x.Product.ID == productID).ToList();
 
-            if (phohoList.Count == 0)
+            if (phohoList is null)
                 return new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Nie ma takiego zdjecia" };
 
             return new PhotoGetResponse() { ID = random.Next(1, 100000), Model = phohoList };

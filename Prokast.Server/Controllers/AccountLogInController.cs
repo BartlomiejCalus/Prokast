@@ -66,7 +66,7 @@ namespace Prokast.Server.Controllers
             try
             {
                 var response = _LogInService.Log_In(loginRequest);
-                if (response is null) return BadRequest();
+                if (response is ErrorResponse) return BadRequest();
                 return Ok(response);
             }
             catch (Exception ex) {
@@ -82,7 +82,7 @@ namespace Prokast.Server.Controllers
             try
             {
                 var response = _LogInService.Log_In_Warehouse(loginRequest);
-                if (response is null) return BadRequest();
+                if (response is ErrorResponse) return BadRequest();
                 return Ok(response);
             }
             catch (Exception ex)
