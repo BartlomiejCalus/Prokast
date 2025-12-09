@@ -110,7 +110,7 @@ namespace Prokast.Server.Services
         {
 
             var addNameList = _dbContext.AdditionalNames.Where(x => x.ProductID == productID).ToList();
-            if (addNameList.Count() == 0)
+            if (addNameList is null)
                 return new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Brak parametrów" };
 
             return new AdditionalNameGetResponse() { ID = random.Next(1, 100000), Model = addNameList };

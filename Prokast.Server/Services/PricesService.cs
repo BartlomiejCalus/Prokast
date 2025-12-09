@@ -150,7 +150,7 @@ namespace Prokast.Server.Services
         public Response GetAllPricesInProduct(int clientID, int productId)
         {
             var prices = _dbContext.PriceLists.Where(x => x.ProductID == productId).SelectMany(x => x.Prices).ToList();
-            if (prices.Count() == 0)
+            if (prices is null)
                 return new ErrorResponse() { ID = random.Next(1, 100000), errorMsg = "Produkt nie ma tych parametrów!" };
 
             return new PricesGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = [.. prices.Select(x => new PriceGetDto(x))] };
