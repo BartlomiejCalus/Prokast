@@ -3,9 +3,19 @@ import axios, { AxiosError } from "axios";
 
 export async function POST(req: Request) {
   
-  //const apilink = process.env.API_URL_DOCKER_HOST || "http://localhost:8080";
+ // const apilink = process.env.API_URL_DOCKER_HOST || "http://localhost:8080";
   try {
     const { Login, Password } = await req.json();
+
+    console.log("Sending request to external API...");
+    console.log(
+      "Request URL:",
+      "https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/login"
+    );
+    console.log("Request Headers:", {
+      "Content-Type": "application/json",
+    });
+    console.log("Request Body:", { Login, Password });
 
     const response = await axios.post(
       "https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/login",

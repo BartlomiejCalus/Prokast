@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import Cookies from 'js-cookie'; // ✅ w pełni typowany
+import Cookies from 'js-cookie';
 
 const API_URL = process.env.REACT_APP_API_URL; 
 
@@ -21,9 +21,6 @@ const LoginForm: React.FC = () => {
     }
 
     try {
-
-      console.log("ENV TEST:", process.env.REACT_APP_API_URL);
-
       const response = await axios.post(
         `${API_URL}/api/login`,
         { login, password },
@@ -31,7 +28,6 @@ const LoginForm: React.FC = () => {
       );
 
       const data = response.data;
-      console.log('Odpowiedź z API:', data);
 
       Cookies.set('token', data.token, {
         expires: 1 / 24, // 1 godzina
@@ -41,7 +37,6 @@ const LoginForm: React.FC = () => {
 
       navigate('/dashboard');
     } catch (err: any) {
-      console.error(err);
       if (err.response?.status === 401) {
         setError('Nieprawidłowy login lub hasło.');
       } else {
@@ -51,7 +46,7 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-white to-blue-200">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 via-white to-green-200">
       <form onSubmit={handleLogin} className="max-w-md w-full p-6 bg-white shadow-md rounded-2xl space-y-5">
         <h2 className="text-2xl font-bold text-center">Logowanie</h2>
         {error && <div className="text-red-500 text-sm text-center">{error}</div>}
@@ -76,6 +71,16 @@ const LoginForm: React.FC = () => {
         >
           Zaloguj się
         </button>
+
+        {/* Tekstowy link do rejestracji */}
+        <div className="text-center mt-2">
+          <Link
+            to="/RegisterForm"
+            className="text-blue-500 hover:text-blue-600 font-medium transition text-sm"
+          >
+            Nie masz konta? Zarejestruj się
+          </Link>
+        </div>
       </form>
     </div>
   );

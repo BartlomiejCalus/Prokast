@@ -81,6 +81,25 @@ namespace Prokast.Server.Controllers
             }
         }
 
+        [HttpGet("ProductsToAdd")]
+        [ProducesResponseType(typeof(WarehouseGetResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public ActionResult<Response> GetProductsToAdd()
+        {
+            var clientIdFromToken = GetClientIdFromToken();
+
+            try
+            {
+                var result = _warehouseService.GetProductsToAdd(clientIdFromToken);
+                if (result is ErrorResponse) return BadRequest(result);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpGet("Name/{name}")]
         [ProducesResponseType(typeof(WarehouseGetResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -141,13 +160,13 @@ namespace Prokast.Server.Controllers
         [HttpGet("Minimal")]
         [ProducesResponseType(typeof(WarehouseGetMinimalResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public ActionResult<Response> GetWarehousesMinimalData()
+        public ActionResult<Response> GetWarehousesMinimalData([FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
             var clientIdFromToken = GetClientIdFromToken();
 
             try
             {
-                var result = _warehouseService.GetWarehousesMinimalData(clientIdFromToken);
+                var result = _warehouseService.GetWarehousesMinimalData(clientIdFromToken, pageNumber, pageSize);
                 if (result is ErrorResponse) return BadRequest(result);
                 return Ok(result);
             }

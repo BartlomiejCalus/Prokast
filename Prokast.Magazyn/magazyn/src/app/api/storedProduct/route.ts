@@ -23,7 +23,7 @@ export async function GET() {
         });
 
                 console.log("Wysyłam do backendu:", {
-          url: `${apilink}/api/storedproducts`,
+          url: "https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/storedproducts",
           token,
           params: { warehouseID: 1 }
         });
