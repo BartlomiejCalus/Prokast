@@ -3,12 +3,12 @@ import axios, { AxiosError } from "axios";
 
 export async function POST(req: Request) {
   
-  const apilink = process.env.API_URL_DOCKER_HOST || "http://localhost:8080";
+  //const apilink = process.env.API_URL_DOCKER_HOST || "http://localhost:8080";
   try {
     const { Login, Password } = await req.json();
 
     const response = await axios.post(
-      `${apilink}/api/login`,
+      "https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/login",
       { Login, Password },
       { headers: { "Content-Type": "application/json" } }
     );

@@ -13,7 +13,7 @@ export async function GET() {
             return NextResponse.json({ message: "Brak tokena w ciasteczkach" }, { status: 401 });
         }
 
-       const response = await axios.get(`${apilink}/api/storedproducts`, {
+       const response = await axios.get(`https://prokast-axgwbmd6cnezbmet.germanywestcentral-01.azurewebsites.net/api/storedproducts`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
