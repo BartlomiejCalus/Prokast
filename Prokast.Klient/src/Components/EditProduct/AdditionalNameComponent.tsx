@@ -55,7 +55,7 @@ const AdditionalNameComponent = ({
   }, []);
   //#endregion
 
-  const descriptionSchema = yup.object().shape({
+  const nameSchema = yup.object().shape({
     id: yup.number().required(),
     title: yup.string().required("Nazwa jest wymagana"),
     value: yup.string().required("Musi być większe od 0"),
@@ -70,7 +70,7 @@ const AdditionalNameComponent = ({
     reset,
     formState: { errors },
   } = useForm<AdditionalField>({
-    resolver: yupResolver(descriptionSchema),
+    resolver: yupResolver(nameSchema),
     defaultValues: {
       id: 0,
       title: "",
@@ -151,16 +151,18 @@ const AdditionalNameComponent = ({
           </tr>
         </thead>
         <tbody>
-          {names.map((description, index) => (
+          {names.map((name, index) => (
             <tr key={index}>
-              <td className="p-2 border-b">{description.title}</td>
-              <td className="p-2 border-b">{description.value}</td>
+              <td className="p-2 border-b">{name.title.substring(0,15)+
+                (name.title.length > 20 ? "...": "")}</td>
+              <td className="p-2 border-b">{name.value.substring(0,25)+
+                (name.value.length > 35 ? "...": "")}</td>
               <td className="p-2 border-b">
                 <button
                   type="button"
                   className="mr-2"
                   onClick={() => {
-                    setselectedName(description);
+                    setselectedName(name);
                     setIsUpdateOpen(true);
                   }}
                 >
@@ -169,7 +171,7 @@ const AdditionalNameComponent = ({
                 <button
                   type="button"
                   onClick={() => {
-                    setselectedName(description);
+                    setselectedName(name);
                     setIsDeleteOpen(true);
                   }}
                 >

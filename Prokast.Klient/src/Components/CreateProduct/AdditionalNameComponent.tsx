@@ -159,8 +159,10 @@ const AdditionalNameComponent = ({
                 <tbody>
                     {names.map((name, index) => (
                         <tr key={index}>
-                            <td className="p-2 border-b">{name.title}</td>
-                            <td className="p-2 border-b">{name.value}</td>
+                            <td className="p-2 border-b">{name.title.substring(0,15)+
+                                (name.title.length > 15 ? "...": "")}</td>
+                            <td className="p-2 border-b">{name.value.substring(0,25)+
+                                (name.value.length > 25 ? "...": "")}</td>
                             <td className="p-2 border-b">
                                 <button
                                     type="button"
