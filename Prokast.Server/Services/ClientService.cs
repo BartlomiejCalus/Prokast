@@ -74,7 +74,9 @@ namespace Prokast.Server.Services
                 Login = registration.Login,
                 Password = getHashed(registration.Password),
                 RoleID = role.ID,
-                ClientID = client.ID
+                ClientID = client.ID,
+                FirstName = client.FirstName,
+                LastName = client.LastName
             };
 
             _dbContext.Accounts.Add(account);
