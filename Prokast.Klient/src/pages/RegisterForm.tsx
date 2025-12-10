@@ -22,6 +22,7 @@ const RegisterForm: React.FC = () => {
   const [errors, setErrors] = useState({
     login: ''
   });
+  const navigate = useNavigate();
   const normalizeInput = (name: string, value: string) => {
     switch (name) {
       case 'nip': {
@@ -99,7 +100,7 @@ const RegisterForm: React.FC = () => {
       if (response.status >= 200 && response.status <= 204) {
         console.log('Rejestracja zakończona sukcesem!');
       }
-
+      navigate('/');
       console.log('Odpowiedź z API:', response.data);
     } catch (error: any) {
       console.error('Błąd podczas rejestracji:', error);

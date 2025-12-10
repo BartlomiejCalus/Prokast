@@ -41,7 +41,7 @@ const PriceList: React.FC = () => {
       setError("");
     } catch (err: any) {
       console.error(err);
-      setError("Nie udało się pobrać cenników z API.");
+      setError("Brak cenników!");
     } finally {
       setLoading(false);
     }
