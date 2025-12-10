@@ -55,7 +55,7 @@ namespace Prokast.Server.Services
         public Response GetAllWarehouses(int clientID)
         {
             var warehouseList = _dbContext.Warehouses.Where(x =>  x.ClientID == clientID).ToList();
-            if (warehouseList.Count == 0)
+            if (warehouseList is null)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak magazynów!" };
 
             return new WarehouseGetResponse() { ID = random.Next(1, 100000), ClientID = clientID, Model = warehouseList };

@@ -159,8 +159,10 @@ const AdditionalDescriptionComponent = ({
                 <tbody>
                     {descriptions.map((description, index) => (
                         <tr key={index}>
-                            <td className="p-2 border-b">{description.title}</td>
-                            <td className="p-2 border-b">{description.value}</td>
+                            <td className="p-2 border-b">{description.title.substring(0,15)+
+                                (description.title.length > 15 ? "...": "")}</td>
+                            <td className="p-2 border-b">{description.value.substring(0,25)+
+                                (description.value.length > 25 ? "...": "")}</td>
                             <td className="p-2 border-b">
                                 <button
                                     type="button"

@@ -169,10 +169,11 @@ const ParametersComponent = ({
                 <tbody>
                     {params.map((param, index) => (
                         <tr key={index}>
-                            <td className="p-2 border-b">{param.name}</td>
+                            <td className="p-2 border-b">{param.name.substring(0,15)+
+                                (param.name.length > 15 ? "...": "")}</td>
                             <td className="p-2 border-b">
-                                {param.value.substring(0, 35) +
-                                    (param.value.length > 35 ? "..." : "")}
+                                {param.value.substring(0, 25) +
+                                    (param.value.length > 25 ? "..." : "")}
                             </td>
                             <td className="p-2 border-b">
                                 <button
