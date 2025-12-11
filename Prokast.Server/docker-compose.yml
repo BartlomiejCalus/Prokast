@@ -48,7 +48,7 @@ services:
       - SmtpSettings__Server=smtp.wp.pl
       - SmtpSettings__Port=465
       - SmtpSettings__Email=prokast-no-reply1@wp.pl
-      - SmtpSettings__Password=####
+      - SmtpSettings__Password=#@ProkastMasterPassword123@#
       - SmtpSettings__UseSsl=true
     ports:
       - "8080:8080"

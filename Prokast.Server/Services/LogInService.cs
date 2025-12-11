@@ -244,7 +244,10 @@ namespace Prokast.Server.Services
             if (account.ClientID != clientID)
                 return new ErrorResponse() { ID = random.Next(1, 100000), ClientID = clientID, errorMsg = "Brak uprawnień do konta" };
 
-            account.WarehouseID = accountEdit.WarehouseID;
+            if(accountEdit.WarehouseID != null)
+            {
+                account.WarehouseID = accountEdit.WarehouseID;
+            }
             account.RoleID = accountEdit.RoleId;
             account.FirstName = accountEdit.FirstName;
             account.LastName = accountEdit.LastName;
