@@ -56,12 +56,9 @@ const RegisterForm: React.FC = () => {
       case 'city':
       case 'country':
         return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
-
       case 'login':
       case 'address':
       case 'businessName':
-        return value.trim();
-
       default:
         return value;
     }

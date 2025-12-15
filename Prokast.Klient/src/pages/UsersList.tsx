@@ -590,7 +590,8 @@ const UsersList = () => {
               <button
                 onClick={handleSubmit(async (newData) => {
                   const token = Cookies.get("token");
-                  console.log(newData);
+                  console.log('Data:', newData);
+                  console.log("Wysyłam:", newData, "email:", email);
                   if (!token) {
                     console.error("Brak tokenu autoryzacyjnego.");
                     return;

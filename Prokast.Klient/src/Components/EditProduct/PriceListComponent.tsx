@@ -491,7 +491,7 @@ const PriceListComponent = ({
                     );
                     setIsUpdateOpen(false);
                     setToEditablePrice(false);
-                    toast.success("Zaktualizowano nazwę!");
+                    toast.success("Zaktualizowano cenę!");
                     fetchPrices();
                     await onAdd();
                   })}

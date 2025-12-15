@@ -301,7 +301,7 @@ namespace Prokast.Server.Services
                 Name = x.Name,
                 SKU = x.SKU,
                 AdditionDate = x.AdditionDate,
-                Photo = x.Photos?.FirstOrDefault().Value,
+                Photo = x.Photos.Select(p => p.Value).FirstOrDefault(),
                 EAN = x.EAN,
                 Description = x.Description
             }).ToList();

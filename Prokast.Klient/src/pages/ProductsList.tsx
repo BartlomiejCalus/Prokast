@@ -121,9 +121,9 @@ const ProductList: React.FC = () => {
   }, [currentPage, itemsPerPage]);
 
   const filteredProducts = products.filter((p) =>
-  p.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-  (skuSearch === "" || p.sku.toLowerCase().includes(skuSearch.toLowerCase()))
-);
+    p.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    (skuSearch === "" || p.sku.toLowerCase().includes(skuSearch.toLowerCase()))
+  );
   const getPageNumbers = (
     current: number,
     total: number,
@@ -216,9 +216,12 @@ const ProductList: React.FC = () => {
                   className="bg-white/80 backdrop-blur-md shadow-lg rounded-2xl p-6 hover:shadow-xl transition"
                 >
                   <img
-                    src={product.photo}
+                    src={product.photo || "/brak.jpg"}
                     alt={product.name}
                     className="w-full h-48 object-contain rounded-xl mb-4"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src = "/no-image.png";
+                    }}
                   />
                   <h2 className="text-2xl font-bold text-gray-800 mb-2">{product.name}</h2>
                   <div className="text-gray-600 mb-4">

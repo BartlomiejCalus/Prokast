@@ -31,9 +31,9 @@ const EditProducts: React.FC = () => {
       return;
     }
 
-    const decoded: any = jwtDecode(token);
-    const clientID = decoded.ClientID;
-    console.log("🔹 decoded token:", decoded);
+    // const decoded: any = jwtDecode(token);
+    // const clientID = decoded.ClientID;
+    // console.log("🔹 decoded token:", decoded);
 
     try {
       const res = await axios.get(`${API_URL}/api/products/products/${id}`, {
