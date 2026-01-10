@@ -16,23 +16,24 @@ function LoginForm() {
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
+
+
         try {
+            
             const response = await axios.post("/api/login", {
                 Login,
                 Password
             });
 
             if (response.status === 200) {
-                const token = response.data.token; // ← Zakładamy że API zwraca token jako { token: "..." }
-
-                // Zapisz token do localStorage
-                localStorage.setItem("token", token);
+                //const token = response.data.token;
 
                 // Przejdź do strony po zalogowaniu
-                router.replace("/afterLoginPage");
+                router.replace("/dashboard");
             }
         } catch (error) {
             console.error("Login failed:", error);
+        
         }
     };
 
